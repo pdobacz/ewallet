@@ -3,6 +3,7 @@ defmodule AdminAPI.V1.SelfController do
   import AdminAPI.V1.ErrorHandler
   alias AdminAPI.V1.{AccountHelper, AccountView, UserView}
   alias Ecto.Changeset
+  alias EWallet.UserGate
   alias EWallet.Web.{Orchestrator, Originator}
   alias EWallet.Web.V1.AccountOverlay
   alias EWalletDB.{Account, User}
@@ -26,7 +27,7 @@ defmodule AdminAPI.V1.SelfController do
     with {:ok, current_user} <- permit(:update, conn.assigns),
          originator <- Originator.extract(conn.assigns),
          attrs <- Map.put(attrs, "originator", originator),
-         {:ok, user} <- User.update(current_user, attrs) do
+         {:ok, user} <- UserGate.update(current_user, attrs) do
       respond_single(user, conn)
     else
       error ->
@@ -41,7 +42,7 @@ defmodule AdminAPI.V1.SelfController do
     with {:ok, current_user} <- permit(:update_password, conn.assigns),
          originator <- Originator.extract(conn.assigns),
          attrs <- Map.put(attrs, "originator", originator),
-         {:ok, user} <- User.update_password(current_user, attrs) do
+         {:ok, user} <- UserGate.update_password(current_user, attrs) do
       respond_single(user, conn)
     else
       error ->
@@ -57,7 +58,7 @@ defmodule AdminAPI.V1.SelfController do
          originator <- Originator.extract(conn.assigns),
          attrs <- Map.put(attrs, "originator", originator) do
       current_user
-      |> User.store_avatar(attrs)
+      |> UserGate.store_avatar(attrs)
       |> respond_single(conn)
     else
       error ->

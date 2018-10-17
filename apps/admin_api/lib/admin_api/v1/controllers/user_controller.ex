@@ -3,9 +3,9 @@ defmodule AdminAPI.V1.UserController do
   import AdminAPI.V1.ErrorHandler
   alias AdminAPI.V1.AccountHelper
   alias Ecto.Changeset
-  alias EWallet.UserPolicy
+  alias EWallet.{UserGate, UserPolicy}
   alias EWallet.Web.{Originator, Orchestrator, Paginator, V1.UserOverlay}
-  alias EWalletDB.{Account, AccountUser, User, UserQuery}
+  alias EWalletDB.{Account, User, UserQuery}
 
   @doc """
   Retrieves a list of users.
@@ -93,9 +93,8 @@ defmodule AdminAPI.V1.UserController do
     with :ok <- permit(:create, conn.assigns, nil),
          originator <- Originator.extract(conn.assigns),
          attrs <- Map.put(attrs, "originator", originator),
-         {:ok, user} <- User.insert(attrs),
          %Account{} = account <- AccountHelper.get_current_account(conn),
-         {:ok, _account_user} <- AccountUser.link(account.uuid, user.uuid) do
+         {:ok, user} <- UserGate.create(attrs, account) do
       respond_single(user, conn)
     else
       error -> respond_single(error, conn)
@@ -121,7 +120,7 @@ defmodule AdminAPI.V1.UserController do
          originator <- Originator.extract(conn.assigns),
          attrs <- Map.put(attrs, "originator", originator) do
       user
-      |> User.update(attrs)
+      |> UserGate.update(attrs)
       |> respond_single(conn)
     else
       error -> respond_single(error, conn)
@@ -141,7 +140,7 @@ defmodule AdminAPI.V1.UserController do
          originator <- Originator.extract(conn.assigns),
          attrs <- Map.put(attrs, "originator", originator) do
       user
-      |> User.update(attrs)
+      |> UserGate.update(attrs)
       |> respond_single(conn)
     else
       error -> respond_single(error, conn)

@@ -3,7 +3,7 @@ defmodule AdminAPI.V1.ResetPasswordController do
   import AdminAPI.V1.ErrorHandler
   alias AdminAPI.ForgetPasswordEmail
   alias Bamboo.Email
-  alias EWallet.Mailer
+  alias EWallet.{Mailer, UserGate}
   alias EWallet.Web.UrlValidator
   alias EWalletDB.{ForgetPasswordRequest, User}
 
@@ -75,7 +75,7 @@ defmodule AdminAPI.V1.ResetPasswordController do
          "password" => password,
          "password_confirmation" => password_confirmation
        }) do
-    User.update_password(
+    UserGate.update_password(
       request.user,
       %{
         password: password,
