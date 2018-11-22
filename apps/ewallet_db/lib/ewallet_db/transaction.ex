@@ -185,8 +185,6 @@ defmodule EWalletDB.Transaction do
       :to_token_uuid,
       :to,
       :from,
-      :metadata,
-      :encrypted_metadata,
       :originator
     ])
     |> validate_number(:from_amount, less_than: 100_000_000_000_000_000_000_000_000_000_000_000)
