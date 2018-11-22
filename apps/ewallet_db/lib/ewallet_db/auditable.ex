@@ -3,6 +3,7 @@ defmodule EWalletDB.Auditable do
   Allows audit for Ecto records.
   """
   import Ecto.Changeset
+  alias Ecto.Multi
   alias EWalletDB.Audit
   alias EWalletConfig.Types.VirtualStruct
 
@@ -33,11 +34,11 @@ defmodule EWalletDB.Auditable do
     |> validate_required([:originator | required])
   end
 
-  def insert_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
+  def insert_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
     Audit.insert_record_with_audit(changeset, opts, multi)
   end
 
-  def update_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
+  def update_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
     Audit.update_record_with_audit(changeset, opts, multi)
   end
 end

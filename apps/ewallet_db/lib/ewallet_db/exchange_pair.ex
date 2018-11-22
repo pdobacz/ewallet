@@ -126,7 +126,7 @@ defmodule EWalletDB.ExchangePair do
   def insert(attrs) do
     %__MODULE__{}
     |> changeset(attrs)
-    |> insert_with_audit()
+    |> insert_record_with_audit()
   end
 
   @doc """
@@ -136,7 +136,7 @@ defmodule EWalletDB.ExchangePair do
   def update(exchange_pair, attrs) do
     exchange_pair
     |> changeset(attrs)
-    |> update_with_audit()
+    |> update_record_with_audit()
   end
 
   @doc """
@@ -174,7 +174,7 @@ defmodule EWalletDB.ExchangePair do
   def touch(exchange_pair) do
     exchange_pair
     |> change(updated_at: NaiveDateTime.utc_now())
-    |> update_with_audit()
+    |> update_record_with_audit()
   end
 
   @doc """
