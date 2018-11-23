@@ -15,13 +15,14 @@ defmodule EWallet.Web.V1.TransactionRequestSerializer do
   alias EWallet.Web.{Date, Paginator}
   alias EWalletConfig.Helpers.Assoc
   alias EWalletDB.TransactionRequest
+  alias EWalletConfig.System
 
   def serialize(%Paginator{} = paginator) do
     PaginatorSerializer.serialize(paginator, &serialize/1)
   end
 
   def serialize(%TransactionRequest{} = transaction_request) do
-    transaction_request = TransactionRequest.load_consumptions_count(transaction_request)
+    transaction_request = TransactionRequest.load_consumptions_count(transaction_request, %System{})
 
     %{
       object: "transaction_request",

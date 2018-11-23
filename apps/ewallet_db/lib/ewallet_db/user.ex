@@ -42,7 +42,6 @@ defmodule EWalletDB.User do
     field(:encrypted_metadata, EWalletConfig.Encrypted.Map, default: %{})
     field(:avatar, EWalletDB.Uploaders.Avatar.Type)
     field(:enabled, :boolean, default: true)
-    auditable()
 
     belongs_to(
       :invite,
@@ -88,28 +87,30 @@ defmodule EWalletDB.User do
     )
 
     timestamps()
+    auditable()
   end
 
   defp changeset(changeset, attrs) do
     password_hash = attrs |> get_attr(:password) |> Crypto.hash_password()
 
     changeset
-    |> Map.delete(:originator)
-    |> cast(attrs, [
-      :is_admin,
-      :username,
-      :full_name,
-      :calling_name,
-      :provider_user_id,
-      :email,
-      :password,
-      :password_confirmation,
-      :metadata,
-      :encrypted_metadata,
-      :invite_uuid,
-      :originator
-    ])
-    |> validate_required([:originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [
+        :is_admin,
+        :username,
+        :full_name,
+        :calling_name,
+        :provider_user_id,
+        :email,
+        :password,
+        :password_confirmation,
+        :metadata,
+        :encrypted_metadata,
+        :invite_uuid,
+        :originator
+      ]
+    )
     |> validate_confirmation(:password, message: "does not match password")
     |> validate_immutable(:provider_user_id)
     |> unique_constraint(:username)
@@ -122,18 +123,19 @@ defmodule EWalletDB.User do
 
   defp update_user_changeset(user, attrs) do
     user
-    |> Map.delete(:originator)
-    |> cast(attrs, [
-      :username,
-      :full_name,
-      :calling_name,
-      :provider_user_id,
-      :metadata,
-      :encrypted_metadata,
-      :invite_uuid,
-      :originator
-    ])
-    |> validate_required([:originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [
+        :username,
+        :full_name,
+        :calling_name,
+        :provider_user_id,
+        :metadata,
+        :encrypted_metadata,
+        :invite_uuid,
+        :originator
+      ]
+    )
     |> validate_immutable(:provider_user_id)
     |> unique_constraint(:username)
     |> unique_constraint(:provider_user_id)
@@ -143,24 +145,24 @@ defmodule EWalletDB.User do
 
   defp update_admin_changeset(user, attrs) do
     user
-    |> Map.delete(:originator)
-    |> cast(attrs, [
-      :full_name,
-      :calling_name,
-      :metadata,
-      :encrypted_metadata,
-      :invite_uuid,
-      :originator
-    ])
-    |> validate_required([:originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [
+        :full_name,
+        :calling_name,
+        :metadata,
+        :encrypted_metadata,
+        :invite_uuid,
+        :originator
+      ]
+    )
     |> assoc_constraint(:invite)
     |> validate_by_roles(attrs)
   end
 
   defp avatar_changeset(user, attrs) do
     user
-    |> Map.delete(:originator)
-    |> cast(attrs, [:originator])
+    |> cast_and_validate_required_for_audit(attrs, [])
     |> cast_attachments(attrs, [:avatar])
     |> validate_required([:originator])
   end
@@ -169,23 +171,21 @@ defmodule EWalletDB.User do
     password_hash = attrs |> get_attr(:password) |> Crypto.hash_password()
 
     user
-    |> Map.delete(:originator)
-    |> cast(attrs, [
-      :password,
-      :password_confirmation,
-      :originator
-    ])
-    |> validate_required([:originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [
+        :password,
+        :password_confirmation,
+        :originator
+      ]
+    )
     |> validate_confirmation(:password, message: "does not match password")
     |> validate_password(:password)
     |> put_change(:password_hash, password_hash)
   end
 
   defp enable_changeset(%User{} = user, attrs) do
-    user
-    |> Map.delete(:originator)
-    |> cast(attrs, [:enabled, :originator])
-    |> validate_required([:enabled, :originator])
+    cast_and_validate_required_for_audit(user, attrs, [:enabled], [:enabled])
   end
 
   defp get_attr(attrs, atom_field) do

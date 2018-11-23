@@ -26,6 +26,7 @@ defmodule EWallet.TransactionConsumptionConsumerGate do
     User,
     Wallet
   }
+  alias EWalletConfig.System
 
   @spec consume(map()) ::
           {:ok, %TransactionConsumption{}}
@@ -223,7 +224,7 @@ defmodule EWallet.TransactionConsumptionConsumerGate do
           {:ok, consumption}
 
         false ->
-          TransactionConsumptionConfirmerGate.approve_and_confirm(request, consumption)
+          TransactionConsumptionConfirmerGate.approve_and_confirm(request, consumption, %System{})
       end
     else
       {:idempotent_call, consumption} ->
@@ -258,7 +259,8 @@ defmodule EWallet.TransactionConsumptionConsumerGate do
           estimated_at: Map.get(calculation, :calculated_at),
           estimated_rate: Map.get(calculation, :actual_rate),
           metadata: attrs["metadata"] || %{},
-          encrypted_metadata: attrs["encrypted_metadata"] || %{}
+          encrypted_metadata: attrs["encrypted_metadata"] || %{},
+          originator: attrs["originator"]
         })
 
       error ->
