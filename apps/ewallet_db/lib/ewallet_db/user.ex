@@ -15,7 +15,6 @@ defmodule EWalletDB.User do
   alias EWalletDB.{
     Account,
     AccountUser,
-    Audit,
     AuthToken,
     Invite,
     Membership,
@@ -325,7 +324,7 @@ defmodule EWalletDB.User do
   def insert(attrs) do
     %User{}
     |> changeset(attrs)
-    |> Audit.insert_record_with_audit(
+    |> insert_record_with_audit(
       [],
       Multi.run(Multi.new(), :wallet, fn %{record: record} ->
         case User.admin?(record) do
@@ -351,7 +350,8 @@ defmodule EWalletDB.User do
     %{
       user_uuid: user.uuid,
       name: identifier,
-      identifier: identifier
+      identifier: identifier,
+      originator: user
     }
     |> Wallet.insert()
   end
@@ -368,7 +368,7 @@ defmodule EWalletDB.User do
         update_user_changeset(user, attrs)
       end
 
-    Audit.update_record_with_audit(changeset)
+    update_record_with_audit(changeset)
   end
 
   @doc """
@@ -405,7 +405,7 @@ defmodule EWalletDB.User do
   defp do_update_password(user, attrs) do
     user
     |> password_changeset(attrs)
-    |> Audit.update_record_with_audit()
+    |> update_record_with_audit()
   end
 
   @doc """
@@ -415,7 +415,7 @@ defmodule EWalletDB.User do
   def update_email(%User{} = user, attrs) do
     user
     |> email_changeset(attrs)
-    |> Audit.update_record_with_audit()
+    |> update_record_with_audit()
   end
 
   @doc """
@@ -434,7 +434,7 @@ defmodule EWalletDB.User do
 
     user
     |> avatar_changeset(updated_attrs)
-    |> Audit.update_record_with_audit()
+    |> update_record_with_audit()
   end
 
   @doc """
@@ -682,6 +682,6 @@ defmodule EWalletDB.User do
   def enable_or_disable(user, attrs) do
     user
     |> enable_changeset(attrs)
-    |> Audit.update_record_with_audit()
+    |> update_record_with_audit()
   end
 end
