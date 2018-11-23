@@ -28,7 +28,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => meta.token.id,
           "correlation_id" => "123",
           "amount" => 1_000,
-          "account_id" => nil
+          "account_id" => nil,
+          "originator" => %System{}
         })
 
       assert res == {:error, :account_id_not_found}
@@ -41,7 +42,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => meta.token.id,
           "correlation_id" => "123",
           "amount" => 1_000,
-          "account_id" => "fake"
+          "account_id" => "fake",
+          "originator" => %System{}
         })
 
       assert res == {:error, :account_id_not_found}
@@ -55,7 +57,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => "123",
           "amount" => 1_000,
           "account_id" => "fake",
-          "address" => nil
+          "address" => nil,
+          "originator" => %System{}
         })
 
       assert res == {:error, :account_id_not_found}
@@ -69,7 +72,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => "123",
           "amount" => 1_000,
           "account_id" => meta.account.id,
-          "creator" => %{account: meta.account}
+          "creator" => %{account: meta.account},
+          "originator" => %System{}
         })
 
       assert res == :ok
@@ -85,7 +89,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "amount" => 1_000,
           "account_id" => meta.account.id,
           "address" => meta.account_wallet.address,
-          "creator" => %{account: meta.account}
+          "creator" => %{account: meta.account},
+          "originator" => %System{}
         })
 
       assert res == :ok
@@ -101,7 +106,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => "123",
           "amount" => 1_000,
           "account_id" => meta.account.id,
-          "address" => "fake-0000-0000-0000"
+          "address" => "fake-0000-0000-0000",
+          "originator" => %System{}
         })
 
       assert res == {:error, :account_wallet_not_found}
@@ -119,7 +125,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "account_id" => meta.account.id,
           "provider_user_id" => meta.user.provider_user_id,
           "address" => meta.user_wallet.address,
-          "creator" => %{account: meta.account}
+          "creator" => %{account: meta.account},
+          "originator" => %System{}
         })
 
       assert res == :ok
@@ -139,7 +146,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "amount" => 1_000,
           "account_id" => meta.account.id,
           "provider_user_id" => meta.user.provider_user_id,
-          "address" => meta.account_wallet.address
+          "address" => meta.account_wallet.address,
+          "originator" => %System{}
         })
 
       assert res == {:error, :user_wallet_mismatch}
@@ -153,7 +161,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => "123",
           "amount" => 1_000,
           "account_id" => meta.account.id,
-          "address" => meta.user_wallet.address
+          "address" => meta.user_wallet.address,
+          "originator" => %System{}
         })
 
       assert res == {:error, :account_wallet_mismatch}
@@ -168,7 +177,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => meta.token.id,
           "correlation_id" => "123",
           "amount" => 1_000,
-          "provider_user_id" => nil
+          "provider_user_id" => nil,
+          "originator" => %System{}
         })
 
       assert res == {:error, :provider_user_id_not_found}
@@ -181,7 +191,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => meta.token.id,
           "correlation_id" => "123",
           "amount" => 1_000,
-          "provider_user_id" => "fake"
+          "provider_user_id" => "fake",
+          "originator" => %System{}
         })
 
       assert res == {:error, :provider_user_id_not_found}
@@ -197,7 +208,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => "123",
           "amount" => 1_000,
           "provider_user_id" => meta.user.provider_user_id,
-          "creator" => %{account: meta.account}
+          "creator" => %{account: meta.account},
+          "originator" => %System{}
         })
 
       assert res == :ok
@@ -213,7 +225,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "amount" => 1_000,
           "provider_user_id" => meta.user.provider_user_id,
           "address" => meta.user_wallet.address,
-          "creator" => %{end_user: meta.user}
+          "creator" => %{end_user: meta.user},
+          "originator" => %System{}
         })
 
       assert res == :ok
@@ -228,7 +241,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => "123",
           "amount" => 1_000,
           "provider_user_id" => meta.user.provider_user_id,
-          "address" => "fake-0000-0000-0000"
+          "address" => "fake-0000-0000-0000",
+          "originator" => %System{}
         })
 
       assert res == {:error, :user_wallet_not_found}
@@ -242,7 +256,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => "123",
           "amount" => 1_000,
           "provider_user_id" => meta.user.provider_user_id,
-          "address" => meta.account_wallet.address
+          "address" => meta.account_wallet.address,
+          "originator" => %System{}
         })
 
       assert res == {:error, :user_wallet_mismatch}
@@ -257,7 +272,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => meta.token.id,
           "correlation_id" => "123",
           "amount" => 1_000,
-          "address" => nil
+          "address" => nil,
+          "originator" => %System{}
         })
 
       assert res == {:error, :wallet_not_found}
@@ -271,7 +287,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => "123",
           "amount" => 1_000,
           "address" => meta.user_wallet.address,
-          "creator" => %{end_user: meta.user}
+          "creator" => %{end_user: meta.user},
+          "originator" => %System{}
         })
 
       assert res == :ok
@@ -286,7 +303,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => "123",
           "amount" => 1_000,
           "address" => "fake-0000-0000-0000",
-          "creator" => %{account: meta.account}
+          "creator" => %{account: meta.account},
+          "originator" => %System{}
         })
 
       assert res == {:error, :wallet_not_found}
@@ -300,7 +318,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "type" => "receive",
           "token_id" => meta.token.id,
           "correlation_id" => "123",
-          "amount" => 1_000
+          "amount" => 1_000,
+          "originator" => %System{}
         })
 
       assert res == {:error, :invalid_parameter}
@@ -318,7 +337,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => "123",
           "amount" => 1_000,
           "address" => meta.user_wallet.address,
-          "creator" => %{account: meta.account}
+          "creator" => %{account: meta.account},
+          "originator" => %System{}
         })
 
       assert %TransactionRequest{} = request
@@ -338,7 +358,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "correlation_id" => nil,
           "amount" => nil,
           "address" => meta.user_wallet.address,
-          "creator" => %{end_user: meta.user}
+          "creator" => %{end_user: meta.user},
+          "originator" => %System{}
         })
 
       assert changeset.errors == [type: {"is invalid", [validation: :inclusion]}]
@@ -351,7 +372,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => meta.token.id,
           "correlation_id" => nil,
           "amount" => nil,
-          "address" => "fake-0000-0000-0000"
+          "address" => "fake-0000-0000-0000",
+          "originator" => %System{}
         })
 
       assert error == :user_wallet_not_found
@@ -367,7 +389,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => meta.token.id,
           "correlation_id" => nil,
           "amount" => nil,
-          "address" => wallet.address
+          "address" => wallet.address,
+          "originator" => %System{}
         })
 
       assert error == :user_wallet_mismatch
@@ -380,7 +403,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => "fake",
           "correlation_id" => nil,
           "amount" => nil,
-          "address" => nil
+          "address" => nil,
+          "originator" => %System{}
         })
 
       assert res == {:error, :token_not_found}
@@ -407,7 +431,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "expiration_reason" => "test",
           "expired_at" => "something",
           "max_consumptions" => 3,
-          "creator" => %{end_user: meta.user}
+          "creator" => %{end_user: meta.user},
+          "originator" => %System{}
         })
 
       assert %TransactionRequest{} = request
@@ -436,7 +461,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => meta.token.id,
           "correlation_id" => nil,
           "amount" => nil,
-          "creator" => %{end_user: meta.user}
+          "creator" => %{end_user: meta.user},
+          "originator" => %System{}
         })
 
       assert %TransactionRequest{} = request
@@ -451,7 +477,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => token.id,
           "correlation_id" => nil,
           "amount" => nil,
-          "creator" => %{end_user: meta.user}
+          "creator" => %{end_user: meta.user},
+          "originator" => %System{}
         })
 
       assert code == :token_is_disabled
@@ -473,7 +500,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => meta.token.id,
           "correlation_id" => nil,
           "amount" => nil,
-          "creator" => %{end_user: meta.user}
+          "creator" => %{end_user: meta.user},
+          "originator" => %System{}
         })
 
       assert code == :wallet_is_disabled
@@ -486,7 +514,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => meta.token.id,
           "correlation_id" => nil,
           "amount" => nil,
-          "creator" => %{end_user: meta.user}
+          "creator" => %{end_user: meta.user},
+          "originator" => %System{}
         })
 
       assert changeset.errors == [type: {"is invalid", [validation: :inclusion]}]
@@ -498,7 +527,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "type" => "receive",
           "token_id" => meta.token.id,
           "correlation_id" => nil,
-          "amount" => nil
+          "amount" => nil,
+          "originator" => %System{}
         })
 
       assert error == :invalid_parameter
@@ -511,7 +541,8 @@ defmodule EWallet.TransactionRequestGateTest do
           "token_id" => "fake",
           "correlation_id" => nil,
           "amount" => nil,
-          "creator" => %{end_user: meta.user}
+          "creator" => %{end_user: meta.user},
+          "originator" => %System{}
         })
 
       assert res == {:error, :token_not_found}
@@ -554,10 +585,10 @@ defmodule EWallet.TransactionRequestGateTest do
     end
   end
 
-  describe "expire_if_past_expiration_date/1" do
+  describe "expire_if_past_expiration_date/2" do
     test "does nothing if expiration date is not set" do
       request = insert(:transaction_request, expiration_date: nil)
-      {res, request} = TransactionRequestGate.expire_if_past_expiration_date(request)
+      {res, request} = TransactionRequestGate.expire_if_past_expiration_date(request, %System{})
       assert res == :ok
       assert %TransactionRequest{} = request
       assert TransactionRequest.valid?(request) == true
@@ -566,7 +597,7 @@ defmodule EWallet.TransactionRequestGateTest do
     test "does nothing if expiration date is not past" do
       future_date = NaiveDateTime.add(NaiveDateTime.utc_now(), 60, :second)
       request = insert(:transaction_request, expiration_date: future_date)
-      {res, request} = TransactionRequestGate.expire_if_past_expiration_date(request)
+      {res, request} = TransactionRequestGate.expire_if_past_expiration_date(request, %System{})
       assert res == :ok
       assert %TransactionRequest{} = request
       assert TransactionRequest.valid?(request) == true
@@ -575,7 +606,7 @@ defmodule EWallet.TransactionRequestGateTest do
     test "expires the request if expiration date is past" do
       past_date = NaiveDateTime.add(NaiveDateTime.utc_now(), -60, :second)
       request = insert(:transaction_request, expiration_date: past_date)
-      {res, error} = TransactionRequestGate.expire_if_past_expiration_date(request)
+      {res, error} = TransactionRequestGate.expire_if_past_expiration_date(request, %System{})
       request = TransactionRequest.get(request.id)
       assert res == :error
       assert error == :expired_transaction_request
@@ -584,10 +615,10 @@ defmodule EWallet.TransactionRequestGateTest do
     end
   end
 
-  describe "expire_if_max_consumption/1" do
+  describe "expire_if_max_consumption/2" do
     test "touches the request if max_consumptions is equal to nil" do
       request = insert(:transaction_request, max_consumptions: nil)
-      {res, updated_request} = TransactionRequest.expire_if_max_consumption(request)
+      {res, updated_request} = TransactionRequest.expire_if_max_consumption(request, %System{})
       assert res == :ok
       assert %TransactionRequest{} = updated_request
       assert TransactionRequest.valid?(updated_request) == true
@@ -596,7 +627,7 @@ defmodule EWallet.TransactionRequestGateTest do
 
     test "touches the request if max_consumptions is equal to 0" do
       request = insert(:transaction_request, max_consumptions: 0)
-      {res, updated_request} = TransactionRequest.expire_if_max_consumption(request)
+      {res, updated_request} = TransactionRequest.expire_if_max_consumption(request, %System{})
       assert res == :ok
       assert %TransactionRequest{} = updated_request
       assert TransactionRequest.valid?(updated_request) == true
@@ -605,7 +636,7 @@ defmodule EWallet.TransactionRequestGateTest do
 
     test "touches the request if max_consumptions has not been reached" do
       request = insert(:transaction_request, max_consumptions: 3)
-      {res, updated_request} = TransactionRequest.expire_if_max_consumption(request)
+      {res, updated_request} = TransactionRequest.expire_if_max_consumption(request, %System{})
       assert res == :ok
       assert %TransactionRequest{} = updated_request
       assert TransactionRequest.valid?(updated_request) == true
@@ -629,7 +660,7 @@ defmodule EWallet.TransactionRequestGateTest do
           status: "confirmed"
         )
 
-      {res, updated_request} = TransactionRequest.expire_if_max_consumption(request)
+      {res, updated_request} = TransactionRequest.expire_if_max_consumption(request, %System{})
       assert res == :ok
       assert %TransactionRequest{} = updated_request
       assert updated_request.expired_at != nil
