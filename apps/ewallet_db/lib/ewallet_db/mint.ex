@@ -135,7 +135,7 @@ defmodule EWalletDB.Mint do
   @doc """
   Confirms a mint.
   """
-  def confirm(%Mint{confirmed: true} = mint), do: mint
+  def confirm(%Mint{confirmed: true} = mint, _), do: mint
 
   def confirm(%Mint{confirmed: false} = mint, originator) do
     {:ok, mint} =

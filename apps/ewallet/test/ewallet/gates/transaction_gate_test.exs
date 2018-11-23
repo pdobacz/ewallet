@@ -5,6 +5,7 @@ defmodule EWallet.TransactionGateTest do
   alias Ecto.UUID
   alias EWallet.{BalanceFetcher, TransactionGate}
   alias EWalletDB.{Account, Token, Transaction, User, Wallet}
+  alias EWalletConfig.System
 
   def init_wallet(address, token, amount \\ 1_000) do
     master_account = Account.get_master_account()
@@ -32,7 +33,8 @@ defmodule EWallet.TransactionGateTest do
         "token_id" => token.id,
         "amount" => 100 * token.subunit_to_unit,
         "metadata" => %{some: "data"},
-        "idempotency_token" => idempotency_token
+        "idempotency_token" => idempotency_token,
+        "originator" => %System{}
       }
     end
 
@@ -63,7 +65,8 @@ defmodule EWallet.TransactionGateTest do
           error_description: response["description"],
           error_data: nil,
           status: status,
-          type: Transaction.internal()
+          type: Transaction.internal(),
+          originator: %System{}
         })
 
       {idempotency_token, transaction, attrs}
@@ -205,7 +208,8 @@ defmodule EWallet.TransactionGateTest do
           "token_id" => token.id,
           "amount" => 0,
           "metadata" => %{some: "data"},
-          "idempotency_token" => idempotency_token
+          "idempotency_token" => idempotency_token,
+          "originator" => %System{}
         })
 
       assert res == :error
@@ -315,7 +319,8 @@ defmodule EWallet.TransactionGateTest do
           "to_amount" => 200 * token_1.subunit_to_unit,
           "exchange_account_id" => account.id,
           "metadata" => %{something: "interesting"},
-          "encrypted_metadata" => %{something: "secret"}
+          "encrypted_metadata" => %{something: "secret"},
+          "originator" => %System{}
         })
 
       {:ok, b1} = BalanceFetcher.get(token_1.id, wallet_1)

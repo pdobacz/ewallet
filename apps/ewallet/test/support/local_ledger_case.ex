@@ -7,6 +7,7 @@ defmodule EWallet.LocalLedgerCase do
   alias EWallet.{MintGate, TransactionGate}
   alias EWalletDB.Account
   alias EWalletConfig.ConfigTestHelper
+  alias EWalletConfig.System
 
   defmacro __using__(_opts) do
     quote do
@@ -52,7 +53,8 @@ defmodule EWallet.LocalLedgerCase do
         "token_id" => token.id,
         "amount" => amount * token.subunit_to_unit,
         "description" => "Minting #{amount} #{token.symbol}",
-        "metadata" => %{}
+        "metadata" => %{},
+        "originator" => %System{}
       })
 
     assert mint.confirmed == true
@@ -67,7 +69,8 @@ defmodule EWallet.LocalLedgerCase do
         "token_id" => token.id,
         "amount" => amount,
         "metadata" => %{},
-        "idempotency_token" => UUID.generate()
+        "idempotency_token" => UUID.generate(),
+        "originator" => %System{}
       })
 
     transaction
@@ -84,7 +87,8 @@ defmodule EWallet.LocalLedgerCase do
         "token_id" => token.id,
         "amount" => amount * token.subunit_to_unit,
         "metadata" => %{},
-        "idempotency_token" => UUID.generate()
+        "idempotency_token" => UUID.generate(),
+        "originator" => %System{}
       })
 
     transaction
