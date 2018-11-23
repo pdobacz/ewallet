@@ -5,12 +5,12 @@ defmodule EWalletDB.Category do
   use Ecto.Schema
   use EWalletDB.SoftDelete
   use EWalletConfig.Types.ExternalID
+  use EWalletDB.Auditable
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader
   alias Ecto.UUID
   alias EWalletConfig.Helpers.InputAttribute
-  alias EWalletDB.{Audit, Account, Repo}
-  alias EWalletConfig.Types.VirtualStruct
+  alias EWalletDB.{Account, Repo}
 
   @primary_key {:uuid, UUID, autogenerate: true}
 
@@ -19,9 +19,6 @@ defmodule EWalletDB.Category do
 
     field(:name, :string)
     field(:description, :string)
-    field(:originator, VirtualStruct, virtual: true)
-    timestamps()
-    soft_delete()
 
     many_to_many(
       :accounts,
@@ -30,12 +27,19 @@ defmodule EWalletDB.Category do
       join_keys: [category_uuid: :uuid, account_uuid: :uuid],
       on_replace: :delete
     )
+
+    timestamps()
+    soft_delete()
+    auditable()
   end
 
   defp changeset(category, attrs) do
     category
-    |> cast(attrs, [:name, :description, :originator])
-    |> validate_required([:name, :originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:name, :description, :originator],
+      [:name]
+    )
     |> unique_constraint(:name)
     |> put_accounts(attrs, :account_ids)
   end
@@ -97,7 +101,7 @@ defmodule EWalletDB.Category do
   def insert(attrs) do
     %__MODULE__{}
     |> changeset(attrs)
-    |> Audit.insert_record_with_audit()
+    |> insert_record_with_audit()
   end
 
   @doc """
@@ -107,7 +111,7 @@ defmodule EWalletDB.Category do
   def update(category, attrs) do
     category
     |> changeset(attrs)
-    |> Audit.update_record_with_audit()
+    |> update_record_with_audit()
   end
 
   @doc """

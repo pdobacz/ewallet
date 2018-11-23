@@ -172,7 +172,8 @@ defmodule EWalletDB.Audit do
          target_type <- get_type(record.__struct__),
          changes <- Map.delete(changeset.changes, :originator),
          encrypted_metadata <- changes[:encrypted_metadata],
-         changes <- Map.delete(changes, :encrypted_metadata) do
+         changes <- Map.delete(changes, :encrypted_metadata),
+         changes <- format_changes(changes) do
       %{
         action: Atom.to_string(action),
         target_type: target_type,
@@ -187,6 +188,30 @@ defmodule EWalletDB.Audit do
       error -> error
     end
   end
+
+  defp format_changes(changes) do
+    changes
+    |> Enum.map(fn {field, value} ->
+      format_change(field, value)
+    end)
+    |> Enum.into(%{})
+  end
+
+  defp format_change(field, values) when is_list(values) do
+    {field, Enum.map(values, fn value ->
+      format_value(value)
+    end)}
+  end
+
+  defp format_change(field, value) do
+    {field, value}
+  end
+
+  defp format_value(%Changeset{} = value) do
+    value.data.uuid
+  end
+
+  defp format_value(value), do: value
 
   defp get_originator(%Changeset{changes: %{originator: :self}}, record) do
     {:ok, record}

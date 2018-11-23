@@ -11,7 +11,9 @@ audits = %{
   EWalletDB.Transaction => "transaction",
   EWalletDB.Mint => "mint",
   EWalletDB.TransactionRequest => "transaction_request",
-  EWalletDB.TransactionConsumption => "transaction_consumption"
+  EWalletDB.TransactionConsumption => "transaction_consumption",
+  EWalletDB.Account => "account",
+  EWalletDB.Category => "category"
 }
 
 config :ewallet_db,

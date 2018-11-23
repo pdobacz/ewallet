@@ -521,11 +521,11 @@ defmodule EWalletDB.SchemaCase do
         schema = unquote(schema)
         table = unquote(table)
 
-        {_, record} =
-          schema
-          |> get_factory()
-          |> params_for(metadata: nil, encrypted_metadata: nil)
-          |> schema.insert()
+          {_, record} =
+            schema
+            |> get_factory()
+            |> params_for(metadata: nil, encrypted_metadata: nil)
+            |> schema.insert()
 
         {:ok, results} =
           SQL.query(EWalletDB.Repo, "SELECT metadata, encrypted_metadata FROM \"#{table}\"", [])
@@ -629,7 +629,7 @@ defmodule EWalletDB.SchemaCase do
         assert schema.deleted?(record)
 
         {res, record} = schema.restore(record)
-        IO.inspect(record)
+
         assert res == :ok
         refute schema.deleted?(record)
       end

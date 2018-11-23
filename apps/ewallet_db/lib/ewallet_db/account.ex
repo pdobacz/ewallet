@@ -104,8 +104,11 @@ defmodule EWalletDB.Account do
   @spec changeset(%Account{}, map()) :: Ecto.Changeset.t()
   defp changeset(%Account{} = account, attrs) do
     account
-    |> cast(attrs, [:name, :description, :parent_uuid, :metadata, :encrypted_metadata])
-    |> validate_required([:name])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:name, :description, :parent_uuid, :metadata, :encrypted_metadata],
+      [:name]
+    )
     |> validate_parent_uuid()
     |> validate_account_level(@child_level_limit)
     |> unique_constraint(:name)
@@ -141,23 +144,22 @@ defmodule EWalletDB.Account do
   """
   @spec insert(map()) :: {:ok, %Account{}} | {:error, Ecto.Changeset.t()}
   def insert(attrs) do
-    multi =
+    %Account{}
+    |> changeset(attrs)
+    |> insert_record_with_audit(
+      [],
       Multi.new()
-      |> Multi.insert(:account, changeset(%Account{}, attrs))
-      |> Multi.run(:wallet, fn %{account: account} ->
+      |> Multi.run(:wallet, fn %{record: account} ->
         _ = insert_wallet(account, Wallet.primary())
         insert_wallet(account, Wallet.burn())
       end)
+    )
+    |> case do
+      {:ok, account} ->
+        {:ok, Repo.preload(account, [:wallets])}
 
-    case Repo.transaction(multi) do
-      {:ok, result} ->
-        account = result.account |> Repo.preload([:wallets])
-        {:ok, account}
-
-      # Only the account insertion should fail. If the wallet insert fails, there is
-      # something wrong with our code.
-      {:error, _failed_operation, changeset, _changes_so_far} ->
-        {:error, changeset}
+      error ->
+        error
     end
   end
 
@@ -168,7 +170,7 @@ defmodule EWalletDB.Account do
   def update(%Account{} = account, attrs) do
     changeset = changeset(account, attrs)
 
-    case Repo.update(changeset) do
+    case update_record_with_audit(changeset) do
       {:ok, account} ->
         {:ok, get(account.id)}
 
@@ -186,7 +188,8 @@ defmodule EWalletDB.Account do
       account_uuid: account.uuid,
       name: identifier,
       identifier: identifier,
-      metadata: %{}
+      metadata: %{},
+      originator: account
     }
     |> Wallet.insert()
   end
@@ -205,7 +208,7 @@ defmodule EWalletDB.Account do
 
     changeset = avatar_changeset(account, attrs)
 
-    case Repo.update(changeset) do
+    case update_record_with_audit(changeset) do
       {:ok, account} -> get(account.id)
       result -> result
     end
@@ -532,8 +535,8 @@ defmodule EWalletDB.Account do
     end)
   end
 
-  @spec add_category(%Account{}, %Category{}) :: {:ok, %Account{}} | {:error, Ecto.Changeset.t()}
-  def add_category(account, category) do
+  @spec add_category(%Account{}, %Category{}, Map.t()) :: {:ok, %Account{}} | {:error, Ecto.Changeset.t()}
+  def add_category(account, category, originator) do
     account = Repo.preload(account, :categories)
 
     category_ids =
@@ -542,12 +545,15 @@ defmodule EWalletDB.Account do
       |> Enum.map(fn existing -> existing.id end)
       |> List.insert_at(0, category.id)
 
-    Account.update(account, %{category_ids: category_ids})
+    Account.update(account, %{
+      category_ids: category_ids,
+      originator: originator
+    })
   end
 
-  @spec remove_category(%Account{}, %Category{}) ::
+  @spec remove_category(%Account{}, %Category{}, Map.t()) ::
           {:ok, %Account{}} | {:error, Ecto.Changeset.t()}
-  def remove_category(account, category) do
+  def remove_category(account, category, originator) do
     account = Repo.preload(account, :categories)
 
     remaining =
@@ -557,6 +563,9 @@ defmodule EWalletDB.Account do
 
     category_ids = Enum.map(remaining, fn c -> c.id end)
 
-    Account.update(account, %{category_ids: category_ids})
+    Account.update(account, %{
+      category_ids: category_ids,
+      originator: originator
+    })
   end
 end
