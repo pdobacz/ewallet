@@ -194,10 +194,10 @@ defmodule EWalletDB.APIKey do
   @doc """
   Soft-deletes the given API key.
   """
-  def delete(api_key), do: SoftDelete.delete(api_key)
+  def delete(api_key, originator), do: SoftDelete.delete(api_key, originator)
 
   @doc """
   Restores the given API key from soft-delete.
   """
-  def restore(api_key), do: SoftDelete.restore(api_key)
+  def restore(api_key, originator), do: SoftDelete.restore(api_key, originator)
 end

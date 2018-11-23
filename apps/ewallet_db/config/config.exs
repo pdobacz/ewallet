@@ -13,7 +13,8 @@ audits = %{
   EWalletDB.TransactionRequest => "transaction_request",
   EWalletDB.TransactionConsumption => "transaction_consumption",
   EWalletDB.Account => "account",
-  EWalletDB.Category => "category"
+  EWalletDB.Category => "category",
+  EWalletDB.ExchangePair => "exchange_pair"
 }
 
 config :ewallet_db,

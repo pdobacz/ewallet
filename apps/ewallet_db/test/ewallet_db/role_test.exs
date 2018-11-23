@@ -1,6 +1,7 @@
 defmodule EWalletDB.RoleTest do
   use EWalletDB.SchemaCase
   alias EWalletDB.{Membership, Role}
+  alias EWalletConfig.System
 
   describe "Role factory" do
     test_has_valid_factory(Role)
@@ -53,7 +54,7 @@ defmodule EWalletDB.RoleTest do
       users = role.id |> Role.get(preload: :users) |> Map.get(:users)
       assert Enum.count(users) > 0
 
-      {res, code} = Role.delete(role)
+      {res, code} = Role.delete(role, %System{})
 
       assert res == :error
       assert code == :role_not_empty

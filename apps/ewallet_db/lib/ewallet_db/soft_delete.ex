@@ -104,20 +104,26 @@ defmodule EWalletDB.SoftDelete do
   @doc """
   Soft-deletes the given struct.
   """
-  @spec delete(struct()) :: any()
-  def delete(struct) do
+  @spec delete(struct(), Map.t()) :: any()
+  def delete(struct, originator) do
     struct
-    |> change(deleted_at: NaiveDateTime.utc_now())
+    |> change(
+      deleted_at: NaiveDateTime.utc_now(),
+      originator: originator
+    )
     |> Repo.update()
   end
 
   @doc """
   Restores the given struct from soft-delete.
   """
-  @spec restore(struct()) :: any()
-  def restore(struct) do
+  @spec restore(struct(), Map.t()) :: any()
+  def restore(struct, originator) do
     struct
-    |> change(deleted_at: nil)
+    |> change(
+      deleted_at: nil,
+      originator: originator
+    )
     |> Repo.update()
   end
 end

@@ -535,7 +535,8 @@ defmodule EWalletDB.Account do
     end)
   end
 
-  @spec add_category(%Account{}, %Category{}, Map.t()) :: {:ok, %Account{}} | {:error, Ecto.Changeset.t()}
+  @spec add_category(%Account{}, %Category{}, Map.t()) ::
+          {:ok, %Account{}} | {:error, Ecto.Changeset.t()}
   def add_category(account, category, originator) do
     account = Repo.preload(account, :categories)
 

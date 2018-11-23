@@ -189,14 +189,14 @@ defmodule EWalletDB.Key do
   @doc """
   Soft-deletes the given key.
   """
-  @spec delete(%Key{}) :: {:ok, %Key{}} | {:error, Ecto.Changeset.t()}
-  def delete(key), do: SoftDelete.delete(key)
+  @spec delete(%Key{}, Map.t()) :: {:ok, %Key{}} | {:error, Ecto.Changeset.t()}
+  def delete(key, originator), do: SoftDelete.delete(key, originator)
 
   @doc """
   Restores the given key from soft-delete.
   """
-  @spec restore(%Key{}) :: {:ok, %Key{}} | {:error, Ecto.Changeset.t()}
-  def restore(key), do: SoftDelete.restore(key)
+  @spec restore(%Key{}, Map.t()) :: {:ok, %Key{}} | {:error, Ecto.Changeset.t()}
+  def restore(key, originator), do: SoftDelete.restore(key, originator)
 
   @doc """
   Retrieves all account uuids that are accessible by the given key.

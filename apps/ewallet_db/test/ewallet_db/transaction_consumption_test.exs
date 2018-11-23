@@ -90,35 +90,40 @@ defmodule EWalletDB.TransactionConsumptionTest do
         insert(
           :transaction_consumption,
           transaction_request_uuid: request.uuid,
-          status: "pending"
+          status: "pending",
+          originator: nil
         )
 
       consumption_2 =
         insert(
           :transaction_consumption,
           transaction_request_uuid: request.uuid,
-          status: "confirmed"
+          status: "confirmed",
+          originator: nil
         )
 
       _consumption_3 =
         insert(
           :transaction_consumption,
           transaction_request_uuid: request.uuid,
-          status: "failed"
+          status: "failed",
+          originator: nil
         )
 
       _consumption_4 =
         insert(
           :transaction_consumption,
           transaction_request_uuid: request.uuid,
-          status: "expired"
+          status: "expired",
+          originator: nil
         )
 
       consumption_5 =
         insert(
           :transaction_consumption,
           transaction_request_uuid: request.uuid,
-          status: "confirmed"
+          status: "confirmed",
+          originator: nil
         )
 
       consumptions = TransactionConsumption.all_active_for_request(request.uuid)

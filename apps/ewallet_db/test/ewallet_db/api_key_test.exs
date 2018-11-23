@@ -2,6 +2,7 @@ defmodule EWalletDB.APIKeyTest do
   use EWalletDB.SchemaCase
   alias Ecto.UUID
   alias EWalletDB.APIKey
+  alias EWalletConfig.System
 
   @owner_app :some_app
 
@@ -17,7 +18,7 @@ defmodule EWalletDB.APIKeyTest do
     end
 
     test "does not return a soft-deleted API key" do
-      {:ok, api_key} = :api_key |> insert() |> APIKey.delete()
+      {:ok, api_key} = :api_key |> insert() |> APIKey.delete(%System{})
       assert APIKey.get(api_key.id) == nil
     end
 

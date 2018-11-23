@@ -33,7 +33,8 @@ defmodule EWalletDB.AuditTest do
       assert length(audits) == 2
 
       results = Enum.map(audits, fn a -> {a.action, a.originator_type, a.target_type} end)
-      assert Enum.member?(results, {"insert", "user", "user"})
+
+      assert Enum.member?(results, {"insert", "system", "user"})
       assert Enum.member?(results, {"update", "system", "user"})
     end
   end
@@ -55,7 +56,7 @@ defmodule EWalletDB.AuditTest do
       assert length(audits) == 2
 
       results = Enum.map(audits, fn a -> {a.action, a.originator_type, a.target_type} end)
-      assert Enum.member?(results, {"insert", "user", "user"})
+      assert Enum.member?(results, {"insert", "system", "user"})
       assert Enum.member?(results, {"update", "system", "user"})
     end
 
@@ -75,7 +76,7 @@ defmodule EWalletDB.AuditTest do
       assert length(audits) == 2
 
       results = Enum.map(audits, fn a -> {a.action, a.originator_type, a.target_type} end)
-      assert Enum.member?(results, {"insert", "user", "user"})
+      assert Enum.member?(results, {"insert", "system", "user"})
       assert Enum.member?(results, {"update", "system", "user"})
     end
   end

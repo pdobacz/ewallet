@@ -2,6 +2,7 @@ defmodule EWalletDB.KeyTest do
   use EWalletDB.SchemaCase
   alias Ecto.UUID
   alias EWalletDB.Key
+  alias EWalletConfig.System
 
   describe "Key factory" do
     test_has_valid_factory(Key)
@@ -19,7 +20,7 @@ defmodule EWalletDB.KeyTest do
       assert Enum.empty?(Key.all())
       keys = insert_list(5, :key)
       # Soft delete d key
-      {:ok, _key} = keys |> Enum.at(0) |> Key.delete()
+      {:ok, _key} = keys |> Enum.at(0) |> Key.delete(%System{})
 
       assert length(Key.all()) == 4
     end
@@ -33,7 +34,7 @@ defmodule EWalletDB.KeyTest do
     end
 
     test "does not return a soft-deleted key" do
-      {:ok, key} = :key |> insert() |> Key.delete()
+      {:ok, key} = :key |> insert() |> Key.delete(%System{})
       assert Key.get(key.id) == nil
     end
 
@@ -54,7 +55,7 @@ defmodule EWalletDB.KeyTest do
     end
 
     test "does not return a soft-deleted key" do
-      {:ok, key} = :key |> insert() |> Key.delete()
+      {:ok, key} = :key |> insert() |> Key.delete(%System{})
       assert Key.get(:access_key, key.access_key) == nil
     end
 

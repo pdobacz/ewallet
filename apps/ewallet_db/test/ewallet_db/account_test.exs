@@ -105,10 +105,11 @@ defmodule EWalletDB.AccountTest do
       assert_categories(account, [cat1, cat2])
 
       # Now update with additional category_ids
-      {:ok, updated} = Account.update(account, %{
-        category_ids: [cat1.id, cat2.id, cat3.id],
-        originator: %System{}
-      })
+      {:ok, updated} =
+        Account.update(account, %{
+          category_ids: [cat1.id, cat2.id, cat3.id],
+          originator: %System{}
+        })
 
       # Assert that the 3rd category is added
       assert_categories(updated, [cat1, cat2, cat3])
@@ -127,10 +128,11 @@ defmodule EWalletDB.AccountTest do
       assert_categories(account, [cat1, cat2])
 
       # Now update by removing a category from category_ids
-      {:ok, updated} = Account.update(account, %{
-        category_ids: [cat1.id],
-        originator: %System{}
-      })
+      {:ok, updated} =
+        Account.update(account, %{
+          category_ids: [cat1.id],
+          originator: %System{}
+        })
 
       # Only one category should be left
       assert_categories(updated, [cat1])
@@ -149,10 +151,11 @@ defmodule EWalletDB.AccountTest do
       assert_categories(account, [cat1, cat2])
 
       # Now update by setting category_ids to an empty list
-      {:ok, updated} = Account.update(account, %{
-        category_ids: [],
-        originator: %System{}
-      })
+      {:ok, updated} =
+        Account.update(account, %{
+          category_ids: [],
+          originator: %System{}
+        })
 
       # No category should be left
       assert_categories(updated, [])
@@ -171,10 +174,11 @@ defmodule EWalletDB.AccountTest do
       assert_categories(account, [cat1, cat2])
 
       # Now update by passing a nil category_ids
-      {:ok, updated} = Account.update(account, %{
-        category_ids: nil,
-        originator: %System{}
-      })
+      {:ok, updated} =
+        Account.update(account, %{
+          category_ids: nil,
+          originator: %System{}
+        })
 
       # The categories should remain the same
       assert_categories(updated, [cat1, cat2])

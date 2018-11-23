@@ -11,6 +11,7 @@ defmodule EWalletDB.Wallet do
   alias EWalletConfig.Types.WalletAddress
   alias EWalletDB.{Account, Repo, User, Wallet}
   alias ExULID.ULID
+  alias EWalletConfig.System
 
   @genesis "genesis"
   @burn "burn"
@@ -211,12 +212,17 @@ defmodule EWalletDB.Wallet do
   """
   @spec insert_genesis :: {:ok, %__MODULE__{}} | {:ok, nil} | {:error, Ecto.Changeset.t()}
   def insert_genesis do
-    changeset =
-      changeset(%Wallet{}, %{address: @genesis_address, name: @genesis, identifier: @genesis})
-
     opts = [on_conflict: :nothing, conflict_target: :address]
 
-    case Repo.insert(changeset, opts) do
+    %Wallet{}
+    |> changeset(%{
+      address: @genesis_address,
+      name: @genesis,
+      identifier: @genesis,
+      originator: %System{}
+    })
+    |> Repo.insert(opts)
+    |> case do
       {:ok, _wallet} ->
         {:ok, get(@genesis_address)}
 

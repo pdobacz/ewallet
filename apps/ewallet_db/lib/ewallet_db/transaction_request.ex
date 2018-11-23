@@ -378,8 +378,11 @@ defmodule EWalletDB.TransactionRequest do
     end
   end
 
-  @spec update_consumptions_count(%TransactionRequest{}, list(%TransactionConsumption{}), Map.t()) ::
-          %TransactionRequest{}
+  @spec update_consumptions_count(
+          %TransactionRequest{},
+          list(%TransactionConsumption{}),
+          Map.t()
+        ) :: %TransactionRequest{}
   defp update_consumptions_count(request, consumptions, originator) do
     {:ok, request} =
       request

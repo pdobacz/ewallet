@@ -37,7 +37,7 @@ defmodule EWalletDB.Category do
     category
     |> cast_and_validate_required_for_audit(
       attrs,
-      [:name, :description, :originator],
+      [:name, :description],
       [:name]
     )
     |> unique_constraint(:name)
@@ -124,9 +124,9 @@ defmodule EWalletDB.Category do
   Soft-deletes the given category. The operation fails if the category
   has one more more accounts associated.
   """
-  @spec delete(%__MODULE__{}) ::
+  @spec delete(%__MODULE__{}, Map.t()) ::
           {:ok, %__MODULE__{}} | {:error, Ecto.Changeset.t()} | {:error, atom()}
-  def delete(category) do
+  def delete(category, originator) do
     empty? =
       category
       |> Repo.preload(:accounts)
@@ -134,7 +134,7 @@ defmodule EWalletDB.Category do
       |> Enum.empty?()
 
     case empty? do
-      true -> SoftDelete.delete(category)
+      true -> SoftDelete.delete(category, originator)
       false -> {:error, :category_not_empty}
     end
   end
@@ -142,6 +142,6 @@ defmodule EWalletDB.Category do
   @doc """
   Restores the given category from soft-delete.
   """
-  @spec restore(%__MODULE__{}) :: {:ok, %__MODULE__{}} | {:error, Ecto.Changeset.t()}
-  def restore(category), do: SoftDelete.restore(category)
+  @spec restore(%__MODULE__{}, Map.t()) :: {:ok, %__MODULE__{}} | {:error, Ecto.Changeset.t()}
+  def restore(category, originator), do: SoftDelete.restore(category, originator)
 end

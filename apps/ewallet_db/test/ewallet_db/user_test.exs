@@ -27,7 +27,7 @@ defmodule EWalletDB.UserTest do
 
       audit = Enum.at(audits, 0)
       assert audit.originator_uuid != nil
-      assert audit.originator_type == "user"
+      assert audit.originator_type == "system"
     end
 
     test_insert_generate_uuid(User, :uuid)

@@ -521,11 +521,11 @@ defmodule EWalletDB.SchemaCase do
         schema = unquote(schema)
         table = unquote(table)
 
-          {_, record} =
-            schema
-            |> get_factory()
-            |> params_for(metadata: nil, encrypted_metadata: nil)
-            |> schema.insert()
+        {_, record} =
+          schema
+          |> get_factory()
+          |> params_for(metadata: nil, encrypted_metadata: nil)
+          |> schema.insert()
 
         {:ok, results} =
           SQL.query(EWalletDB.Repo, "SELECT metadata, encrypted_metadata FROM \"#{table}\"", [])
@@ -584,7 +584,7 @@ defmodule EWalletDB.SchemaCase do
           |> params_for(%{})
           |> schema.insert()
 
-        {:ok, record} = schema.delete(record)
+        {:ok, record} = schema.delete(record, %System{})
 
         assert record.deleted_at != nil
         assert schema.deleted?(record)
@@ -606,7 +606,7 @@ defmodule EWalletDB.SchemaCase do
         # Makes sure the record is not already deleted before testing
         refute schema.deleted?(record)
 
-        {res, record} = schema.delete(record)
+        {res, record} = schema.delete(record, %System{})
         assert res == :ok
         assert schema.deleted?(record)
       end
@@ -625,10 +625,10 @@ defmodule EWalletDB.SchemaCase do
           |> schema.insert()
 
         # Makes sure the record is already soft-deleted before testing
-        {:ok, record} = schema.delete(record)
+        {:ok, record} = schema.delete(record, %System{})
         assert schema.deleted?(record)
 
-        {res, record} = schema.restore(record)
+        {res, record} = schema.restore(record, %System{})
 
         assert res == :ok
         refute schema.deleted?(record)

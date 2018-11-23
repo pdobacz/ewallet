@@ -191,16 +191,16 @@ defmodule EWalletDB.Audit do
 
   defp format_changes(changes) do
     changes
-    |> Enum.map(fn {field, value} ->
+    |> Enum.into(%{}, fn {field, value} ->
       format_change(field, value)
     end)
-    |> Enum.into(%{})
   end
 
   defp format_change(field, values) when is_list(values) do
-    {field, Enum.map(values, fn value ->
-      format_value(value)
-    end)}
+    {field,
+     Enum.map(values, fn value ->
+       format_value(value)
+     end)}
   end
 
   defp format_change(field, value) do
