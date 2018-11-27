@@ -34,7 +34,11 @@ defmodule EWalletDB.Role do
 
   defp changeset(%Role{} = key, attrs) do
     key
-    |> cast(attrs, [:priority, :name, :display_name])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:priority, :name, :display_name],
+      [:name, :priority]
+    )
     |> validate_required([:name, :priority])
     |> unique_constraint(:name)
   end
@@ -92,7 +96,7 @@ defmodule EWalletDB.Role do
 
     %Role{}
     |> changeset(attrs)
-    |> Repo.insert()
+    |> insert_record_with_audit()
   end
 
   @doc """
@@ -102,7 +106,7 @@ defmodule EWalletDB.Role do
   def update(role, attrs) do
     role
     |> changeset(attrs)
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 
   @doc """

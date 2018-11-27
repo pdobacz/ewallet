@@ -57,14 +57,36 @@ defmodule EWalletDB.Audit do
     ])
   end
 
+  @schemas_to_audit_types %{
+    EWalletConfig.System => "system",
+    EWalletDB.User => "user",
+    EWalletDB.Invite => "invite",
+    EWalletDB.Key => "key",
+    EWalletDB.ForgetPasswordRequest => "forget_password_request",
+    EWalletDB.UpdateEmailRequest => "update_email_request",
+    EWalletDB.AccountUser => "account_user",
+    EWalletDB.Transaction => "transaction",
+    EWalletDB.Mint => "mint",
+    EWalletDB.TransactionRequest => "transaction_request",
+    EWalletDB.TransactionConsumption => "transaction_consumption",
+    EWalletDB.Account => "account",
+    EWalletDB.Category => "category",
+    EWalletDB.ExchangePair => "exchange_pair",
+    EWalletDB.Wallet => "wallet",
+    EWalletDB.Membership => "membership",
+    EWalletDB.AuthToken => "auth_token"
+  }
+
+  @audit_types_to_schemas Enum.into(@schemas_to_audit_types, %{}, fn {key, value} -> {value, key} end)
+
   @spec get_schema(String.t()) :: Atom.t()
   def get_schema(type) do
-    Application.get_env(:ewallet_db, :audit_types_to_schemas)[type]
+    Map.fetch!(@audit_types_to_schemas, type)
   end
 
   @spec get_type(Atom.t()) :: String.t()
   def get_type(schema) do
-    Application.get_env(:ewallet_db, :schemas_to_audit_types)[schema]
+    Map.fetch!(@schemas_to_audit_types, schema)
   end
 
   @spec all_for_target(Map.t()) :: [%Audit{}]
@@ -129,6 +151,17 @@ defmodule EWalletDB.Audit do
           | {:error, Multi.name(), any(), %{optional(Multi.name()) => any()}}
   def update_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
     :update
+    |> perform(changeset, opts, multi)
+    |> handle_perform_result()
+  end
+
+  @spec delete_record_with_audit(Map.t(), Keyword.t(), Multi.t()) ::
+          {:ok, any()}
+          | {:error, any()}
+          | {:error, :no_originator_given}
+          | {:error, Multi.name(), any(), %{optional(Multi.name()) => any()}}
+  def delete_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
+    :delete
     |> perform(changeset, opts, multi)
     |> handle_perform_result()
   end

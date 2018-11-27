@@ -194,12 +194,11 @@ defmodule EWalletDB.User do
 
   defp email_changeset(user, attrs) do
     user
-    |> Map.delete(:originator)
-    |> cast(attrs, [
-      :email,
-      :originator
-    ])
-    |> validate_required([:email, :originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:email, :originator],
+      [:email, :originator]
+    )
     |> validate_email(:email)
     |> unique_constraint(:email)
   end
@@ -580,7 +579,7 @@ defmodule EWalletDB.User do
   def set_admin(user, boolean) do
     user
     |> change(is_admin: boolean)
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 
   @doc """

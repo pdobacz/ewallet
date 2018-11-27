@@ -85,16 +85,20 @@ defmodule EWalletDB.Wallet do
 
   defp secondary_changeset(%Wallet{} = wallet, attrs) do
     wallet
-    |> cast(attrs, @cast_attrs)
-    |> validate_required([:name, :identifier, :account_uuid])
+    |> cast_and_validate_required_for_audit(
+      attrs, @cast_attrs, [:name, :identifier, :account_uuid]
+    )
     |> validate_format(:identifier, ~r/#{@secondary}_.*/)
     |> shared_changeset()
   end
 
   defp burn_changeset(%Wallet{} = wallet, attrs) do
     wallet
-    |> cast(attrs, @cast_attrs)
-    |> validate_required([:name, :identifier, :account_uuid])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      @cast_attrs,
+      [:name, :identifier, :account_uuid]
+    )
     |> validate_format(:identifier, ~r/#{@burn}|#{@burn}_.*/)
     |> shared_changeset()
   end
@@ -113,8 +117,7 @@ defmodule EWalletDB.Wallet do
 
   defp enable_changeset(%Wallet{} = wallet, attrs) do
     wallet
-    |> cast(attrs, [:enabled])
-    |> validate_required([:enabled])
+    |> cast_and_validate_required_for_audit(attrs, [:enabled], [:enabled])
   end
 
   @spec all_for(any()) :: Ecto.Query.t() | nil
@@ -163,7 +166,7 @@ defmodule EWalletDB.Wallet do
   def insert(attrs) do
     %Wallet{}
     |> changeset(attrs)
-    |> Repo.insert()
+    |> insert_record_with_audit()
   end
 
   @spec insert_secondary_or_burn(map()) :: {:ok, %__MODULE__{}} | {:error, Ecto.Changeset.t()}
@@ -178,12 +181,12 @@ defmodule EWalletDB.Wallet do
   def insert_secondary_or_burn(attrs), do: insert_secondary_or_burn(attrs, nil)
 
   def insert_secondary_or_burn(attrs, "burn") do
-    %Wallet{} |> burn_changeset(attrs) |> Repo.insert()
+    %Wallet{} |> burn_changeset(attrs) |> insert_record_with_audit()
   end
 
   # "secondary" and anything else will go in there.
   def insert_secondary_or_burn(attrs, _) do
-    %Wallet{} |> secondary_changeset(attrs) |> Repo.insert()
+    %Wallet{} |> secondary_changeset(attrs) |> insert_record_with_audit()
   end
 
   defp build_identifier("genesis"), do: @genesis
@@ -221,7 +224,7 @@ defmodule EWalletDB.Wallet do
       identifier: @genesis,
       originator: %System{}
     })
-    |> Repo.insert(opts)
+    |> insert_record_with_audit(opts)
     |> case do
       {:ok, _wallet} ->
         {:ok, get(@genesis_address)}
@@ -248,6 +251,6 @@ defmodule EWalletDB.Wallet do
   def enable_or_disable(wallet, attrs) do
     wallet
     |> enable_changeset(attrs)
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 end

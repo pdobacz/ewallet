@@ -4,6 +4,7 @@ defmodule EWalletDB.TransactionRequest do
   """
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
+  use EWalletDB.Auditable
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader
   alias Ecto.{Changeset, Query, UUID}
@@ -115,8 +116,7 @@ defmodule EWalletDB.TransactionRequest do
 
   defp changeset(%TransactionRequest{} = transaction_request, attrs) do
     transaction_request
-    |> Map.delete(:originator)
-    |> cast(attrs, [
+    |> cast_and_validate_required_for_audit(attrs, [
       :type,
       :amount,
       :correlation_id,
@@ -135,8 +135,7 @@ defmodule EWalletDB.TransactionRequest do
       :exchange_account_uuid,
       :exchange_wallet_address,
       :originator
-    ])
-    |> validate_required([
+    ], [
       :type,
       :status,
       :token_uuid,
@@ -157,24 +156,30 @@ defmodule EWalletDB.TransactionRequest do
 
   defp consumptions_count_changeset(%TransactionRequest{} = transaction_request, attrs) do
     transaction_request
-    |> Map.delete(:originator)
-    |> cast(attrs, [:consumptions_count, :originator])
-    |> validate_required([:consumptions_count, :originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:consumptions_count],
+      [:consumptions_count]
+    )
   end
 
   defp expire_changeset(%TransactionRequest{} = transaction_request, attrs) do
     transaction_request
-    |> Map.delete(:originator)
-    |> cast(attrs, [:status, :expired_at, :expiration_reason, :originator])
-    |> validate_required([:status, :expired_at, :expiration_reason, :originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:status, :expired_at, :expiration_reason],
+      [:status, :expired_at, :expiration_reason, :originator]
+    )
     |> validate_inclusion(:status, @statuses)
   end
 
   defp touch_changeset(%TransactionRequest{} = transaction_request, attrs) do
     transaction_request
-    |> Map.delete(:originator)
-    |> cast(attrs, [:updated_at, :originator])
-    |> validate_required([:updated_at, :originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:updated_at, :originator],
+      [:updated_at, :originator]
+    )
   end
 
   defp validate_amount_if_disallow_override(changeset) do
@@ -390,7 +395,7 @@ defmodule EWalletDB.TransactionRequest do
         consumptions_count: length(consumptions),
         originator: originator
       })
-      |> Repo.update()
+      |> update_record_with_audit()
 
     request
   end

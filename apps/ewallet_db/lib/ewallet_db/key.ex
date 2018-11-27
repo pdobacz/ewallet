@@ -39,8 +39,11 @@ defmodule EWalletDB.Key do
 
   defp insert_changeset(%Key{} = key, attrs) do
     key
-    |> cast(attrs, [:access_key, :secret_key, :account_uuid, :enabled])
-    |> validate_required([:access_key, :secret_key, :account_uuid])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:access_key, :secret_key, :account_uuid, :enabled],
+      [:access_key, :secret_key, :account_uuid]
+    )
     |> unique_constraint(:access_key, name: :key_access_key_index)
     |> put_change(:secret_key_hash, Crypto.hash_secret(attrs[:secret_key]))
     |> put_change(:secret_key, Base.url_encode64(attrs[:secret_key], padding: false))
@@ -49,8 +52,7 @@ defmodule EWalletDB.Key do
 
   defp enable_changeset(%Key{} = key, attrs) do
     key
-    |> cast(attrs, [:enabled])
-    |> validate_required([:enabled])
+    |> cast_and_validate_required_for_audit(attrs, [:enabled], [:enabled])
   end
 
   @doc """
@@ -107,7 +109,7 @@ defmodule EWalletDB.Key do
 
     %Key{}
     |> insert_changeset(attrs)
-    |> Repo.insert()
+    |> insert_record_with_audit()
   end
 
   defp get_master_account_uuid do
@@ -127,14 +129,14 @@ defmodule EWalletDB.Key do
 
     key
     |> enable_changeset(attrs)
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 
   @spec enable_or_disable(%Key{}, map()) :: {:ok, %Key{}} | {:error, Ecto.Changeset.t()}
   def enable_or_disable(%Key{} = key, attrs) do
     key
     |> enable_changeset(attrs)
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 
   @doc """

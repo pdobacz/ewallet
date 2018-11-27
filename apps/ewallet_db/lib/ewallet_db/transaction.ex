@@ -4,6 +4,7 @@ defmodule EWalletDB.Transaction do
   """
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
+  use EWalletDB.Auditable
   import Ecto.{Changeset, Query}
   import EWalletDB.Validator
   import EWalletDB.Validator
@@ -146,8 +147,7 @@ defmodule EWalletDB.Transaction do
 
   defp changeset(%Transaction{} = transaction, attrs) do
     transaction
-    |> Map.delete(:originator)
-    |> cast(attrs, [
+    |> cast_and_validate_required_for_audit(attrs, [
       :idempotency_token,
       :status,
       :type,
@@ -173,8 +173,7 @@ defmodule EWalletDB.Transaction do
       :exchange_pair_uuid,
       :calculated_at,
       :originator
-    ])
-    |> validate_required([
+    ], [
       :idempotency_token,
       :status,
       :type,
@@ -213,23 +212,23 @@ defmodule EWalletDB.Transaction do
 
   defp confirm_changeset(%Transaction{} = transaction, attrs) do
     transaction
-    |> Map.delete(:originator)
-    |> cast(attrs, [:status, :local_ledger_uuid, :originator])
-    |> validate_required([:status, :local_ledger_uuid, :originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:status, :local_ledger_uuid, :originator],
+      [:status, :local_ledger_uuid, :originator]
+    )
     |> validate_inclusion(:status, @statuses)
   end
 
   defp fail_changeset(%Transaction{} = transaction, attrs) do
     transaction
-    |> Map.delete(:originator)
-    |> cast(attrs, [
+    |> cast_and_validate_required_for_audit(attrs, [
       :status,
       :error_code,
       :error_description,
       :error_data,
       :originator
-    ])
-    |> validate_required([
+    ], [
       :status,
       :error_code,
       :originator

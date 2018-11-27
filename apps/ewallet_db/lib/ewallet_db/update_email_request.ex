@@ -32,8 +32,11 @@ defmodule EWalletDB.UpdateEmailRequest do
 
   defp changeset(changeset, attrs) do
     changeset
-    |> cast(attrs, [:email, :token, :user_uuid])
-    |> validate_required([:email, :token, :user_uuid])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:email, :token, :user_uuid],
+      [:email, :token, :user_uuid]
+    )
     |> validate_email(:email)
     |> unique_constraint(:token)
     |> assoc_constraint(:user)
@@ -97,6 +100,6 @@ defmodule EWalletDB.UpdateEmailRequest do
   defp insert(attrs) do
     %UpdateEmailRequest{}
     |> changeset(attrs)
-    |> Repo.insert()
+    |> insert_record_with_audit()
   end
 end

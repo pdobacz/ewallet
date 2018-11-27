@@ -6,8 +6,8 @@ defmodule EWalletDB.ForgetPasswordRequest do
   use EWalletDB.Auditable
   import Ecto.{Changeset, Query}
   alias Ecto.UUID
-  alias EWalletConfig.Helpers.Crypto
   alias EWalletDB.{ForgetPasswordRequest, Repo, User}
+  alias EWalletConfig.{Helpers.Crypto, System}
 
   @primary_key {:uuid, UUID, autogenerate: true}
   @token_length 32
@@ -30,8 +30,7 @@ defmodule EWalletDB.ForgetPasswordRequest do
 
   defp changeset(changeset, attrs) do
     changeset
-    |> cast(attrs, [:token, :user_uuid])
-    |> validate_required([:token, :user_uuid])
+    |> cast_and_validate_required_for_audit(attrs, [:token, :user_uuid], [:token, :user_uuid])
     |> assoc_constraint(:user)
   end
 
@@ -88,13 +87,19 @@ defmodule EWalletDB.ForgetPasswordRequest do
   @spec generate(%User{}) :: %ForgetPasswordRequest{} | {:error, Ecto.Changeset.t()}
   def generate(user) do
     token = Crypto.generate_base64_key(@token_length)
-    {:ok, _} = insert(%{token: token, user_uuid: user.uuid})
+
+    {:ok, _} = insert(%{
+      token: token,
+      user_uuid: user.uuid,
+      originator: %System{}
+    })
+
     ForgetPasswordRequest.get(user, token)
   end
 
   defp insert(attrs) do
     %ForgetPasswordRequest{}
     |> changeset(attrs)
-    |> Repo.insert()
+    |> insert_record_with_audit()
   end
 end

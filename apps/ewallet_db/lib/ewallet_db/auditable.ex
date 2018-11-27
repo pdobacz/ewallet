@@ -41,4 +41,8 @@ defmodule EWalletDB.Auditable do
   def update_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
     Audit.update_record_with_audit(changeset, opts, multi)
   end
+
+  def delete_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
+    Audit.delete_record_with_audit(changeset, opts, multi)
+  end
 end

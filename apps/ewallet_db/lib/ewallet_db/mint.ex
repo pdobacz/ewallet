@@ -4,6 +4,7 @@ defmodule EWalletDB.Mint do
   """
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
+  use EWalletDB.Auditable
   import Ecto.{Query, Changeset}
   import EWalletDB.Helpers.Preloader
   alias Ecto.UUID
@@ -49,16 +50,17 @@ defmodule EWalletDB.Mint do
 
   defp changeset(%Mint{} = mint, attrs) do
     mint
-    |> Map.delete(:originator)
-    |> cast(attrs, [
-      :description,
-      :amount,
-      :account_uuid,
-      :token_uuid,
-      :confirmed,
-      :originator
-    ])
-    |> validate_required([:amount, :token_uuid, :originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [
+        :description,
+        :amount,
+        :account_uuid,
+        :token_uuid,
+        :confirmed
+      ],
+      [:amount, :token_uuid, :originator]
+    )
     |> validate_number(
       :amount,
       greater_than: 0,
@@ -74,9 +76,11 @@ defmodule EWalletDB.Mint do
 
   defp update_changeset(%Mint{} = mint, attrs) do
     mint
-    |> Map.delete(:originator)
-    |> cast(attrs, [:transaction_uuid, :originator])
-    |> validate_required([:transaction_uuid, :originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:transaction_uuid],
+      [:transaction_uuid]
+    )
     |> assoc_constraint(:transaction)
   end
 

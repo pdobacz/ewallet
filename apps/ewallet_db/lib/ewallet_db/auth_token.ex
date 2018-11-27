@@ -43,22 +43,31 @@ defmodule EWalletDB.AuthToken do
 
   defp changeset(%AuthToken{} = token, attrs) do
     token
-    |> cast(attrs, [:token, :owner_app, :user_uuid, :account_uuid, :expired])
-    |> validate_required([:token, :owner_app, :user_uuid])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:token, :owner_app, :user_uuid, :account_uuid, :expired],
+      [:token, :owner_app, :user_uuid]
+    )
     |> unique_constraint(:token)
     |> assoc_constraint(:user)
   end
 
   defp expire_changeset(%AuthToken{} = token, attrs) do
     token
-    |> cast(attrs, [:expired])
-    |> validate_required([:expired])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:expired],
+      [:expired]
+    )
   end
 
   defp switch_account_changeset(%AuthToken{} = token, attrs) do
     token
-    |> cast(attrs, [:account_uuid])
-    |> validate_required([:account_uuid])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:account_uuid],
+      [:account_uuid]
+    )
   end
 
   @spec switch_account(%__MODULE__{}, %Account{}) ::
@@ -66,7 +75,7 @@ defmodule EWalletDB.AuthToken do
   def switch_account(token, account) do
     token
     |> switch_account_changeset(%{account_uuid: account.uuid})
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 
   @doc """
@@ -80,7 +89,8 @@ defmodule EWalletDB.AuthToken do
       owner_app: Atom.to_string(owner_app),
       user_uuid: user.uuid,
       account_uuid: if(account, do: account.uuid, else: nil),
-      token: Crypto.generate_base64_key(@key_length)
+      token: Crypto.generate_base64_key(@key_length),
+      originator: user
     }
 
     insert(attrs)
@@ -161,18 +171,21 @@ defmodule EWalletDB.AuthToken do
   defp insert(attrs) do
     %AuthToken{}
     |> changeset(attrs)
-    |> Repo.insert()
+    |> insert_record_with_audit()
   end
 
   # Expires the given token.
-  def expire(token, owner_app) when is_binary(token) and is_atom(owner_app) do
+  def expire(token, owner_app, originator) when is_binary(token) and is_atom(owner_app) do
     token
     |> get_by_token(owner_app)
-    |> expire()
+    |> expire(originator)
   end
 
-  def expire(%AuthToken{} = token) do
-    update(token, %{expired: true})
+  def expire(%AuthToken{} = token, originator) do
+    update(token, %{
+      expired: true,
+      originator: originator
+    })
   end
 
   def expire_for_user(%{enabled: true}), do: :ok
@@ -194,6 +207,6 @@ defmodule EWalletDB.AuthToken do
   defp update(%AuthToken{} = token, attrs) do
     token
     |> expire_changeset(attrs)
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 end

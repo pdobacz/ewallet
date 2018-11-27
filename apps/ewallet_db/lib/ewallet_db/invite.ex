@@ -3,9 +3,9 @@ defmodule EWalletDB.Invite do
   Ecto Schema representing invite.
   """
   use Ecto.Schema
+  use EWalletDB.Auditable
   import Ecto.{Changeset, Query}
   alias Ecto.{Multi, UUID}
-  alias EWalletConfig.Types.VirtualStruct
   alias EWalletConfig.Helpers.Crypto
   alias EWalletDB.{Audit, Invite, Repo, User}
 
@@ -17,7 +17,6 @@ defmodule EWalletDB.Invite do
     field(:token, :string)
     field(:success_url, :string)
     field(:verified_at, :naive_datetime)
-    field(:originator, VirtualStruct, virtual: true)
 
     belongs_to(
       :user,
@@ -28,20 +27,25 @@ defmodule EWalletDB.Invite do
     )
 
     timestamps()
+    auditable()
   end
 
   defp changeset_insert(changeset, attrs) do
     changeset
-    |> Map.delete(:originator)
-    |> cast(attrs, [:user_uuid, :token, :success_url, :originator])
-    |> validate_required([:user_uuid, :token, :originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:user_uuid, :token, :success_url],
+      [:user_uuid, :token]
+    )
   end
 
   defp changeset_accept(changeset, attrs) do
     changeset
-    |> Map.delete(:originator)
-    |> cast(attrs, [:verified_at, :originator])
-    |> validate_required([:verified_at, :originator])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [:verified_at],
+      [:verified_at]
+    )
   end
 
   @doc """
@@ -116,14 +120,17 @@ defmodule EWalletDB.Invite do
       success_url: opts[:success_url],
       originator: originator
     })
-    |> Audit.insert_record_with_audit(
+    |> insert_record_with_audit(
       [],
       # Assign the invite to the user
       Multi.run(Multi.new(), :user, fn %{record: record} ->
         {:ok, _user} =
           user
-          |> change(%{invite_uuid: record.uuid})
-          |> Repo.update()
+          |> change(%{
+            invite_uuid: record.uuid,
+            originator: record
+          })
+          |> update_record_with_audit()
       end)
     )
     |> case do
@@ -145,7 +152,7 @@ defmodule EWalletDB.Invite do
          {:ok, _user} <- User.update(invite.user, attrs),
          invite_attrs <- %{verified_at: NaiveDateTime.utc_now(), originator: invite.user},
          changeset <- changeset_accept(invite, invite_attrs),
-         {:ok, invite} <- Audit.update_record_with_audit(changeset) do
+         {:ok, invite} <- update_record_with_audit(changeset) do
       {:ok, invite}
     else
       {:error, _failed_operation, changeset, _changes_so_far} ->

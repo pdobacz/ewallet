@@ -61,7 +61,7 @@ defmodule EWalletDB.Token do
 
   defp changeset(%Token{} = token, attrs) do
     token
-    |> cast(attrs, [
+    |> cast_and_validate_required_for_audit(attrs, [
       :symbol,
       :iso_code,
       :name,
@@ -77,8 +77,7 @@ defmodule EWalletDB.Token do
       :account_uuid,
       :metadata,
       :encrypted_metadata
-    ])
-    |> validate_required([
+    ], [
       :symbol,
       :name,
       :subunit_to_unit,
@@ -102,7 +101,7 @@ defmodule EWalletDB.Token do
 
   defp update_changeset(%Token{} = token, attrs) do
     token
-    |> cast(attrs, [
+    |> cast_and_validate_required_for_audit(attrs, [
       :iso_code,
       :name,
       :description,
@@ -112,8 +111,7 @@ defmodule EWalletDB.Token do
       :iso_numeric,
       :metadata,
       :encrypted_metadata
-    ])
-    |> validate_required([
+    ], [
       :name
     ])
     |> unique_constraint(:iso_code)
@@ -124,8 +122,7 @@ defmodule EWalletDB.Token do
 
   defp enable_changeset(%Token{} = token, attrs) do
     token
-    |> cast(attrs, [:enabled])
-    |> validate_required([:enabled])
+    |> cast_and_validate_required_for_audit(attrs, [:enabled], [:enabled])
   end
 
   defp set_id(changeset, opts) do
@@ -163,7 +160,7 @@ defmodule EWalletDB.Token do
   def insert(attrs) do
     changeset = changeset(%Token{}, attrs)
 
-    case Repo.insert(changeset) do
+    case insert_record_with_audit(changeset) do
       {:ok, token} ->
         {:ok, get(token.id)}
 
@@ -178,7 +175,7 @@ defmodule EWalletDB.Token do
   def update(token, attrs) do
     token
     |> update_changeset(attrs)
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 
   @doc """
@@ -215,6 +212,6 @@ defmodule EWalletDB.Token do
   def enable_or_disable(token, attrs) do
     token
     |> enable_changeset(attrs)
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 end

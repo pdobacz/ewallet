@@ -61,8 +61,8 @@ defmodule EWalletDB.SoftDelete do
   end
   ```
   """
+  use EWalletDB.Auditable
   import Ecto.{Changeset, Query}
-  alias EWalletDB.Repo
 
   @doc false
   defmacro __using__(_) do
@@ -111,7 +111,7 @@ defmodule EWalletDB.SoftDelete do
       deleted_at: NaiveDateTime.utc_now(),
       originator: originator
     )
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 
   @doc """
@@ -124,6 +124,6 @@ defmodule EWalletDB.SoftDelete do
       deleted_at: nil,
       originator: originator
     )
-    |> Repo.update()
+    |> update_record_with_audit()
   end
 end
