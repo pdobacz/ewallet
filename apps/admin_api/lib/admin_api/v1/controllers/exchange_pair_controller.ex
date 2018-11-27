@@ -2,7 +2,7 @@ defmodule AdminAPI.V1.ExchangePairController do
   use AdminAPI, :controller
   import AdminAPI.V1.ErrorHandler
   alias EWallet.{ExchangePairGate, ExchangePairPolicy}
-  alias EWallet.Web.{Orchestrator, Paginator, V1.ExchangePairOverlay}
+  alias EWallet.Web.{Orchestrator, Originator, Paginator, V1.ExchangePairOverlay}
   alias EWalletDB.ExchangePair
 
   @doc """
@@ -84,7 +84,8 @@ defmodule AdminAPI.V1.ExchangePairController do
   @spec delete(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def delete(conn, %{"id" => id} = attrs) do
     with :ok <- permit(:delete, conn.assigns, id),
-         {:ok, deleted_pairs} <- ExchangePairGate.delete(id, attrs),
+         originator <- Originator.extract(conn.assigns),
+         {:ok, deleted_pairs} <- ExchangePairGate.delete(id, attrs, originator),
          {:ok, deleted_pairs} <- Orchestrator.all(deleted_pairs, ExchangePairOverlay) do
       render(conn, :exchange_pairs, %{exchange_pairs: deleted_pairs})
     else
