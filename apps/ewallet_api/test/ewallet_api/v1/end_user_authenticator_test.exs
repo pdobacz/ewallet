@@ -1,7 +1,7 @@
 defmodule EWalletAPI.Web.V1.EndUserAuthenticatorTest do
   use EWalletAPI.ConnCase, async: true
   alias EWalletAPI.V1.EndUserAuthenticator
-  alias EWalletConfig.Helpers.Crypto
+  alias EWalletConfig.{System, Helpers.Crypto}
   alias EWalletDB.User
 
   setup do
@@ -61,7 +61,7 @@ defmodule EWalletAPI.Web.V1.EndUserAuthenticatorTest do
     end
 
     test "returns conn with authenticated:false if user is disabled", context do
-      User.enable_or_disable(context.user, %{enabled: false})
+      {:ok, _} = User.enable_or_disable(context.user, %{enabled: false, originator: %System{}})
       conn = EndUserAuthenticator.authenticate(build_conn(), context.email, context.password)
       assert_error(conn)
     end

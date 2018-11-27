@@ -13,4 +13,9 @@ defmodule EWallet.Web.Originator do
   def extract(%{admin_user: admin_user}) do
     admin_user
   end
+
+  @spec extract(Map.t()) :: [%User{}]
+  def extract(%{user: user}) do
+    user
+  end
 end

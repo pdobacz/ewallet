@@ -13,6 +13,7 @@ defmodule EWalletAPI.ConnCase do
   of the test unless the test case is marked as async.
   """
   use ExUnit.CaseTemplate
+  use Phoenix.ConnTest
   import EWalletDB.Factory
   import Ecto.Query
   alias Ecto.Adapters.SQL.Sandbox
@@ -20,7 +21,7 @@ defmodule EWalletAPI.ConnCase do
   alias EWallet.{MintGate, TransactionGate}
   alias EWalletDB.{Account, Repo, User}
   alias EWalletConfig.ConfigTestHelper
-  use Phoenix.ConnTest
+  alias EWalletConfig.System
 
   # Attributes required by Phoenix.ConnTest
   @endpoint EWalletAPI.Endpoint
@@ -158,7 +159,8 @@ defmodule EWalletAPI.ConnCase do
         "token_id" => token.id,
         "amount" => amount * token.subunit_to_unit,
         "description" => "Minting #{amount} #{token.symbol}",
-        "metadata" => %{}
+        "metadata" => %{},
+        "originator" => %System{}
       })
 
     assert mint.confirmed == true
@@ -173,7 +175,8 @@ defmodule EWalletAPI.ConnCase do
         "token_id" => token.id,
         "amount" => amount,
         "metadata" => %{},
-        "idempotency_token" => UUID.generate()
+        "idempotency_token" => UUID.generate(),
+        "originator" => %System{}
       })
 
     transaction
