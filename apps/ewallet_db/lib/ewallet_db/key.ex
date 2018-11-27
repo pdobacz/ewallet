@@ -51,8 +51,7 @@ defmodule EWalletDB.Key do
   end
 
   defp enable_changeset(%Key{} = key, attrs) do
-    key
-    |> cast_and_validate_required_for_audit(attrs, [:enabled], [:enabled])
+    cast_and_validate_required_for_audit(key, attrs, [:enabled], [:enabled])
   end
 
   @doc """

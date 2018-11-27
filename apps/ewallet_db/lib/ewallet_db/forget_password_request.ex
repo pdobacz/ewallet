@@ -88,11 +88,12 @@ defmodule EWalletDB.ForgetPasswordRequest do
   def generate(user) do
     token = Crypto.generate_base64_key(@token_length)
 
-    {:ok, _} = insert(%{
-      token: token,
-      user_uuid: user.uuid,
-      originator: %System{}
-    })
+    {:ok, _} =
+      insert(%{
+        token: token,
+        user_uuid: user.uuid,
+        originator: %System{}
+      })
 
     ForgetPasswordRequest.get(user, token)
   end

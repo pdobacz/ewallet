@@ -1,6 +1,7 @@
 defmodule EWalletDB.TransactionConsumptionTest do
   use EWalletDB.SchemaCase
   alias EWalletDB.TransactionConsumption
+  alias EWalletConfig.System
 
   describe "TransactionConsumption factory" do
     test_has_valid_factory(TransactionConsumption)
@@ -170,7 +171,7 @@ defmodule EWalletDB.TransactionConsumptionTest do
     test "approves the consumption" do
       consumption = insert(:transaction_consumption)
       assert consumption.status == "pending"
-      consumption = TransactionConsumption.approve(consumption)
+      consumption = TransactionConsumption.approve(consumption, %System{})
       assert consumption.status == "approved"
     end
   end
@@ -179,7 +180,7 @@ defmodule EWalletDB.TransactionConsumptionTest do
     test "rejects the consumption" do
       consumption = insert(:transaction_consumption)
       assert consumption.status == "pending"
-      consumption = TransactionConsumption.reject(consumption)
+      consumption = TransactionConsumption.reject(consumption, %System{})
       assert consumption.status == "rejected"
     end
   end

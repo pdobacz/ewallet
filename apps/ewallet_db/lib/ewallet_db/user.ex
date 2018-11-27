@@ -160,6 +160,10 @@ defmodule EWalletDB.User do
     |> validate_by_roles(attrs)
   end
 
+  defp set_admin_changeset(user, attrs) do
+    cast_and_validate_required_for_audit(user, attrs, [:is_admin])
+  end
+
   defp avatar_changeset(user, attrs) do
     user
     |> cast_and_validate_required_for_audit(attrs, [])
@@ -575,10 +579,13 @@ defmodule EWalletDB.User do
   @doc """
   Sets the user's admin status.
   """
-  @spec set_admin(%User{}, boolean()) :: {:ok, %User{}} | {:error, Ecto.Changeset.t()}
-  def set_admin(user, boolean) do
+  @spec set_admin(%User{}, boolean(), Map.t()) :: {:ok, %User{}} | {:error, Ecto.Changeset.t()}
+  def set_admin(user, boolean, originator) do
     user
-    |> change(is_admin: boolean)
+    |> set_admin_changeset(%{
+      is_admin: boolean,
+      originator: originator
+    })
     |> update_record_with_audit()
   end
 

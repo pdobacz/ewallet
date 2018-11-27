@@ -297,7 +297,8 @@ defmodule EWalletDB.TransactionConsumption do
   @doc """
   Expires the given consumption.
   """
-  @spec expire(%TransactionConsumption{}, Map.t()) :: {:ok, %TransactionConsumption{}} | {:error, map()}
+  @spec expire(%TransactionConsumption{}, Map.t()) ::
+          {:ok, %TransactionConsumption{}} | {:error, map()}
   def expire(consumption, originator) do
     consumption
     |> expired_changeset(%{

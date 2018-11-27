@@ -62,7 +62,7 @@ defmodule EWalletDB.SoftDelete do
   ```
   """
   use EWalletDB.Auditable
-  import Ecto.{Changeset, Query}
+  import Ecto.Query
 
   @doc false
   defmacro __using__(_) do
@@ -83,6 +83,14 @@ defmodule EWalletDB.SoftDelete do
     quote do
       field(:deleted_at, :naive_datetime)
     end
+  end
+
+  defp soft_delete_changeset(record, attrs) do
+    cast_and_validate_required_for_audit(
+      record,
+      attrs,
+      [:deleted_at]
+    )
   end
 
   @doc """
@@ -107,10 +115,10 @@ defmodule EWalletDB.SoftDelete do
   @spec delete(struct(), Map.t()) :: any()
   def delete(struct, originator) do
     struct
-    |> change(
+    |> soft_delete_changeset(%{
       deleted_at: NaiveDateTime.utc_now(),
       originator: originator
-    )
+    })
     |> update_record_with_audit()
   end
 
@@ -120,10 +128,10 @@ defmodule EWalletDB.SoftDelete do
   @spec restore(struct(), Map.t()) :: any()
   def restore(struct, originator) do
     struct
-    |> change(
+    |> soft_delete_changeset(%{
       deleted_at: nil,
       originator: originator
-    )
+    })
     |> update_record_with_audit()
   end
 end

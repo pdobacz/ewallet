@@ -147,45 +147,49 @@ defmodule EWalletDB.Transaction do
 
   defp changeset(%Transaction{} = transaction, attrs) do
     transaction
-    |> cast_and_validate_required_for_audit(attrs, [
-      :idempotency_token,
-      :status,
-      :type,
-      :payload,
-      :metadata,
-      :encrypted_metadata,
-      :from_account_uuid,
-      :to_account_uuid,
-      :from_user_uuid,
-      :to_user_uuid,
-      :from_token_uuid,
-      :to_token_uuid,
-      :from_amount,
-      :to_amount,
-      :exchange_account_uuid,
-      :exchange_wallet_address,
-      :to,
-      :from,
-      :rate,
-      :local_ledger_uuid,
-      :error_code,
-      :error_description,
-      :exchange_pair_uuid,
-      :calculated_at,
-      :originator
-    ], [
-      :idempotency_token,
-      :status,
-      :type,
-      :payload,
-      :from_amount,
-      :from_token_uuid,
-      :to_amount,
-      :to_token_uuid,
-      :to,
-      :from,
-      :originator
-    ])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [
+        :idempotency_token,
+        :status,
+        :type,
+        :payload,
+        :metadata,
+        :encrypted_metadata,
+        :from_account_uuid,
+        :to_account_uuid,
+        :from_user_uuid,
+        :to_user_uuid,
+        :from_token_uuid,
+        :to_token_uuid,
+        :from_amount,
+        :to_amount,
+        :exchange_account_uuid,
+        :exchange_wallet_address,
+        :to,
+        :from,
+        :rate,
+        :local_ledger_uuid,
+        :error_code,
+        :error_description,
+        :exchange_pair_uuid,
+        :calculated_at,
+        :originator
+      ],
+      [
+        :idempotency_token,
+        :status,
+        :type,
+        :payload,
+        :from_amount,
+        :from_token_uuid,
+        :to_amount,
+        :to_token_uuid,
+        :to,
+        :from,
+        :originator
+      ]
+    )
     |> validate_number(:from_amount, less_than: 100_000_000_000_000_000_000_000_000_000_000_000)
     |> validate_number(:to_amount, less_than: 100_000_000_000_000_000_000_000_000_000_000_000)
     |> validate_from_wallet_identifier()
@@ -222,17 +226,21 @@ defmodule EWalletDB.Transaction do
 
   defp fail_changeset(%Transaction{} = transaction, attrs) do
     transaction
-    |> cast_and_validate_required_for_audit(attrs, [
-      :status,
-      :error_code,
-      :error_description,
-      :error_data,
-      :originator
-    ], [
-      :status,
-      :error_code,
-      :originator
-    ])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [
+        :status,
+        :error_code,
+        :error_description,
+        :error_data,
+        :originator
+      ],
+      [
+        :status,
+        :error_code,
+        :originator
+      ]
+    )
     |> validate_inclusion(:status, @statuses)
   end
 

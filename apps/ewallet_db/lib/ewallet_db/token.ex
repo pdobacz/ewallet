@@ -61,28 +61,32 @@ defmodule EWalletDB.Token do
 
   defp changeset(%Token{} = token, attrs) do
     token
-    |> cast_and_validate_required_for_audit(attrs, [
-      :symbol,
-      :iso_code,
-      :name,
-      :description,
-      :short_symbol,
-      :subunit,
-      :subunit_to_unit,
-      :symbol_first,
-      :html_entity,
-      :iso_numeric,
-      :smallest_denomination,
-      :locked,
-      :account_uuid,
-      :metadata,
-      :encrypted_metadata
-    ], [
-      :symbol,
-      :name,
-      :subunit_to_unit,
-      :account_uuid
-    ])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [
+        :symbol,
+        :iso_code,
+        :name,
+        :description,
+        :short_symbol,
+        :subunit,
+        :subunit_to_unit,
+        :symbol_first,
+        :html_entity,
+        :iso_numeric,
+        :smallest_denomination,
+        :locked,
+        :account_uuid,
+        :metadata,
+        :encrypted_metadata
+      ],
+      [
+        :symbol,
+        :name,
+        :subunit_to_unit,
+        :account_uuid
+      ]
+    )
     |> validate_number(
       :subunit_to_unit,
       greater_than: 0,
@@ -101,19 +105,23 @@ defmodule EWalletDB.Token do
 
   defp update_changeset(%Token{} = token, attrs) do
     token
-    |> cast_and_validate_required_for_audit(attrs, [
-      :iso_code,
-      :name,
-      :description,
-      :short_symbol,
-      :symbol_first,
-      :html_entity,
-      :iso_numeric,
-      :metadata,
-      :encrypted_metadata
-    ], [
-      :name
-    ])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [
+        :iso_code,
+        :name,
+        :description,
+        :short_symbol,
+        :symbol_first,
+        :html_entity,
+        :iso_numeric,
+        :metadata,
+        :encrypted_metadata
+      ],
+      [
+        :name
+      ]
+    )
     |> unique_constraint(:iso_code)
     |> unique_constraint(:name)
     |> unique_constraint(:short_symbol)

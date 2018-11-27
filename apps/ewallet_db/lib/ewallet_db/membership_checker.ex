@@ -78,7 +78,7 @@ defmodule EWalletDB.MembershipChecker do
     |> search_descendants(user, role, memberships, originator)
   end
 
-  defp init_descendants_search_or_return(allowed?, _, _, _, _, _), do: allowed?
+  defp init_descendants_search_or_return(allowed?, _, _, _, _, _, _), do: allowed?
 
   def search_descendants([]), do: true
 

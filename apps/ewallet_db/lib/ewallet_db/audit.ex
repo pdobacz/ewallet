@@ -74,10 +74,15 @@ defmodule EWalletDB.Audit do
     EWalletDB.ExchangePair => "exchange_pair",
     EWalletDB.Wallet => "wallet",
     EWalletDB.Membership => "membership",
-    EWalletDB.AuthToken => "auth_token"
+    EWalletDB.AuthToken => "auth_token",
+    EWalletDB.APIKey => "api_key",
+    EWalletDB.Token => "token",
+    EWalletDB.Role => "role"
   }
 
-  @audit_types_to_schemas Enum.into(@schemas_to_audit_types, %{}, fn {key, value} -> {value, key} end)
+  @audit_types_to_schemas Enum.into(@schemas_to_audit_types, %{}, fn {key, value} ->
+                            {value, key}
+                          end)
 
   @spec get_schema(String.t()) :: Atom.t()
   def get_schema(type) do

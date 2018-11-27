@@ -154,7 +154,7 @@ defmodule EWalletDB.Membership do
   defp update(%Membership{} = membership, attrs) do
     membership
     |> changeset(attrs)
-    |> insert_record_with_audit()
+    |> update_record_with_audit()
   end
 
   defp delete(%Membership{} = membership, originator) do

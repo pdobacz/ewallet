@@ -448,7 +448,7 @@ defmodule EWalletDB.UserTest do
       user = insert(:user)
       refute User.admin?(user)
 
-      {:ok, user} = User.set_admin(user, true)
+      {:ok, user} = User.set_admin(user, true, %System{})
       assert User.admin?(user)
     end
 
@@ -456,7 +456,7 @@ defmodule EWalletDB.UserTest do
       user = insert(:admin)
       assert User.admin?(user)
 
-      {:ok, user} = User.set_admin(user, false)
+      {:ok, user} = User.set_admin(user, false, %System{})
       refute User.admin?(user)
     end
   end

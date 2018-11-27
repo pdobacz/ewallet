@@ -116,32 +116,36 @@ defmodule EWalletDB.TransactionRequest do
 
   defp changeset(%TransactionRequest{} = transaction_request, attrs) do
     transaction_request
-    |> cast_and_validate_required_for_audit(attrs, [
-      :type,
-      :amount,
-      :correlation_id,
-      :user_uuid,
-      :account_uuid,
-      :token_uuid,
-      :wallet_address,
-      :require_confirmation,
-      :max_consumptions,
-      :max_consumptions_per_user,
-      :consumption_lifetime,
-      :expiration_date,
-      :metadata,
-      :encrypted_metadata,
-      :allow_amount_override,
-      :exchange_account_uuid,
-      :exchange_wallet_address,
-      :originator
-    ], [
-      :type,
-      :status,
-      :token_uuid,
-      :wallet_address,
-      :originator
-    ])
+    |> cast_and_validate_required_for_audit(
+      attrs,
+      [
+        :type,
+        :amount,
+        :correlation_id,
+        :user_uuid,
+        :account_uuid,
+        :token_uuid,
+        :wallet_address,
+        :require_confirmation,
+        :max_consumptions,
+        :max_consumptions_per_user,
+        :consumption_lifetime,
+        :expiration_date,
+        :metadata,
+        :encrypted_metadata,
+        :allow_amount_override,
+        :exchange_account_uuid,
+        :exchange_wallet_address,
+        :originator
+      ],
+      [
+        :type,
+        :status,
+        :token_uuid,
+        :wallet_address,
+        :originator
+      ]
+    )
     |> validate_amount_if_disallow_override()
     |> validate_number(:amount, less_than: 100_000_000_000_000_000_000_000_000_000_000_000)
     |> validate_inclusion(:type, @types)

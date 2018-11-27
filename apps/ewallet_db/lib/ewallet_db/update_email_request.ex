@@ -93,7 +93,15 @@ defmodule EWalletDB.UpdateEmailRequest do
   @spec generate(%User{}, String.t()) :: %UpdateEmailRequest{} | {:error, Changeset.t()}
   def generate(user, email) do
     token = Crypto.generate_base64_key(@token_length)
-    {:ok, _} = insert(%{token: token, email: email, user_uuid: user.uuid})
+
+    {:ok, _} =
+      insert(%{
+        token: token,
+        email: email,
+        user_uuid: user.uuid,
+        originator: user
+      })
+
     UpdateEmailRequest.get(email, token)
   end
 

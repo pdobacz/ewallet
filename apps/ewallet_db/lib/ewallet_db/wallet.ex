@@ -86,7 +86,9 @@ defmodule EWalletDB.Wallet do
   defp secondary_changeset(%Wallet{} = wallet, attrs) do
     wallet
     |> cast_and_validate_required_for_audit(
-      attrs, @cast_attrs, [:name, :identifier, :account_uuid]
+      attrs,
+      @cast_attrs,
+      [:name, :identifier, :account_uuid]
     )
     |> validate_format(:identifier, ~r/#{@secondary}_.*/)
     |> shared_changeset()
