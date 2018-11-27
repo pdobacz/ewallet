@@ -20,7 +20,7 @@ defmodule AdminAPI.ConnCase do
   alias Ecto.UUID
   alias EWallet.{MintGate, TransactionGate}
   alias EWallet.Web.Date
-  alias EWalletConfig.{ConfigTestHelper, Helpers.Crypto, Types.ExternalID}
+  alias EWalletConfig.{ConfigTestHelper, Helpers.Crypto, Types.ExternalID, System}
   alias EWalletDB.{Account, Key, Repo, User}
 
   # Attributes required by Phoenix.ConnTest
@@ -177,14 +177,15 @@ defmodule AdminAPI.ConnCase do
     |> Repo.one()
   end
 
-  def mint!(token, amount \\ 1_000_000) do
+  def mint!(token, amount \\ 1_000_000, originator \\ %System{}) do
     {:ok, mint, _transaction} =
       MintGate.insert(%{
         "idempotency_token" => UUID.generate(),
         "token_id" => token.id,
         "amount" => amount * token.subunit_to_unit,
         "description" => "Minting #{amount} #{token.symbol}",
-        "metadata" => %{}
+        "metadata" => %{},
+        "originator" => originator
       })
 
     assert mint.confirmed == true
@@ -214,7 +215,7 @@ defmodule AdminAPI.ConnCase do
     )
   end
 
-  def transfer!(from, to, token, amount) do
+  def transfer!(from, to, token, amount, originator \\ %System{}) do
     {:ok, transaction} =
       TransactionGate.create(%{
         "from_address" => from,
@@ -222,7 +223,8 @@ defmodule AdminAPI.ConnCase do
         "token_id" => token.id,
         "amount" => amount,
         "metadata" => %{},
-        "idempotency_token" => UUID.generate()
+        "idempotency_token" => UUID.generate(),
+        "originator" => originator
       })
 
     transaction

@@ -571,7 +571,8 @@ defmodule AdminAPI.V1.AdminAuth.WalletControllerTest do
         Wallet.insert_secondary_or_burn(%{
           "account_uuid" => account.uuid,
           "name" => "MyBurn",
-          "identifier" => "burn"
+          "identifier" => "burn",
+          "originator" => %System{}
         })
 
       response =
@@ -592,7 +593,8 @@ defmodule AdminAPI.V1.AdminAuth.WalletControllerTest do
         Wallet.insert_secondary_or_burn(%{
           "account_uuid" => account.uuid,
           "name" => "MySecondary",
-          "identifier" => "secondary"
+          "identifier" => "secondary",
+          "originator" => %System{}
         })
 
       response =

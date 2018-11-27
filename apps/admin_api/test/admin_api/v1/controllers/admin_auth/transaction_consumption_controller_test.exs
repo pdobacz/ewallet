@@ -1482,7 +1482,7 @@ defmodule AdminAPI.V1.AdminAuth.TransactionConsumptionControllerTest do
           amount: 100_000 * meta.token.subunit_to_unit
         )
 
-      {:ok, token} = Token.enable_or_disable(meta.token, %{enabled: false})
+      {:ok, token} = Token.enable_or_disable(meta.token, %{enabled: false, originator: %System{}})
 
       response =
         admin_user_request("/transaction_request.consume", %{
@@ -1505,10 +1505,11 @@ defmodule AdminAPI.V1.AdminAuth.TransactionConsumptionControllerTest do
         Wallet.insert_secondary_or_burn(%{
           "account_uuid" => meta.account.uuid,
           "name" => "MySecondary",
-          "identifier" => "secondary"
+          "identifier" => "secondary",
+          "originator" => %System{}
         })
 
-      {:ok, wallet} = Wallet.enable_or_disable(wallet, %{enabled: false})
+      {:ok, wallet} = Wallet.enable_or_disable(wallet, %{enabled: false, originator: %System{}})
 
       transaction_request =
         insert(

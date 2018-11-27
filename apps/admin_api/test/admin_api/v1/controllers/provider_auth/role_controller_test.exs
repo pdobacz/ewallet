@@ -1,7 +1,8 @@
 defmodule AdminAPI.V1.ProviderAuth.RoleControllerTest do
   use AdminAPI.ConnCase, async: true
   alias EWalletDB.{Membership, Role}
-
+  alias EWalletConfig.System
+  
   describe "/role.all" do
     test "returns a list of roles and pagination data" do
       response = provider_request("/role.all")
@@ -159,7 +160,7 @@ defmodule AdminAPI.V1.ProviderAuth.RoleControllerTest do
       user = insert(:admin)
       account = insert(:account)
       role = insert(:role, name: "test_role_not_empty")
-      {:ok, _membership} = Membership.assign(user, account, role)
+      {:ok, _membership} = Membership.assign(user, account, role, %System{})
 
       users = role.id |> Role.get(preload: :users) |> Map.get(:users)
       assert Enum.count(users) > 0
