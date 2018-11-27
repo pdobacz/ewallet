@@ -35,7 +35,7 @@ defmodule EWallet.Web.Inviter do
   def invite_admin(email, account, role, redirect_url, originator, create_email_func) do
     with {:ok, user} <- get_or_insert_user(email, nil, originator),
          {:ok, invite} <- Invite.generate(user, preload: :user),
-         {:ok, _membership} <- Membership.assign(invite.user, account, role) do
+         {:ok, _membership} <- Membership.assign(invite.user, account, role, originator) do
       send_email(invite, redirect_url, create_email_func)
     else
       {:error, error} ->

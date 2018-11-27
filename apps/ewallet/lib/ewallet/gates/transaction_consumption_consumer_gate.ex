@@ -26,6 +26,7 @@ defmodule EWallet.TransactionConsumptionConsumerGate do
     User,
     Wallet
   }
+
   alias EWalletConfig.System
 
   @spec consume(map()) ::

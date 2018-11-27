@@ -88,9 +88,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert consumption.approved_at == nil
 
       {:ok, consumption} =
-        TransactionConsumptionConfirmerGate.confirm(consumption.id, true, %{
-          account: meta.account
-        }, %System{})
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          true,
+          %{
+            account: meta.account
+          },
+          %System{}
+        )
 
       assert consumption.status == "confirmed"
       assert consumption.approved_at != nil
@@ -131,9 +136,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert consumption.approved_at == nil
 
       {:ok, consumption} =
-        TransactionConsumptionConfirmerGate.confirm(consumption.id, true, %{
-          account: meta.account
-        }, %System{})
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          true,
+          %{
+            account: meta.account
+          },
+          %System{}
+        )
 
       assert consumption.status == "confirmed"
       assert consumption.approved_at != nil
@@ -173,9 +183,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert consumption.approved_at == nil
 
       {:error, :unauthorized} =
-        TransactionConsumptionConfirmerGate.confirm(consumption.id, true, %{
-          account: account
-        }, %System{})
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          true,
+          %{
+            account: account
+          },
+          %System{}
+        )
     end
 
     test "confirms a user's consumption if created and approved as account", meta do
@@ -217,9 +232,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert consumption.approved_at == nil
 
       {:ok, consumption} =
-        TransactionConsumptionConfirmerGate.confirm(consumption.id, true, %{
-          account: meta.account
-        }, %System{})
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          true,
+          %{
+            account: meta.account
+          },
+          %System{}
+        )
 
       assert consumption.status == "confirmed"
       assert consumption.approved_at != nil
@@ -257,9 +277,15 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert consumption.status == "pending"
       assert consumption.approved_at == nil
 
-      res = TransactionConsumptionConfirmerGate.confirm(consumption.id, true, %{
-        account: account
-      }, %System{})
+      res =
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          true,
+          %{
+            account: account
+          },
+          %System{}
+        )
 
       assert res == {:error, :unauthorized}
     end
@@ -301,9 +327,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert transaction_request.expired_at != nil
 
       res =
-        TransactionConsumptionConfirmerGate.confirm(consumption.id, true, %{
-          account: meta.account
-        }, %System{})
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          true,
+          %{
+            account: meta.account
+          },
+          %System{}
+        )
 
       assert res == {:error, :expired_transaction_request}
     end
@@ -342,9 +373,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert consumption.approved_at == nil
 
       {:ok, consumption} =
-        TransactionConsumptionConfirmerGate.confirm(consumption.id, false, %{
-          account: meta.account
-        }, %System{})
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          false,
+          %{
+            account: meta.account
+          },
+          %System{}
+        )
 
       assert consumption.status == "rejected"
       assert consumption.approved_at == nil
@@ -404,9 +440,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
             Sandbox.allow(LocalLedgerDB.Repo, pid, self())
 
             {res, response} =
-              TransactionConsumptionConfirmerGate.confirm(c.id, true, %{
-                account: meta.account
-              }, %System{})
+              TransactionConsumptionConfirmerGate.confirm(
+                c.id,
+                true,
+                %{
+                  account: meta.account
+                },
+                %System{}
+              )
 
             send(pid, {String.to_atom("updated_#{i + 1}"), res, response})
           end)
@@ -458,9 +499,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert consumption.approved_at == nil
 
       {:ok, consumption} =
-        TransactionConsumptionConfirmerGate.confirm(consumption.id, true, %{
-          end_user: meta.receiver
-        }, %System{})
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          true,
+          %{
+            end_user: meta.receiver
+          },
+          %System{}
+        )
 
       assert consumption.status == "confirmed"
       assert consumption.approved_at != nil
@@ -504,9 +550,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert consumption.approved_at == nil
 
       {:ok, consumption} =
-        TransactionConsumptionConfirmerGate.confirm(consumption.id, true, %{
-          end_user: meta.receiver
-        }, %System{})
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          true,
+          %{
+            end_user: meta.receiver
+          },
+          %System{}
+        )
 
       assert consumption.status == "confirmed"
       assert consumption.approved_at != nil
@@ -544,9 +595,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert consumption.approved_at == nil
 
       res =
-        TransactionConsumptionConfirmerGate.confirm(consumption.id, true, %{
-          end_user: meta.sender
-        }, %System{})
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          true,
+          %{
+            end_user: meta.sender
+          },
+          %System{}
+        )
 
       assert res == {:error, :unauthorized}
     end
@@ -587,9 +643,14 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
       assert transaction_request.expired_at != nil
 
       res =
-        TransactionConsumptionConfirmerGate.confirm(consumption.id, true, %{
-          end_user: meta.receiver
-        }, %System{})
+        TransactionConsumptionConfirmerGate.confirm(
+          consumption.id,
+          true,
+          %{
+            end_user: meta.receiver
+          },
+          %System{}
+        )
 
       assert res == {:error, :expired_transaction_request}
     end

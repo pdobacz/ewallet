@@ -22,7 +22,8 @@ defmodule EWallet.Web.V1.TransactionRequestSerializer do
   end
 
   def serialize(%TransactionRequest{} = transaction_request) do
-    transaction_request = TransactionRequest.load_consumptions_count(transaction_request, %System{})
+    transaction_request =
+      TransactionRequest.load_consumptions_count(transaction_request, %System{})
 
     %{
       object: "transaction_request",

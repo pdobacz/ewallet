@@ -79,7 +79,11 @@ defmodule EWallet.ExchangePairGate do
   end
 
   # Only updates the opposite pair if explicitly requested
-  defp update(:opposite, direct_pair, %{"sync_opposite" => true, "originator" => originator} = direct_attrs) do
+  defp update(
+         :opposite,
+         direct_pair,
+         %{"sync_opposite" => true, "originator" => originator} = direct_attrs
+       ) do
     case get_opposite_pair(direct_pair) do
       nil ->
         {:error, :exchange_opposite_pair_not_found}

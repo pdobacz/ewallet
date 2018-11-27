@@ -53,7 +53,8 @@ defmodule EWallet.TransactionConsumptionValidator do
          {:ok, request} <- TransactionRequest.expire_if_past_expiration_date(request, %System{}),
          {:ok, _wallet} <- validate_max_consumptions_per_user(request, wallet),
          true <- TransactionRequest.valid?(request) || request.expiration_reason,
-         {:ok, consumption} = TransactionConsumption.expire_if_past_expiration_date(consumption, %System{}) do
+         {:ok, consumption} =
+           TransactionConsumption.expire_if_past_expiration_date(consumption, %System{}) do
       case TransactionConsumption.expired?(consumption) do
         false ->
           {:ok, consumption}

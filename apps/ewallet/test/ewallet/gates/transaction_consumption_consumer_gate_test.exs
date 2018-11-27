@@ -413,7 +413,10 @@ defmodule EWallet.TransactionConsumptionConsumerGateTest do
     end
 
     test "receives an error when the token is disabled", meta do
-      {:ok, token} = Token.enable_or_disable(meta.token, %{enabled: false})
+      {:ok, token} = Token.enable_or_disable(meta.token, %{
+        enabled: false,
+        originator: %System{}
+      })
 
       {res, code} =
         TransactionConsumptionConsumerGate.consume(%{
@@ -439,7 +442,10 @@ defmodule EWallet.TransactionConsumptionConsumerGateTest do
           "identifier" => "secondary"
         })
 
-      {:ok, wallet} = Wallet.enable_or_disable(wallet, %{enabled: false})
+      {:ok, wallet} = Wallet.enable_or_disable(wallet, %{
+        enabled: false,
+        originator: %System{}
+      })
 
       {res, code} =
         TransactionConsumptionConsumerGate.consume(%{
@@ -788,10 +794,12 @@ defmodule EWallet.TransactionConsumptionConsumerGateTest do
 
     test "allows only one consume per user with four consumes at the same time", meta do
       initialize_wallet(meta.sender_wallet, 200_000, meta.token)
-      {:ok, request} = TransactionRequest.update(meta.request, %{
-        max_consumptions_per_user: 1,
-        originator: %System{}
-      })
+
+      {:ok, request} =
+        TransactionRequest.update(meta.request, %{
+          max_consumptions_per_user: 1,
+          originator: %System{}
+        })
 
       pid = self()
 
@@ -921,10 +929,12 @@ defmodule EWallet.TransactionConsumptionConsumerGateTest do
          same idempotency_token",
          meta do
       initialize_wallet(meta.sender_wallet, 200_000, meta.token)
-      {:ok, request} = TransactionRequest.update(meta.request, %{
-        max_consumptions: 1,
-        originator: %System{}
-      })
+
+      {:ok, request} =
+        TransactionRequest.update(meta.request, %{
+          max_consumptions: 1,
+          originator: %System{}
+        })
 
       {res, consumption} =
         TransactionConsumptionConsumerGate.consume(meta.sender, %{
@@ -962,10 +972,12 @@ defmodule EWallet.TransactionConsumptionConsumerGateTest do
           consumptions has been reached",
          meta do
       initialize_wallet(meta.sender_wallet, 200_000, meta.token)
-      {:ok, request} = TransactionRequest.update(meta.request, %{
-        max_consumptions: 1,
-        originator: %System{}
-      })
+
+      {:ok, request} =
+        TransactionRequest.update(meta.request, %{
+          max_consumptions: 1,
+          originator: %System{}
+        })
 
       {res, consumption} =
         TransactionConsumptionConsumerGate.consume(meta.sender, %{
@@ -1000,10 +1012,12 @@ defmodule EWallet.TransactionConsumptionConsumerGateTest do
 
     test "allows only one consume with four consumes at the same time", meta do
       initialize_wallet(meta.sender_wallet, 200_000, meta.token)
-      {:ok, request} = TransactionRequest.update(meta.request, %{
-        max_consumptions: 1,
-        originator: %System{}
-      })
+
+      {:ok, request} =
+        TransactionRequest.update(meta.request, %{
+          max_consumptions: 1,
+          originator: %System{}
+        })
 
       pid = self()
 
@@ -1114,10 +1128,12 @@ defmodule EWallet.TransactionConsumptionConsumerGateTest do
           increment it",
          meta do
       initialize_wallet(meta.sender_wallet, 200_000, meta.token)
-      {:ok, request} = TransactionRequest.update(meta.request, %{
-        max_consumptions: 2,
-        originator: %System{}
-      })
+
+      {:ok, request} =
+        TransactionRequest.update(meta.request, %{
+          max_consumptions: 2,
+          originator: %System{}
+        })
 
       {res, consumption} =
         TransactionConsumptionConsumerGate.consume(meta.sender, %{
