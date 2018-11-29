@@ -36,10 +36,11 @@ defmodule AdminAPI.V1.APIKeyController do
   def create(conn, attrs) do
     with :ok <- permit(:create, conn.assigns, nil),
          # Admin API doesn't use API Keys anymore. Defaulting to "ewallet_api".
-         {:ok, api_key} <- APIKey.insert(%{
-           owner_app: "ewallet_api",
-           originator: Originator.extract(conn.assigns)
-         }),
+         {:ok, api_key} <-
+           APIKey.insert(%{
+             owner_app: "ewallet_api",
+             originator: Originator.extract(conn.assigns)
+           }),
          {:ok, api_key} <- Orchestrator.one(api_key, APIKeyOverlay, attrs) do
       render(conn, :api_key, %{api_key: api_key})
     else

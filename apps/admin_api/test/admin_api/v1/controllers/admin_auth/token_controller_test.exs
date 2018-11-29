@@ -361,7 +361,8 @@ defmodule AdminAPI.V1.AdminAuth.TokenControllerTest do
     end
 
     test "Raises invalid_parameter error if id is missing" do
-      response = admin_user_request("/token.enable_or_disable", %{enabled: false, originator: %System{}})
+      response =
+        admin_user_request("/token.enable_or_disable", %{enabled: false, originator: %System{}})
 
       refute response["success"]
 

@@ -238,10 +238,11 @@ defmodule EWallet.TransactionGateTest do
       attrs = build_addresses_attrs(idempotency_token, wallet1, wallet2, token)
       init_wallet(wallet1.address, token, 1_000)
 
-      {:ok, _token} = Token.enable_or_disable(token, %{
-        enabled: false,
-        originator: %System{}
-      })
+      {:ok, _token} =
+        Token.enable_or_disable(token, %{
+          enabled: false,
+          originator: %System{}
+        })
 
       {status, code} = TransactionGate.create(attrs)
       assert status == :error
@@ -264,10 +265,11 @@ defmodule EWallet.TransactionGateTest do
       attrs = build_addresses_attrs(idempotency_token, wallet3, wallet2, token)
       init_wallet(wallet3.address, token, 1_000)
 
-      {:ok, _wallet3} = Wallet.enable_or_disable(wallet3, %{
-        enabled: false,
-        originator: %System{}
-      })
+      {:ok, _wallet3} =
+        Wallet.enable_or_disable(wallet3, %{
+          enabled: false,
+          originator: %System{}
+        })
 
       {status, code} = TransactionGate.create(attrs)
       assert status == :error
@@ -290,10 +292,11 @@ defmodule EWallet.TransactionGateTest do
       attrs = build_addresses_attrs(idempotency_token, wallet1, wallet3, token)
       init_wallet(wallet1.address, token, 1_000)
 
-      {:ok, _wallet3} = Wallet.enable_or_disable(wallet3, %{
-        enabled: false,
-        originator: %System{}
-      })
+      {:ok, _wallet3} =
+        Wallet.enable_or_disable(wallet3, %{
+          enabled: false,
+          originator: %System{}
+        })
 
       {status, code} = TransactionGate.create(attrs)
       assert status == :error

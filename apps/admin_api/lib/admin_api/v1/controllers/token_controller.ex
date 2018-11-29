@@ -82,7 +82,10 @@ defmodule AdminAPI.V1.TokenController do
     |> Map.put("account_uuid", Account.get_master_account().uuid)
     |> Originator.set_in_attrs(conn.assigns)
     |> Token.insert()
-    |> MintGate.mint_token(%{"amount" => amount})
+    |> MintGate.mint_token(%{
+      "amount" => amount,
+      "originator" => Originator.extract(conn.assigns)
+    })
     |> respond_single(conn)
   end
 

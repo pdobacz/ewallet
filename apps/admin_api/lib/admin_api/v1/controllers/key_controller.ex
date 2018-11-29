@@ -38,7 +38,7 @@ defmodule AdminAPI.V1.KeyController do
   @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create(conn, attrs) do
     with :ok <- permit(:create, conn.assigns, nil),
-         attrs <- Originator.set_in_attrs(attrs, conn.assigns),
+         attrs <- Originator.set_in_attrs(attrs, conn.assigns, :originator),
          {:ok, key} <- Key.insert(attrs),
          {:ok, key} <- Orchestrator.one(key, KeyOverlay, attrs) do
       render(conn, :key, %{key: key})

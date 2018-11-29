@@ -18,7 +18,7 @@ defmodule AdminAPI.V1.InviteController do
     with %Invite{} = invite <- Invite.get(email, token) || {:error, :invite_not_found},
          {:ok, invite} <- Preloader.preload_one(invite, :user),
          {:ok, _} <- Invite.accept(invite, password, password_confirmation),
-         originator <- Originator.extract(conn.assigns),
+         originator <- Originator.get_initial_originator(invite),
          {:ok, _} <- User.set_admin(invite.user, true, originator) do
       render(conn, UserView, :user, %{user: invite.user})
     else

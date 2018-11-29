@@ -800,10 +800,11 @@ defmodule AdminAPI.V1.AdminAuth.TransactionControllerTest do
         amount: 2_000_000
       })
 
-      {:ok, token} = Token.enable_or_disable(token, %{
-        enabled: false,
-        origintor: %System{}
-      })
+      {:ok, token} =
+        Token.enable_or_disable(token, %{
+          enabled: false,
+          originator: %System{}
+        })
 
       response =
         admin_user_request("/transaction.create", %{

@@ -46,6 +46,7 @@ defmodule AdminAPI.V1.ExchangePairController do
   @spec create(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def create(conn, attrs) do
     with :ok <- permit(:create, conn.assigns, nil),
+         attrs <- Originator.set_in_attrs(attrs, conn.assigns),
          {:ok, pairs} <- ExchangePairGate.insert(attrs),
          {:ok, pairs} <- Orchestrator.all(pairs, ExchangePairOverlay) do
       render(conn, :exchange_pairs, %{exchange_pairs: pairs})
@@ -64,6 +65,7 @@ defmodule AdminAPI.V1.ExchangePairController do
   @spec update(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def update(conn, %{"id" => id} = attrs) do
     with :ok <- permit(:update, conn.assigns, id),
+         attrs <- Originator.set_in_attrs(attrs, conn.assigns),
          {:ok, pairs} <- ExchangePairGate.update(id, attrs),
          {:ok, pairs} <- Orchestrator.all(pairs, ExchangePairOverlay) do
       render(conn, :exchange_pairs, %{exchange_pairs: pairs})

@@ -2,7 +2,7 @@ defmodule AdminAPI.V1.ProviderAuth.RoleControllerTest do
   use AdminAPI.ConnCase, async: true
   alias EWalletDB.{Membership, Role}
   alias EWalletConfig.System
-  
+
   describe "/role.all" do
     test "returns a list of roles and pagination data" do
       response = provider_request("/role.all")

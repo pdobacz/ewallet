@@ -413,10 +413,11 @@ defmodule EWallet.TransactionConsumptionConsumerGateTest do
     end
 
     test "receives an error when the token is disabled", meta do
-      {:ok, token} = Token.enable_or_disable(meta.token, %{
-        enabled: false,
-        originator: %System{}
-      })
+      {:ok, token} =
+        Token.enable_or_disable(meta.token, %{
+          enabled: false,
+          originator: %System{}
+        })
 
       {res, code} =
         TransactionConsumptionConsumerGate.consume(%{
@@ -439,13 +440,15 @@ defmodule EWallet.TransactionConsumptionConsumerGateTest do
         Wallet.insert_secondary_or_burn(%{
           "account_uuid" => meta.account.uuid,
           "name" => "MySecondary",
-          "identifier" => "secondary"
+          "identifier" => "secondary",
+          "originator" => %System{}
         })
 
-      {:ok, wallet} = Wallet.enable_or_disable(wallet, %{
-        enabled: false,
-        originator: %System{}
-      })
+      {:ok, wallet} =
+        Wallet.enable_or_disable(wallet, %{
+          enabled: false,
+          originator: %System{}
+        })
 
       {res, code} =
         TransactionConsumptionConsumerGate.consume(%{

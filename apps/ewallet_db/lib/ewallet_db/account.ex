@@ -136,7 +136,9 @@ defmodule EWalletDB.Account do
   @spec avatar_changeset(Ecto.Changeset.t() | %Account{}, map()) ::
           Ecto.Changeset.t() | %Account{} | no_return()
   defp avatar_changeset(changeset, attrs) do
-    cast_attachments(changeset, attrs, [:avatar])
+    changeset
+    |> cast_and_validate_required_for_audit(attrs, [])
+    |> cast_attachments(attrs, [:avatar])
   end
 
   @doc """
@@ -198,13 +200,15 @@ defmodule EWalletDB.Account do
   Stores an avatar for the given account.
   """
   @spec store_avatar(%Account{}, map()) :: %Account{} | nil | no_return()
-  def store_avatar(%Account{} = account, attrs) do
+  def store_avatar(%Account{} = account, %{"originator" => originator} = attrs) do
     attrs =
-      case attrs["avatar"] do
+      attrs["avatar"]
+      |> case do
         "" -> %{avatar: nil}
         "null" -> %{avatar: nil}
         avatar -> %{avatar: avatar}
       end
+      |> Map.put(:originator, originator)
 
     changeset = avatar_changeset(account, attrs)
 

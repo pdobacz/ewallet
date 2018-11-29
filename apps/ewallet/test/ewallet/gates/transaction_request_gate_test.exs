@@ -469,7 +469,11 @@ defmodule EWallet.TransactionRequestGateTest do
     end
 
     test "receives an error when the token is disabled", meta do
-      {:ok, token} = Token.enable_or_disable(meta.token, %{enabled: false})
+      {:ok, token} =
+        Token.enable_or_disable(meta.token, %{
+          enabled: false,
+          originator: %System{}
+        })
 
       {:error, code} =
         TransactionRequestGate.create(meta.user_wallet, %{
@@ -489,10 +493,15 @@ defmodule EWallet.TransactionRequestGateTest do
         Wallet.insert_secondary_or_burn(%{
           "account_uuid" => meta.account.uuid,
           "name" => "MySecondary",
-          "identifier" => "secondary"
+          "identifier" => "secondary",
+          "originator" => %System{}
         })
 
-      {:ok, wallet} = Wallet.enable_or_disable(wallet, %{enabled: false})
+      {:ok, wallet} =
+        Wallet.enable_or_disable(wallet, %{
+          enabled: false,
+          originator: %System{}
+        })
 
       {:error, code} =
         TransactionRequestGate.create(wallet, %{

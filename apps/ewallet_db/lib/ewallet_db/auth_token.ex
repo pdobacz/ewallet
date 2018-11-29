@@ -70,11 +70,14 @@ defmodule EWalletDB.AuthToken do
     )
   end
 
-  @spec switch_account(%__MODULE__{}, %Account{}) ::
+  @spec switch_account(%__MODULE__{}, %Account{}, Map.t()) ::
           {:ok, %__MODULE__{}} | {:error, Ecto.Changeset.t()}
-  def switch_account(token, account) do
+  def switch_account(token, account, originator) do
     token
-    |> switch_account_changeset(%{account_uuid: account.uuid})
+    |> switch_account_changeset(%{
+      account_uuid: account.uuid,
+      originator: originator
+    })
     |> update_record_with_audit()
   end
 
