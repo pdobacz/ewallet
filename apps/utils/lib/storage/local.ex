@@ -1,4 +1,4 @@
-defmodule EWalletConfig.Storage.Local do
+defmodule Utils.Storage.Local do
   @moduledoc """
   Modified copy of the Arc local storage, needed to add the base URL before
   the file paths.
@@ -6,7 +6,7 @@ defmodule EWalletConfig.Storage.Local do
   Original: https://github.com/stavro/arc/blob/master/lib/arc/storage/local.ex
   """
   alias Arc.Definition.Versioning
-  alias EWalletConfig.Config
+  alias Utils.Config
 
   def put(definition, version, {file, scope}) do
     destination_dir = definition.storage_dir(version, {file, scope})
