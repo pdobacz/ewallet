@@ -10,7 +10,7 @@ defmodule ActivityLogger.Application do
     DeferredConfig.populate(:activity_logger)
 
     children = [
-      supervisor(EWalletConfig.Repo, [])
+      supervisor(ActivityLogger.Repo, [])
     ]
 
     opts = [strategy: :one_for_one, name: ActivityLogger.Supervisor]

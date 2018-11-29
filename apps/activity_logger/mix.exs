@@ -40,8 +40,12 @@ defmodule ActivityLogger.MixProject do
   defp deps do
     [
       {:postgrex, ">= 0.0.0"},
+      {:poison, "~> 3.1"},
       {:ecto, "~> 2.1.6"},
-      {:deferred_config, "~> 0.1.0"}
+      {:deferred_config, "~> 0.1.0"},
+      {:ex_machina, "~> 2.2", only: :test},
+      {:cloak, "~> 0.7.0-alpha"},
+      {:utils, in_umbrella: true}
     ]
   end
 

@@ -1,10 +1,9 @@
 defmodule ActivityLogger.ActivityLog do
   @moduledoc """
-  Ecto Schema representing audits.
+  Ecto Schema representing activity_logs.
   """
-  use Arc.Ecto.Schema
   use Ecto.Schema
-  use EWalletConfig.Types.ExternalID
+  use Utils.Types.ExternalID
   import Ecto.{Changeset, Query}
   alias Ecto.{Changeset, Multi, UUID}
 
@@ -16,7 +15,7 @@ defmodule ActivityLogger.ActivityLog do
   @primary_key {:uuid, UUID, autogenerate: true}
   @primary_key {:uuid, UUID, autogenerate: true}
 
-  schema "audit" do
+  schema "activity_log" do
     external_id(prefix: "adt_")
 
     field(:action, :string)
@@ -24,7 +23,7 @@ defmodule ActivityLogger.ActivityLog do
     field(:target_type, :string)
     field(:target_uuid, UUID)
     field(:target_changes, :map)
-    field(:target_encrypted_metadata, EWalletConfig.Encrypted.Map, default: %{})
+    field(:target_encrypted_changes, ActivityLogger.Encrypted.Map, default: %{})
 
     field(:originator_uuid, UUID)
     field(:originator_type, :string)
@@ -41,7 +40,7 @@ defmodule ActivityLogger.ActivityLog do
       :target_type,
       :target_uuid,
       :target_changes,
-      :target_encrypted_metadata,
+      :target_encrypted_changes,
       :originator_uuid,
       :originator_type,
       :metadata,
@@ -58,41 +57,16 @@ defmodule ActivityLogger.ActivityLog do
     ])
   end
 
-  @schemas_to_audit_types %{
-    EWalletConfig.System => "system",
-    EWalletDB.User => "user",
-    EWalletDB.Invite => "invite",
-    EWalletDB.Key => "key",
-    EWalletDB.ForgetPasswordRequest => "forget_password_request",
-    EWalletDB.UpdateEmailRequest => "update_email_request",
-    EWalletDB.AccountUser => "account_user",
-    EWalletDB.Transaction => "transaction",
-    EWalletDB.Mint => "mint",
-    EWalletDB.TransactionRequest => "transaction_request",
-    EWalletDB.TransactionConsumption => "transaction_consumption",
-    EWalletDB.Account => "account",
-    EWalletDB.Category => "category",
-    EWalletDB.ExchangePair => "exchange_pair",
-    EWalletDB.Wallet => "wallet",
-    EWalletDB.Membership => "membership",
-    EWalletDB.AuthToken => "auth_token",
-    EWalletDB.APIKey => "api_key",
-    EWalletDB.Token => "token",
-    EWalletDB.Role => "role"
-  }
-
-  @audit_types_to_schemas Enum.into(@schemas_to_audit_types, %{}, fn {key, value} ->
-                            {value, key}
-                          end)
-
   @spec get_schema(String.t()) :: Atom.t()
   def get_schema(type) do
-    Map.fetch!(@audit_types_to_schemas, type)
+    config = Application.get_env(:activity_logger, :activity_log_types_to_schemas)
+    Map.fetch!(config, type)
   end
 
   @spec get_type(Atom.t()) :: String.t()
   def get_type(schema) do
-    Map.fetch!(@schemas_to_audit_types, schema)
+    config = Application.get_env(:activity_logger, :schemas_to_activity_log_types)
+    Map.fetch!(config, schema)
   end
 
   @spec all_for_target(Map.t()) :: [%ActivityLog{}]
@@ -114,8 +88,8 @@ defmodule ActivityLogger.ActivityLog do
     |> all_for_target(uuid)
   end
 
-  @spec get_initial_audit(String.t(), UUID.t()) :: %ActivityLog{}
-  def get_initial_audit(type, uuid) do
+  @spec get_initial_activity_log(String.t(), UUID.t()) :: %ActivityLog{}
+  def get_initial_activity_log(type, uuid) do
     Repo.get_by(
       ActivityLog,
       action: "insert",
@@ -126,47 +100,47 @@ defmodule ActivityLogger.ActivityLog do
 
   @spec get_initial_originator(Map.t()) :: Map.t()
   def get_initial_originator(record) do
-    audit_type = get_type(record.__struct__)
-    audit = ActivityLog.get_initial_audit(audit_type, record.uuid)
-    originator_schema = ActivityLog.get_schema(audit.originator_type)
+    activity_log_type = get_type(record.__struct__)
+    activity_log = ActivityLog.get_initial_activity_log(activity_log_type, record.uuid)
+    originator_schema = ActivityLog.get_schema(activity_log.originator_type)
 
     case originator_schema do
-      EWalletConfig.System ->
-        %EWalletConfig.System{uuid: audit.originator_uuid}
+      ActivityLogger.System ->
+        %ActivityLogger.System{uuid: activity_log.originator_uuid}
 
       schema ->
-        Repo.get(schema, audit.originator_uuid)
+        Repo.get(schema, activity_log.originator_uuid)
     end
   end
 
-  @spec insert_record_with_audit(%Changeset{}, Keyword.t(), Multi.t()) ::
+  @spec insert_record_with_activity_log(%Changeset{}, Keyword.t(), Multi.t()) ::
           {:ok, any()}
           | {:error, any()}
           | {:error, :no_originator_given}
           | {:error, Multi.name(), any(), %{optional(Multi.name()) => any()}}
-  def insert_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
+  def insert_record_with_activity_log(changeset, opts \\ [], multi \\ Multi.new()) do
     :insert
     |> perform(changeset, opts, multi)
     |> handle_perform_result()
   end
 
-  @spec update_record_with_audit(%Changeset{}, Keyword.t(), Multi.t()) ::
+  @spec update_record_with_activity_log(%Changeset{}, Keyword.t(), Multi.t()) ::
           {:ok, any()}
           | {:error, any()}
           | {:error, :no_originator_given}
           | {:error, Multi.name(), any(), %{optional(Multi.name()) => any()}}
-  def update_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
+  def update_record_with_activity_log(changeset, opts \\ [], multi \\ Multi.new()) do
     :update
     |> perform(changeset, opts, multi)
     |> handle_perform_result()
   end
 
-  @spec delete_record_with_audit(Map.t(), Keyword.t(), Multi.t()) ::
+  @spec delete_record_with_activity_log(Map.t(), Keyword.t(), Multi.t()) ::
           {:ok, any()}
           | {:error, any()}
           | {:error, :no_originator_given}
           | {:error, Multi.name(), any(), %{optional(Multi.name()) => any()}}
-  def delete_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
+  def delete_record_with_activity_log(changeset, opts \\ [], multi \\ Multi.new()) do
     :delete
     |> perform(changeset, opts, multi)
     |> handle_perform_result()
@@ -180,10 +154,10 @@ defmodule ActivityLogger.ActivityLog do
   def perform(action, changeset, opts \\ [], multi \\ Multi.new()) do
     Multi
     |> apply(action, [Multi.new(), :record, changeset, opts])
-    |> Multi.run(:audit, fn %{record: record} ->
+    |> Multi.run(:activity_log, fn %{record: record} ->
       action
       |> build_attrs(changeset, record)
-      |> insert_audit()
+      |> insert_activity_log()
     end)
     |> Multi.append(multi)
     |> Repo.transaction()
@@ -199,7 +173,7 @@ defmodule ActivityLogger.ActivityLog do
     {:error, changeset}
   end
 
-  defp insert_audit(attrs) do
+  defp insert_activity_log(attrs) do
     %ActivityLog{}
     |> changeset(attrs)
     |> Repo.insert()
@@ -210,15 +184,15 @@ defmodule ActivityLogger.ActivityLog do
          originator_type <- get_type(originator.__struct__),
          target_type <- get_type(record.__struct__),
          changes <- Map.delete(changeset.changes, :originator),
-         encrypted_metadata <- changes[:encrypted_metadata],
-         changes <- Map.delete(changes, :encrypted_metadata),
+         encrypted_changes <- changes[:encrypted_changes],
+         changes <- Map.delete(changes, :encrypted_changes),
          changes <- format_changes(changes) do
       %{
         action: Atom.to_string(action),
         target_type: target_type,
         target_uuid: record.uuid,
         target_changes: changes,
-        target_encrypted_metadata: encrypted_metadata || %{},
+        target_encrypted_changes: encrypted_changes || %{},
         originator_uuid: originator.uuid,
         originator_type: originator_type,
         inserted_at: NaiveDateTime.utc_now()
