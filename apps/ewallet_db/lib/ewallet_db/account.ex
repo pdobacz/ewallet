@@ -5,7 +5,7 @@ defmodule EWalletDB.Account do
   use Ecto.Schema
   use Arc.Ecto.Schema
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader
   import EWalletDB.AccountValidator

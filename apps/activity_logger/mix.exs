@@ -1,9 +1,9 @@
-defmodule ActivityLog.MixProject do
+defmodule ActivityLogger.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :activity_log,
+      app: :activity_logger,
       version: "0.1.0",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
@@ -32,7 +32,7 @@ defmodule ActivityLog.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {ActivityLog.Application, []}
+      mod: {ActivityLogger.Application, []}
     ]
   end
 

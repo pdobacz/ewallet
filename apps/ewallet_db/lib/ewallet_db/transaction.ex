@@ -4,12 +4,12 @@ defmodule EWalletDB.Transaction do
   """
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.{Changeset, Query}
   import EWalletDB.Validator
   import EWalletDB.Validator
   alias Ecto.{Multi, UUID}
-  alias EWalletDB.{Account, Audit, ExchangePair, Repo, Token, Transaction, User, Wallet}
+  alias EWalletDB.{Account, ActivityLog, ExchangePair, Repo, Token, Transaction, User, Wallet}
   alias EWalletConfig.Types.VirtualStruct
 
   @pending "pending"
@@ -332,7 +332,7 @@ defmodule EWalletDB.Transaction do
     opts = [on_conflict: :nothing, conflict_target: :idempotency_token]
     changeset = changeset(%Transaction{}, attrs)
 
-    Audit.perform(
+    ActivityLog.perform(
       :insert,
       changeset,
       opts,
@@ -371,7 +371,7 @@ defmodule EWalletDB.Transaction do
       local_ledger_uuid: local_ledger_uuid,
       originator: originator
     })
-    |> Audit.update_record_with_audit()
+    |> ActivityLog.update_record_with_audit()
     |> handle_update_result()
   end
 
@@ -414,7 +414,7 @@ defmodule EWalletDB.Transaction do
   defp do_fail(data, transaction) do
     transaction
     |> fail_changeset(data)
-    |> Audit.update_record_with_audit()
+    |> ActivityLog.update_record_with_audit()
     |> handle_update_result()
   end
 

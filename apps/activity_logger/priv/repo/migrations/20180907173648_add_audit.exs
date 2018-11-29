@@ -1,4 +1,4 @@
-defmodule EWalletDB.Repo.Migrations.AddAudit do
+defmodule EWalletDB.Repo.Migrations.AddActivityLog do
   use Ecto.Migration
 
   def change do

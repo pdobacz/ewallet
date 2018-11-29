@@ -2,7 +2,7 @@ defmodule EWallet.Web.Originator do
   @moduledoc """
   Module to extract the originator from the conn.assigns.
   """
-  alias EWalletDB.{Key, User, Audit}
+  alias EWalletDB.{Key, User, ActivityLog}
 
   @spec extract(Map.t()) :: %Key{}
   def extract(%{key: key}) do
@@ -26,6 +26,6 @@ defmodule EWallet.Web.Originator do
 
   @spec get_initial_originator(Map.t()) :: Map.t()
   def get_initial_originator(record) do
-    Audit.get_initial_originator(record)
+    ActivityLog.get_initial_originator(record)
   end
 end

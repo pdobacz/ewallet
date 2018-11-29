@@ -5,7 +5,7 @@ defmodule EWalletDB.Category do
   use Ecto.Schema
   use EWalletDB.SoftDelete
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader
   alias Ecto.UUID

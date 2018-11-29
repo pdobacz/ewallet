@@ -5,7 +5,7 @@ defmodule EWalletDB.APIKey do
   use Ecto.Schema
   use EWalletDB.SoftDelete
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.Changeset
   alias Ecto.UUID
   alias EWalletConfig.Helpers.Crypto

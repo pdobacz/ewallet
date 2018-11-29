@@ -11,7 +11,7 @@ defmodule EWalletDB.Factory do
     Account,
     AccountUser,
     APIKey,
-    Audit,
+    ActivityLog,
     AuthToken,
     Category,
     ExchangePair,
@@ -158,13 +158,13 @@ defmodule EWalletDB.Factory do
     user = insert(:user, params)
     originator = insert(:admin)
 
-    %Audit{
+    %ActivityLog{
       action: "insert",
-      target_type: Audit.get_type(User),
+      target_type: ActivityLog.get_type(User),
       target_uuid: user.uuid,
       target_changes: params,
       originator_uuid: originator.uuid,
-      originator_type: Audit.get_type(Admin)
+      originator_type: ActivityLog.get_type(Admin)
     }
   end
 
@@ -173,13 +173,13 @@ defmodule EWalletDB.Factory do
     admin = insert(params)
     originator = %System{}
 
-    %Audit{
+    %ActivityLog{
       action: "insert",
-      target_type: Audit.get_type(admin.__struct__),
+      target_type: ActivityLog.get_type(admin.__struct__),
       target_uuid: admin.uuid,
       target_changes: params,
       originator_uuid: originator.uuid,
-      originator_type: Audit.get_type(originator.__struct__)
+      originator_type: ActivityLog.get_type(originator.__struct__)
     }
   end
 

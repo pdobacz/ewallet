@@ -4,7 +4,7 @@ defmodule EWalletDB.Wallet do
   """
   use Ecto.Schema
   use EWalletConfig.Types.WalletAddress
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.{Changeset, Query}
   import EWalletDB.Validator
   alias Ecto.UUID

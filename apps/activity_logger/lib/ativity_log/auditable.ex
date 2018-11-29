@@ -1,17 +1,17 @@
-defmodule EWalletDB.Auditable do
+defmodule EWalletDB.ActivityLogable do
   @moduledoc """
   Allows audit for Ecto records.
   """
   import Ecto.Changeset
   alias Ecto.Multi
-  alias EWalletDB.Audit
+  alias EWalletDB.ActivityLog
   alias EWalletConfig.Types.VirtualStruct
 
   @doc false
   defmacro __using__(_) do
     quote do
-      import EWalletDB.Auditable
-      alias EWalletDB.Auditable
+      import EWalletDB.ActivityLogable
+      alias EWalletDB.ActivityLogable
     end
   end
 
@@ -35,14 +35,14 @@ defmodule EWalletDB.Auditable do
   end
 
   def insert_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
-    Audit.insert_record_with_audit(changeset, opts, multi)
+    ActivityLog.insert_record_with_audit(changeset, opts, multi)
   end
 
   def update_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
-    Audit.update_record_with_audit(changeset, opts, multi)
+    ActivityLog.update_record_with_audit(changeset, opts, multi)
   end
 
   def delete_record_with_audit(changeset, opts \\ [], multi \\ Multi.new()) do
-    Audit.delete_record_with_audit(changeset, opts, multi)
+    ActivityLog.delete_record_with_audit(changeset, opts, multi)
   end
 end

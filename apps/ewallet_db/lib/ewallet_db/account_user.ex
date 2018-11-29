@@ -4,7 +4,7 @@ defmodule EWalletDB.AccountUser do
   """
   use Ecto.Schema
   use Arc.Ecto.Schema
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.Changeset
   alias Ecto.UUID
   alias EWalletDB.{Account, AccountUser, User}

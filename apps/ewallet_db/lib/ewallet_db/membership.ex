@@ -3,7 +3,7 @@ defmodule EWalletDB.Membership do
   Ecto Schema representing user memberships.
   """
   use Ecto.Schema
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.Changeset
   import Ecto.Query, except: [update: 2]
   alias Ecto.UUID

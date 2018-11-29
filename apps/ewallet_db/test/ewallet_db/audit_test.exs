@@ -1,22 +1,22 @@
-defmodule EWalletDB.AuditTest do
+defmodule EWalletDB.ActivityLogTest do
   use EWalletDB.SchemaCase
   alias Ecto.{Changeset, Multi}
   alias EWalletConfig.System
-  alias EWalletDB.{Audit, User}
+  alias EWalletDB.{ActivityLog, User}
 
-  describe "Audit.get_schema/1" do
+  describe "ActivityLog.get_schema/1" do
     test "gets the schema from a type" do
-      assert Audit.get_schema("user") == EWalletDB.User
+      assert ActivityLog.get_schema("user") == EWalletDB.User
     end
   end
 
-  describe "Audit.get_type/1" do
+  describe "ActivityLog.get_type/1" do
     test "gets the type from a schema" do
-      assert Audit.get_type(EWalletDB.User) == "user"
+      assert ActivityLog.get_type(EWalletDB.User) == "user"
     end
   end
 
-  describe "Audit.all_for_target/1" do
+  describe "ActivityLog.all_for_target/1" do
     test "returns all audits for a target" do
       {:ok, _user} = :user |> params_for() |> User.insert()
       {:ok, _user} = :user |> params_for() |> User.insert()
@@ -28,7 +28,7 @@ defmodule EWalletDB.AuditTest do
           originator: %System{}
         })
 
-      audits = Audit.all_for_target(user)
+      audits = ActivityLog.all_for_target(user)
 
       assert length(audits) == 2
 
@@ -39,7 +39,7 @@ defmodule EWalletDB.AuditTest do
     end
   end
 
-  describe "Audit.all_for_target/2" do
+  describe "ActivityLog.all_for_target/2" do
     test "returns all audits for a target when given a string" do
       {:ok, _user} = :user |> params_for() |> User.insert()
       {:ok, _user} = :user |> params_for() |> User.insert()
@@ -51,7 +51,7 @@ defmodule EWalletDB.AuditTest do
           originator: %System{}
         })
 
-      audits = Audit.all_for_target("user", user.uuid)
+      audits = ActivityLog.all_for_target("user", user.uuid)
 
       assert length(audits) == 2
 
@@ -71,7 +71,7 @@ defmodule EWalletDB.AuditTest do
           originator: %System{}
         })
 
-      audits = Audit.all_for_target(User, user.uuid)
+      audits = ActivityLog.all_for_target(User, user.uuid)
 
       assert length(audits) == 2
 
@@ -81,7 +81,7 @@ defmodule EWalletDB.AuditTest do
     end
   end
 
-  describe "Audit.get_initial_audit/2" do
+  describe "ActivityLog.get_initial_audit/2" do
     test "gets the initial audit for a record" do
       initial_originator = insert(:admin)
       {:ok, user} = :user |> params_for(%{originator: initial_originator}) |> User.insert()
@@ -92,7 +92,7 @@ defmodule EWalletDB.AuditTest do
           originator: %System{}
         })
 
-      audit = Audit.get_initial_audit("user", user.uuid)
+      audit = ActivityLog.get_initial_audit("user", user.uuid)
 
       assert audit.originator_type == "user"
       assert audit.originator_uuid == initial_originator.uuid
@@ -103,7 +103,7 @@ defmodule EWalletDB.AuditTest do
     end
   end
 
-  describe "Audit.get_initial_originator/2" do
+  describe "ActivityLog.get_initial_originator/2" do
     test "gets the initial originator for a record" do
       initial_originator = insert(:admin)
       {:ok, user} = :user |> params_for(%{originator: initial_originator}) |> User.insert()
@@ -114,14 +114,14 @@ defmodule EWalletDB.AuditTest do
           originator: %System{}
         })
 
-      originator = Audit.get_initial_originator(user)
+      originator = ActivityLog.get_initial_originator(user)
 
       assert originator.__struct__ == User
       assert originator.uuid == initial_originator.uuid
     end
   end
 
-  describe "Audit.insert_record_with_audit/2" do
+  describe "ActivityLog.insert_record_with_audit/2" do
     test "inserts an audit and a user with encrypted metadata" do
       admin = insert(:admin)
 
@@ -132,8 +132,8 @@ defmodule EWalletDB.AuditTest do
         })
 
       changeset = Changeset.change(%User{}, params)
-      {res, record} = Audit.insert_record_with_audit(changeset)
-      audit = record |> Audit.all_for_target() |> Enum.at(0)
+      {res, record} = ActivityLog.insert_record_with_audit(changeset)
+      audit = record |> ActivityLog.all_for_target() |> Enum.at(0)
 
       assert res == :ok
 
@@ -153,11 +153,11 @@ defmodule EWalletDB.AuditTest do
 
       assert audit.target_encrypted_metadata == %{"something" => "cool"}
 
-      assert record |> Audit.all_for_target() |> length() == 1
+      assert record |> ActivityLog.all_for_target() |> length() == 1
     end
   end
 
-  describe "Audit.update_record_with_audit/2" do
+  describe "ActivityLog.update_record_with_audit/2" do
     test "inserts an audit when updating a user" do
       admin = insert(:admin)
       {:ok, user} = :user |> params_for() |> User.insert()
@@ -169,8 +169,8 @@ defmodule EWalletDB.AuditTest do
         })
 
       changeset = Changeset.change(user, params)
-      {res, record} = Audit.update_record_with_audit(changeset)
-      audit = record |> Audit.all_for_target() |> Enum.at(0)
+      {res, record} = ActivityLog.update_record_with_audit(changeset)
+      audit = record |> ActivityLog.all_for_target() |> Enum.at(0)
 
       assert res == :ok
 
@@ -190,7 +190,7 @@ defmodule EWalletDB.AuditTest do
 
       assert audit.target_encrypted_metadata == %{}
 
-      assert user |> Audit.all_for_target() |> length() == 2
+      assert user |> ActivityLog.all_for_target() |> length() == 2
     end
   end
 
@@ -213,7 +213,7 @@ defmodule EWalletDB.AuditTest do
         end)
 
       {res, %{audit: audit, record: record, wow_user: wow_user}} =
-        Audit.perform(:insert, changeset, [], multi)
+        ActivityLog.perform(:insert, changeset, [], multi)
 
       assert res == :ok
 
@@ -226,7 +226,7 @@ defmodule EWalletDB.AuditTest do
       assert wow_user != nil
       assert wow_user.username == "test_username"
 
-      assert record |> Audit.all_for_target() |> length() == 1
+      assert record |> ActivityLog.all_for_target() |> length() == 1
     end
 
     test "inserts an audit and updates a user as well as saving a wallet" do
@@ -248,7 +248,7 @@ defmodule EWalletDB.AuditTest do
         end)
 
       {res, %{audit: audit, record: record, wow_user: _}} =
-        Audit.perform(:update, changeset, [], multi)
+        ActivityLog.perform(:update, changeset, [], multi)
 
       assert res == :ok
 
@@ -260,7 +260,7 @@ defmodule EWalletDB.AuditTest do
       changes = Map.delete(changeset.changes, :originator)
       assert audit.target_changes == changes
 
-      assert user |> Audit.all_for_target() |> length() == 2
+      assert user |> ActivityLog.all_for_target() |> length() == 2
     end
   end
 end

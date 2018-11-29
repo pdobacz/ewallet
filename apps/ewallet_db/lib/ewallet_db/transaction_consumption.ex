@@ -4,7 +4,7 @@ defmodule EWalletDB.TransactionConsumption do
   """
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.{Changeset, Query}
   alias Ecto.UUID
 

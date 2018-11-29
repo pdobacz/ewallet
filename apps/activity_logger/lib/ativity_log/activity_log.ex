@@ -1,4 +1,4 @@
-defmodule EWalletDB.Audit do
+defmodule ActivityLogger.ActivityLog do
   @moduledoc """
   Ecto Schema representing audits.
   """
@@ -8,11 +8,12 @@ defmodule EWalletDB.Audit do
   import Ecto.{Changeset, Query}
   alias Ecto.{Changeset, Multi, UUID}
 
-  alias EWalletDB.{
-    Audit,
+  alias ActivityLogger.{
+    ActivityLog,
     Repo
   }
 
+  @primary_key {:uuid, UUID, autogenerate: true}
   @primary_key {:uuid, UUID, autogenerate: true}
 
   schema "audit" do
@@ -94,29 +95,29 @@ defmodule EWalletDB.Audit do
     Map.fetch!(@schemas_to_audit_types, schema)
   end
 
-  @spec all_for_target(Map.t()) :: [%Audit{}]
+  @spec all_for_target(Map.t()) :: [%ActivityLog{}]
   def all_for_target(record) do
     all_for_target(record.__struct__, record.uuid)
   end
 
-  @spec all_for_target(String.t(), UUID.t()) :: [%Audit{}]
+  @spec all_for_target(String.t(), UUID.t()) :: [%ActivityLog{}]
   def all_for_target(type, uuid) when is_binary(type) do
-    Audit
+    ActivityLog
     |> where([a], a.target_type == ^type and a.target_uuid == ^uuid)
     |> Repo.all()
   end
 
-  @spec all_for_target(Atom.t(), UUID.t()) :: [%Audit{}]
+  @spec all_for_target(Atom.t(), UUID.t()) :: [%ActivityLog{}]
   def all_for_target(schema, uuid) do
     schema
     |> get_type()
     |> all_for_target(uuid)
   end
 
-  @spec get_initial_audit(String.t(), UUID.t()) :: %Audit{}
+  @spec get_initial_audit(String.t(), UUID.t()) :: %ActivityLog{}
   def get_initial_audit(type, uuid) do
     Repo.get_by(
-      Audit,
+      ActivityLog,
       action: "insert",
       target_type: type,
       target_uuid: uuid
@@ -126,8 +127,8 @@ defmodule EWalletDB.Audit do
   @spec get_initial_originator(Map.t()) :: Map.t()
   def get_initial_originator(record) do
     audit_type = get_type(record.__struct__)
-    audit = Audit.get_initial_audit(audit_type, record.uuid)
-    originator_schema = Audit.get_schema(audit.originator_type)
+    audit = ActivityLog.get_initial_audit(audit_type, record.uuid)
+    originator_schema = ActivityLog.get_schema(audit.originator_type)
 
     case originator_schema do
       EWalletConfig.System ->
@@ -199,7 +200,7 @@ defmodule EWalletDB.Audit do
   end
 
   defp insert_audit(attrs) do
-    %Audit{}
+    %ActivityLog{}
     |> changeset(attrs)
     |> Repo.insert()
   end

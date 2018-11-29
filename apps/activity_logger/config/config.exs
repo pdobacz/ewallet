@@ -2,7 +2,7 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-config :activity_log,
-  ecto_repos: [ActivityLog.Repo]
+config :activity_logger,
+  ecto_repos: [ActivityLogger.Repo]
 
 import_config "#{Mix.env()}.exs"

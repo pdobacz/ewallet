@@ -3,11 +3,11 @@ defmodule EWalletDB.Invite do
   Ecto Schema representing invite.
   """
   use Ecto.Schema
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.{Changeset, Query}
   alias Ecto.{Multi, UUID}
   alias EWalletConfig.Helpers.Crypto
-  alias EWalletDB.{Audit, Invite, Repo, User}
+  alias EWalletDB.{ActivityLog, Invite, Repo, User}
 
   @primary_key {:uuid, UUID, autogenerate: true}
   @token_length 32
@@ -110,7 +110,7 @@ defmodule EWalletDB.Invite do
   Generates an invite for the given user.
   """
   def generate(user, opts \\ []) do
-    originator = Audit.get_initial_originator(user)
+    originator = ActivityLog.get_initial_originator(user)
 
     # Insert a new invite
     %Invite{}
@@ -179,7 +179,7 @@ defmodule EWalletDB.Invite do
          {:ok, _user} <- User.update(user, user_attrs),
          invite_attrs <- %{verified_at: NaiveDateTime.utc_now(), originator: invite.user},
          changeset <- changeset_accept(invite, invite_attrs),
-         {:ok, invite} <- Audit.update_record_with_audit(changeset) do
+         {:ok, invite} <- ActivityLog.update_record_with_audit(changeset) do
       {:ok, invite}
     else
       {:error, _failed_operation, changeset, _changes_so_far} ->

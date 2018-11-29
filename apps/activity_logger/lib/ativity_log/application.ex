@@ -1,4 +1,4 @@
-defmodule ActivityLog.Application do
+defmodule ActivityLogger.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -7,13 +7,13 @@ defmodule ActivityLog.Application do
 
   def start(_type, _args) do
     import Supervisor.Spec
-    DeferredConfig.populate(:activity_log)
+    DeferredConfig.populate(:activity_logger)
 
     children = [
       supervisor(EWalletConfig.Repo, [])
     ]
 
-    opts = [strategy: :one_for_one, name: ActivityLog.Supervisor]
+    opts = [strategy: :one_for_one, name: ActivityLogger.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

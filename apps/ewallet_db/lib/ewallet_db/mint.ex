@@ -4,11 +4,11 @@ defmodule EWalletDB.Mint do
   """
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.{Query, Changeset}
   import EWalletDB.Helpers.Preloader
   alias Ecto.UUID
-  alias EWalletDB.{Account, Audit, Mint, Repo, Token, Transaction}
+  alias EWalletDB.{Account, ActivityLog, Mint, Repo, Token, Transaction}
   alias EWalletConfig.Types.VirtualStruct
 
   @primary_key {:uuid, Ecto.UUID, autogenerate: true}
@@ -123,7 +123,7 @@ defmodule EWalletDB.Mint do
   def insert(attrs) do
     %Mint{}
     |> changeset(attrs)
-    |> Audit.insert_record_with_audit()
+    |> ActivityLog.insert_record_with_audit()
   end
 
   @doc """
@@ -133,7 +133,7 @@ defmodule EWalletDB.Mint do
   def update(%Mint{} = mint, attrs) do
     mint
     |> update_changeset(attrs)
-    |> Audit.update_record_with_audit()
+    |> ActivityLog.update_record_with_audit()
   end
 
   @doc """
@@ -148,7 +148,7 @@ defmodule EWalletDB.Mint do
         confirmed: true,
         originator: originator
       })
-      |> Audit.update_record_with_audit()
+      |> ActivityLog.update_record_with_audit()
 
     mint
   end

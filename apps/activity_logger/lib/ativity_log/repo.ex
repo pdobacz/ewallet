@@ -1,5 +1,5 @@
-defmodule ActivityLog.Repo do
-  use Ecto.Repo, otp_app: :activity_log
+defmodule ActivityLogger.Repo do
+  use Ecto.Repo, otp_app: :activity_logger
 
   # Workaround an issue where ecto.migrate task won't start the app
   # thus DeferredConfig.populate is not getting called.

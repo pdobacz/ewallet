@@ -3,7 +3,7 @@ defmodule EWalletDB.ForgetPasswordRequest do
   Ecto Schema representing a password reset request.
   """
   use Ecto.Schema
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.{Changeset, Query}
   alias Ecto.UUID
   alias EWalletDB.{ForgetPasswordRequest, Repo, User}

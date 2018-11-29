@@ -4,7 +4,7 @@ defmodule EWalletDB.AuthToken do
   """
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.Auditable
+  use EWalletDB.ActivityLogable
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
   alias Ecto.UUID

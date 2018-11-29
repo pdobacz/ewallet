@@ -1,7 +1,7 @@
 defmodule EWalletDB.UserTest do
   use EWalletDB.SchemaCase
   alias EWalletConfig.Helpers.Crypto
-  alias EWalletDB.{Account, Audit, Invite, User}
+  alias EWalletDB.{Account, ActivityLog, Invite, User}
   alias EWalletConfig.System
 
   describe "User factory" do
@@ -22,7 +22,7 @@ defmodule EWalletDB.UserTest do
       assert user.metadata["first_name"] == inserted_user.metadata["first_name"]
       assert user.metadata["last_name"] == inserted_user.metadata["last_name"]
 
-      audits = Audit.all_for_target(User, user.uuid)
+      audits = ActivityLog.all_for_target(User, user.uuid)
       assert length(audits) == 1
 
       audit = Enum.at(audits, 0)
