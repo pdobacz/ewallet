@@ -1,6 +1,6 @@
-defmodule EWalletConfig.Types.WalletAddressTest do
+defmodule Utils.Types.WalletAddressTest do
   use ExUnit.Case, async: true
-  alias EWalletConfig.Types.WalletAddress
+  alias Utils.Types.WalletAddress
   # alias EWalletDB.Wallet
 
   describe "cast/1" do

@@ -22,7 +22,7 @@ defmodule EWalletDB.ExchangePair do
   use Ecto.Schema
   use EWalletDB.SoftDelete
   use ActivityLogger.ActivityLogging
-  use EWalletConfig.Types.ExternalID
+  use Utils.Types.ExternalID
   import Ecto.Changeset
   import EWalletDB.Helpers.Preloader
   import EWalletDB.Validator

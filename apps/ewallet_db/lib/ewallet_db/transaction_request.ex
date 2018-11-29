@@ -3,7 +3,7 @@ defmodule EWalletDB.TransactionRequest do
   Ecto Schema representing transaction requests.
   """
   use Ecto.Schema
-  use EWalletConfig.Types.ExternalID
+  use Utils.Types.ExternalID
   use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader

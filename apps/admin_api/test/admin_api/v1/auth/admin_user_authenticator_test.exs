@@ -2,7 +2,7 @@ defmodule AdminAPI.Web.V1.AdminUserAuthenticatorTest do
   use AdminAPI.ConnCase, async: true
   alias AdminAPI.V1.AdminUserAuthenticator
   alias EWalletDB.User
-  alias EWalletConfig.Helpers.Crypto
+  alias Utils.Helpers.Crypto
   alias ActivityLogger.System
 
   describe "authenticate/3" do

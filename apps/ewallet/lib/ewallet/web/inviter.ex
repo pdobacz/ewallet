@@ -3,7 +3,7 @@ defmodule EWallet.Web.Inviter do
   This module handles user invite and confirmation of their emails.
   """
   alias EWallet.Mailer
-  alias EWalletConfig.Helpers.Crypto
+  alias Utils.Helpers.Crypto
   alias EWalletDB.{Account, AccountUser, Invite, Membership, Role, User}
 
   @doc """

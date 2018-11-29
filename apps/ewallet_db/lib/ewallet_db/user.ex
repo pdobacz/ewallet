@@ -4,13 +4,13 @@ defmodule EWalletDB.User do
   """
   use Arc.Ecto.Schema
   use Ecto.Schema
-  use EWalletConfig.Types.ExternalID
+  use Utils.Types.ExternalID
   use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader
   import EWalletDB.Validator
   alias Ecto.{Multi, UUID}
-  alias EWalletConfig.Helpers.Crypto
+  alias Utils.Helpers.Crypto
 
   alias EWalletDB.{
     Account,

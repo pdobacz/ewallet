@@ -3,7 +3,7 @@ defmodule EWalletConfig.StoredSetting do
   Ecto Schema representing stored settings.
   """
   use Ecto.Schema
-  use EWalletConfig.Types.ExternalID
+  use Utils.Types.ExternalID
   import Ecto.Changeset
   import EWalletConfig.{Validator, SettingValidator}
   alias Ecto.UUID

@@ -4,7 +4,7 @@ defmodule EWalletDB.Account do
   """
   use Ecto.Schema
   use Arc.Ecto.Schema
-  use EWalletConfig.Types.ExternalID
+  use Utils.Types.ExternalID
   use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader

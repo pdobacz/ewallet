@@ -3,7 +3,7 @@ defmodule EWalletDB.Role do
   Ecto Schema representing user roles.
   """
   use Ecto.Schema
-  use EWalletConfig.Types.ExternalID
+  use Utils.Types.ExternalID
   use EWalletDB.SoftDelete
   use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}

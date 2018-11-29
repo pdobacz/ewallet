@@ -3,12 +3,12 @@ defmodule EWalletDB.Wallet do
   Ecto Schema representing wallet.
   """
   use Ecto.Schema
-  use EWalletConfig.Types.WalletAddress
+  use Utils.Types.WalletAddress
   use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   import EWalletDB.Validator
   alias Ecto.UUID
-  alias EWalletConfig.Types.WalletAddress
+  alias Utils.Types.WalletAddress
   alias EWalletDB.{Account, Repo, User, Wallet}
   alias ExULID.ULID
   alias ActivityLogger.System

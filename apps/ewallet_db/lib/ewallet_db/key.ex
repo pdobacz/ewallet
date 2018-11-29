@@ -4,11 +4,11 @@ defmodule EWalletDB.Key do
   """
   use Ecto.Schema
   use EWalletDB.SoftDelete
-  use EWalletConfig.Types.ExternalID
+  use Utils.Types.ExternalID
   use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   alias Ecto.UUID
-  alias EWalletConfig.Helpers.Crypto
+  alias Utils.Helpers.Crypto
   alias EWalletDB.{Account, Key, Repo}
 
   @primary_key {:uuid, UUID, autogenerate: true}

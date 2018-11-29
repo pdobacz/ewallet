@@ -7,7 +7,7 @@ defmodule EWalletDB.UpdateEmailRequest do
   import Ecto.{Changeset, Query}
   import EWalletDB.Validator
   alias Ecto.UUID
-  alias EWalletConfig.Helpers.Crypto
+  alias Utils.Helpers.Crypto
   alias EWalletDB.{UpdateEmailRequest, Repo, User}
 
   @primary_key {:uuid, UUID, autogenerate: true}

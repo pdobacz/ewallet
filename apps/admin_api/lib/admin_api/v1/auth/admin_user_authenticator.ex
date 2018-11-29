@@ -4,7 +4,7 @@ defmodule AdminAPI.V1.AdminUserAuthenticator do
   It returns the associated user if authenticated, `false` otherwise.
   """
   import Plug.Conn
-  alias EWalletConfig.Helpers.Crypto
+  alias Utils.Helpers.Crypto
   alias EWalletDB.{AuthToken, User}
 
   def authenticate(conn, email, password) when is_binary(email) do

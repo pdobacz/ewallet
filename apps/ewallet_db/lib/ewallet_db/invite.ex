@@ -6,7 +6,7 @@ defmodule EWalletDB.Invite do
   use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   alias Ecto.{Multi, UUID}
-  alias EWalletConfig.Helpers.Crypto
+  alias Utils.Helpers.Crypto
   alias EWalletDB.{ActivityLog, Invite, Repo, User}
 
   @primary_key {:uuid, UUID, autogenerate: true}

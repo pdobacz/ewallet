@@ -1,6 +1,6 @@
 defmodule EWalletDB.UserTest do
   use EWalletDB.SchemaCase
-  alias EWalletConfig.Helpers.Crypto
+  alias Utils.Helpers.Crypto
   alias EWalletDB.{Account, ActivityLog, Invite, User}
   alias ActivityLogger.System
 
