@@ -4,7 +4,7 @@ defmodule EWallet.Mixfile do
   def project do
     [
       app: :ewallet,
-      version: "0.1.0-beta",
+      version: "1.1.0-pre",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -40,19 +40,19 @@ defmodule EWallet.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:bamboo, "~> 0.8"},
+      {:bamboo_smtp, "~> 1.4.0"},
+      {:bodyguard, "~> 2.2"},
+      {:decimal, "~> 1.0"},
+      {:deferred_config, "~> 0.1.0"},
+      {:ewallet_config, in_umbrella: true},
+      {:ewallet_db, in_umbrella: true},
+      {:local_ledger, in_umbrella: true},
+      {:local_ledger_db, in_umbrella: true},
       {:phoenix, "~> 1.3.0"},
       {:phoenix_html, "~> 2.11.0"},
       {:quantum, "~> 2.2.6"},
       {:timex, "~> 3.0"},
-      {:bodyguard, "~> 2.2"},
-      {:bamboo, "~> 0.8"},
-      {:bamboo_smtp, "~> 1.4.0"},
-      {:decimal, "~> 1.0"},
-      {:deferred_config, "~> 0.1.0"},
-      {:ewallet_db, in_umbrella: true},
-      {:ewallet_config, in_umbrella: true},
-      {:local_ledger, in_umbrella: true},
-      {:local_ledger_db, in_umbrella: true}
     ]
   end
 end

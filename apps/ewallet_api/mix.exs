@@ -4,7 +4,7 @@ defmodule EWalletAPI.Mixfile do
   def project do
     [
       app: :ewallet_api,
-      version: "0.1.0-beta",
+      version: "1.1.0-pre",
       build_path: "../../_build",
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
@@ -50,14 +50,15 @@ defmodule EWalletAPI.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.3.0"},
-      {:cowboy, "~> 1.0"},
       {:cors_plug, "~> 1.5"},
-      {:sentry, "~> 6.2.0"},
-      {:peerage, "~> 1.0.2"},
+      {:cowboy, "~> 1.0"},
       {:deferred_config, "~> 0.1.0"},
+      {:ewallet, in_umbrella: true},
+      {:ewallet_config, in_umbrella: true},
       {:ewallet_db, in_umbrella: true},
-      {:ewallet, in_umbrella: true}
+      {:peerage, "~> 1.0.2"},
+      {:phoenix, "~> 1.3.0"},
+      {:sentry, "~> 6.2.0"},
     ]
   end
 
