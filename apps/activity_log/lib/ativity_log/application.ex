@@ -6,14 +6,13 @@ defmodule ActivityLog.Application do
   use Application
 
   def start(_type, _args) do
-    # List all child processes to be supervised
+    import Supervisor.Spec
+    DeferredConfig.populate(:activity_log)
+
     children = [
-      # Starts a worker by calling: ActivityLog.Worker.start_link(arg)
-      # {ActivityLog.Worker, arg},
+      supervisor(EWalletConfig.Repo, [])
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: ActivityLog.Supervisor]
     Supervisor.start_link(children, opts)
   end

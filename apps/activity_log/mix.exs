@@ -10,6 +10,7 @@ defmodule ActivityLog.MixProject do
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
       elixir: "~> 1.6",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
@@ -39,7 +40,8 @@ defmodule ActivityLog.MixProject do
   defp deps do
     [
       {:postgrex, ">= 0.0.0"},
-      {:ecto, "~> 2.1.6"}
+      {:ecto, "~> 2.1.6"},
+      {:deferred_config, "~> 0.1.0"}
     ]
   end
 
