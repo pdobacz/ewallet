@@ -1,6 +1,6 @@
-defmodule AtivityLog do
+defmodule ActivityLog do
   @moduledoc """
-  Documentation for AtivityLog.
+  Documentation for ActivityLog.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule AtivityLog do
 
   ## Examples
 
-      iex> AtivityLog.hello
+      iex> ActivityLog.hello
       :world
 
   """

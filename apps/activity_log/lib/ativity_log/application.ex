@@ -1,4 +1,4 @@
-defmodule AtivityLog.Application do
+defmodule ActivityLog.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -8,13 +8,13 @@ defmodule AtivityLog.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      # Starts a worker by calling: AtivityLog.Worker.start_link(arg)
-      # {AtivityLog.Worker, arg},
+      # Starts a worker by calling: ActivityLog.Worker.start_link(arg)
+      # {ActivityLog.Worker, arg},
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: AtivityLog.Supervisor]
+    opts = [strategy: :one_for_one, name: ActivityLog.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

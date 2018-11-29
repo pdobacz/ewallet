@@ -10,11 +10,11 @@ use Mix.Config
 
 # You can configure your application as:
 #
-#     config :ativity_log, key: :value
+#     config :activity_log, key: :value
 #
 # and access this configuration in your application as:
 #
-#     Application.get_env(:ativity_log, :key)
+#     Application.get_env(:activity_log, :key)
 #
 # You can also configure a 3rd-party app:
 #
