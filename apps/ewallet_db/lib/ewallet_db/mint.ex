@@ -4,7 +4,7 @@ defmodule EWalletDB.Mint do
   """
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.{Query, Changeset}
   import EWalletDB.Helpers.Preloader
   alias Ecto.UUID

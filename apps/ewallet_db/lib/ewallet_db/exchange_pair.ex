@@ -21,7 +21,7 @@ defmodule EWalletDB.ExchangePair do
   """
   use Ecto.Schema
   use EWalletDB.SoftDelete
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   use EWalletConfig.Types.ExternalID
   import Ecto.Changeset
   import EWalletDB.Helpers.Preloader
@@ -54,7 +54,7 @@ defmodule EWalletDB.ExchangePair do
     field(:rate, :float)
     timestamps()
     soft_delete()
-    auditable()
+    activity_logging()
   end
 
   defp changeset(exchange_pair, attrs) do

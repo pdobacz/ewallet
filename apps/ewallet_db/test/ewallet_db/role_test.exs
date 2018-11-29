@@ -1,7 +1,7 @@
 defmodule EWalletDB.RoleTest do
   use EWalletDB.SchemaCase
   alias EWalletDB.{Membership, Role}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "Role factory" do
     test_has_valid_factory(Role)

@@ -4,7 +4,7 @@ defmodule AdminPanel.PageControllerTest do
   import EWalletDB.Factory
   alias Ecto.Adapters.SQL.Sandbox
   alias EWalletDB.APIKey
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   # Attributes required by Phoenix.ConnTest
   @endpoint AdminPanel.Endpoint

@@ -1,7 +1,7 @@
 defmodule EWalletDB.ExchangePairTest do
   use EWalletDB.SchemaCase
   alias EWalletDB.ExchangePair
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "ExchangePair factory" do
     test_has_valid_factory(ExchangePair)

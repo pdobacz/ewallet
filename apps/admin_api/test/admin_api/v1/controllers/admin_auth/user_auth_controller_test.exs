@@ -1,7 +1,7 @@
 defmodule AdminAPI.V1.AdminAuth.UserAuthControllerTest do
   use AdminAPI.ConnCase, async: true
   alias EWalletDB.{AuthToken, User}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "/user.login" do
     test "responds with a new auth token if id is valid" do

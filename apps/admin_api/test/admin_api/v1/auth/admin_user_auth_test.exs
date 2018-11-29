@@ -2,7 +2,7 @@ defmodule AdminAPI.Web.V1.AdminUserAuthTest do
   use AdminAPI.ConnCase, async: true
   alias AdminAPI.V1.AdminUserAuth
   alias EWalletDB.{AuthToken, User}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   def auth_header(user_id, token) do
     encoded_key = Base.encode64(user_id <> ":" <> token)

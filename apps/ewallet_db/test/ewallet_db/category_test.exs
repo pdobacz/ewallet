@@ -1,7 +1,7 @@
 defmodule EWalletDB.CategoryTest do
   use EWalletDB.SchemaCase
   alias EWalletDB.Category
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   defp insert_category(accounts) do
     account_ids = Enum.map(accounts, fn account -> account.id end)

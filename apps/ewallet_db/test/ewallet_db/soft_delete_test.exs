@@ -2,7 +2,7 @@ defmodule EWalletDB.SoftDeleteTest do
   use EWalletDB.SchemaCase
   import EWalletDB.SoftDelete
   alias EWalletDB.{Key, Repo}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "exclude_deleted/1" do
     test "returns records that are not soft-deleted" do

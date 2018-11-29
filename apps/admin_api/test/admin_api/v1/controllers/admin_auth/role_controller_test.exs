@@ -1,7 +1,7 @@
 defmodule AdminAPI.V1.AdminAuth.RoleControllerTest do
   use AdminAPI.ConnCase, async: true
   alias EWalletDB.{Membership, Role}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "/role.all" do
     test "returns a list of roles and pagination data" do

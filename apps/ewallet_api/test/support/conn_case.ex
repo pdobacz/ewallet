@@ -21,7 +21,7 @@ defmodule EWalletAPI.ConnCase do
   alias EWallet.{MintGate, TransactionGate}
   alias EWalletDB.{Account, Repo, User}
   alias EWalletConfig.ConfigTestHelper
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   # Attributes required by Phoenix.ConnTest
   @endpoint EWalletAPI.Endpoint

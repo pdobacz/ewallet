@@ -61,7 +61,7 @@ defmodule EWalletDB.SoftDelete do
   end
   ```
   """
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.Query
 
   @doc false

@@ -7,7 +7,7 @@ defmodule EWallet.LocalLedgerCase do
   alias EWallet.{MintGate, TransactionGate}
   alias EWalletDB.Account
   alias EWalletConfig.ConfigTestHelper
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   defmacro __using__(_opts) do
     quote do

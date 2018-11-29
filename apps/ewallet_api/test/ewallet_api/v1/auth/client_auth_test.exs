@@ -2,7 +2,7 @@ defmodule EWalletAPI.V1.ClientAuthTest do
   use EWallet.LocalLedgerCase, async: true
   alias EWalletAPI.V1.ClientAuth
   alias EWalletDB.AuthToken
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   def auth_header(key, token) do
     encoded_key = Base.encode64(key <> ":" <> token)

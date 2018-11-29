@@ -3,7 +3,7 @@ defmodule EWalletDB.Invite do
   Ecto Schema representing invite.
   """
   use Ecto.Schema
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   alias Ecto.{Multi, UUID}
   alias EWalletConfig.Helpers.Crypto
@@ -27,7 +27,7 @@ defmodule EWalletDB.Invite do
     )
 
     timestamps()
-    auditable()
+    activity_logging()
   end
 
   defp changeset_insert(changeset, attrs) do

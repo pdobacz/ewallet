@@ -4,7 +4,7 @@ defmodule EWalletDB.TransactionConsumption do
   """
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   alias Ecto.UUID
 
@@ -131,7 +131,7 @@ defmodule EWalletDB.TransactionConsumption do
     )
 
     timestamps()
-    auditable()
+    activity_logging()
   end
 
   defp changeset(%TransactionConsumption{} = consumption, attrs) do

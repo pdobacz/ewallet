@@ -12,7 +12,7 @@ defmodule EWallet.TransactionGate do
   }
 
   alias EWalletDB.{AccountUser, Transaction}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
   alias LocalLedger.Transaction, as: LedgerTransaction
 
   def create(attrs) do

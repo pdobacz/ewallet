@@ -3,7 +3,7 @@ defmodule AdminAPI.Web.V1.AdminUserAuthenticatorTest do
   alias AdminAPI.V1.AdminUserAuthenticator
   alias EWalletDB.User
   alias EWalletConfig.Helpers.Crypto
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "authenticate/3" do
     test "returns authenticated:true if email and password are valid" do

@@ -5,7 +5,7 @@ defmodule EWallet.TransactionGateTest do
   alias Ecto.UUID
   alias EWallet.{BalanceFetcher, TransactionGate}
   alias EWalletDB.{Account, Token, Transaction, User, Wallet}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   def init_wallet(address, token, amount \\ 1_000) do
     master_account = Account.get_master_account()

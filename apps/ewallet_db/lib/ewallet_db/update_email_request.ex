@@ -3,7 +3,7 @@ defmodule EWalletDB.UpdateEmailRequest do
   Ecto Schema representing a change email request.
   """
   use Ecto.Schema
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   import EWalletDB.Validator
   alias Ecto.UUID
@@ -27,7 +27,7 @@ defmodule EWalletDB.UpdateEmailRequest do
     )
 
     timestamps()
-    auditable()
+    activity_logging()
   end
 
   defp changeset(changeset, attrs) do

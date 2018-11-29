@@ -2,7 +2,7 @@ defmodule AdminAPI.V1.ProviderAuth.TransactionControllerTest do
   use AdminAPI.ConnCase, async: true
   alias EWallet.TransactionGate
   alias EWalletDB.{Account, Repo, Transaction, User}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   # credo:disable-for-next-line
   setup do

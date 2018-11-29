@@ -2,7 +2,7 @@ defmodule AdminAPI.V1.ProviderAuth.SelfControllerTest do
   use AdminAPI.ConnCase, async: true
   import Ecto.Query
   alias EWalletDB.{Membership, Repo}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   @update_email_url "http://localhost:4000/update_email?email={email}&token={token}"
 

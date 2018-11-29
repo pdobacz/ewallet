@@ -4,14 +4,14 @@ defmodule EWalletDB.Wallet do
   """
   use Ecto.Schema
   use EWalletConfig.Types.WalletAddress
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   import EWalletDB.Validator
   alias Ecto.UUID
   alias EWalletConfig.Types.WalletAddress
   alias EWalletDB.{Account, Repo, User, Wallet}
   alias ExULID.ULID
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   @genesis "genesis"
   @burn "burn"
@@ -47,7 +47,7 @@ defmodule EWalletDB.Wallet do
     field(:metadata, :map, default: %{})
     field(:encrypted_metadata, EWalletConfig.Encrypted.Map, default: %{})
     field(:enabled, :boolean)
-    auditable()
+    activity_logging()
 
     belongs_to(
       :user,

@@ -4,7 +4,7 @@ defmodule EWallet.Web.V1.AccountSerializerTest do
   alias EWallet.Web.{Date, Orchestrator, Paginator}
   alias EWallet.Web.V1.{AccountOverlay, AccountSerializer, CategorySerializer}
   alias EWalletDB.Account
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "AccountSerializer.serialize/1" do
     test "serializes an account into V1 response format" do

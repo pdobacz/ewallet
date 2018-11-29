@@ -3,7 +3,7 @@ defmodule EWallet.Web.MatchAllParserTest do
   import EWalletDB.Factory
   alias EWallet.Web.{MatchAllParser, Preloader}
   alias EWalletDB.{Account, Repo, Transaction, User}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "to_query/3" do
     test "filter for mapped field" do

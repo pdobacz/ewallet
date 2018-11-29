@@ -5,7 +5,7 @@ defmodule EWalletDB.User do
   use Arc.Ecto.Schema
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader
   import EWalletDB.Validator
@@ -87,7 +87,7 @@ defmodule EWalletDB.User do
     )
 
     timestamps()
-    auditable()
+    activity_logging()
   end
 
   defp changeset(changeset, attrs) do

@@ -4,7 +4,7 @@ defmodule AdminAPI.V1.ProviderAuth.MintControllerTest do
   alias EWallet.Web.Date
   alias EWallet.Web.V1.{AccountSerializer, TokenSerializer, TransactionSerializer}
   alias EWalletDB.{Mint, Repo}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "/token.get_mints" do
     test "returns a list of mints and pagination data" do

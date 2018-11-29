@@ -8,7 +8,7 @@ defmodule EWallet.TransactionConsumptionConsumerGateTest do
   }
 
   alias EWalletDB.{Token, TransactionConsumption, TransactionRequest, User, Wallet}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   setup do
     {:ok, pid} = TestEndpoint.start_link()

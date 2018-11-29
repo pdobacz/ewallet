@@ -3,7 +3,7 @@ defmodule EWallet.Web.MatchAnyParserTest do
   import EWalletDB.Factory
   alias EWallet.Web.{MatchAnyParser, Preloader}
   alias EWalletDB.{Account, Repo, Transaction, User}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "to_query/3" do
     test "filter for boolean true when given 'true' as value" do

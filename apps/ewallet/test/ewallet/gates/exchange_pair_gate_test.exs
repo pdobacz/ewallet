@@ -2,7 +2,7 @@ defmodule EWallet.ExchangePairGateTest do
   use EWallet.LocalLedgerCase, async: true
   alias EWallet.ExchangePairGate
   alias EWalletDB.{ExchangePair, Repo}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "insert/2" do
     test "inserts an exchange pair" do

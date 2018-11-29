@@ -2,7 +2,7 @@ defmodule EWalletAPI.V1.ClientAuthPlugTest do
   use EWalletAPI.ConnCase, async: true
   alias EWalletAPI.V1.ClientAuthPlug
   alias EWalletDB.AuthToken
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "ClientAuthPlug.call/2" do
     test "assigns user if api key and auth token are correct" do

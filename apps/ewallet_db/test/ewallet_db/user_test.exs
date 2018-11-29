@@ -2,7 +2,7 @@ defmodule EWalletDB.UserTest do
   use EWalletDB.SchemaCase
   alias EWalletConfig.Helpers.Crypto
   alias EWalletDB.{Account, ActivityLog, Invite, User}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "User factory" do
     test_has_valid_factory(User)

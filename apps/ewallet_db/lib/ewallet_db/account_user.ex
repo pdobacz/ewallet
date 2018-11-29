@@ -4,7 +4,7 @@ defmodule EWalletDB.AccountUser do
   """
   use Ecto.Schema
   use Arc.Ecto.Schema
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.Changeset
   alias Ecto.UUID
   alias EWalletDB.{Account, AccountUser, User}
@@ -29,7 +29,7 @@ defmodule EWalletDB.AccountUser do
     )
 
     timestamps()
-    auditable()
+    activity_logging()
   end
 
   @spec changeset(account :: %AccountUser{}, attrs :: map()) :: Ecto.Changeset.t()

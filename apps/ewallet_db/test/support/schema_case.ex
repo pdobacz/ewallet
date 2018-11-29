@@ -38,7 +38,7 @@ defmodule EWalletDB.SchemaCase do
   import EWalletDB.Factory
   alias Ecto.Adapters.SQL
   alias EWalletDB.{Account, User}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   defmacro __using__(_opts) do
     quote do

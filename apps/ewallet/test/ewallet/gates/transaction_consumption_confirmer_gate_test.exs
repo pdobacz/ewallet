@@ -11,7 +11,7 @@ defmodule EWallet.TransactionConsumptionConfirmerGateTest do
   }
 
   alias EWalletDB.{AccountUser, TransactionConsumption, TransactionRequest, User}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   setup do
     {:ok, pid} = TestEndpoint.start_link()

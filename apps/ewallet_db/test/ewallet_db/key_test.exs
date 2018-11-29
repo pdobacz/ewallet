@@ -2,7 +2,7 @@ defmodule EWalletDB.KeyTest do
   use EWalletDB.SchemaCase
   alias Ecto.UUID
   alias EWalletDB.Key
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "Key factory" do
     test_has_valid_factory(Key)

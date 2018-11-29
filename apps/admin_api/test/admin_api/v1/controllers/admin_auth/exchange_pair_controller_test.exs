@@ -1,7 +1,7 @@
 defmodule AdminAPI.V1.AdminAuth.ExchangePairControllerTest do
   use AdminAPI.ConnCase, async: true
   alias EWalletDB.{ExchangePair, Repo}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "/exchange_pair.all" do
     test "returns a list of exchange pairs and pagination data" do

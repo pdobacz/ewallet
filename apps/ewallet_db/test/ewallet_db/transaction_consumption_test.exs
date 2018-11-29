@@ -1,7 +1,7 @@
 defmodule EWalletDB.TransactionConsumptionTest do
   use EWalletDB.SchemaCase
   alias EWalletDB.TransactionConsumption
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "TransactionConsumption factory" do
     test_has_valid_factory(TransactionConsumption)

@@ -3,7 +3,7 @@ defmodule AdminAPI.V1.AdminAuth.TransactionRequestControllerTest do
   alias EWallet.Web.Date
   alias EWallet.Web.V1.{AccountSerializer, TokenSerializer, UserSerializer, WalletSerializer}
   alias EWalletDB.{Account, AccountUser, Repo, TransactionRequest, User, Wallet}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "/transaction_request.all" do
     setup do

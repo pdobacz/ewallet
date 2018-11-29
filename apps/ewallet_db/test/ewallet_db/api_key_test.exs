@@ -2,7 +2,7 @@ defmodule EWalletDB.APIKeyTest do
   use EWalletDB.SchemaCase
   alias Ecto.UUID
   alias EWalletDB.APIKey
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   @owner_app :some_app
 

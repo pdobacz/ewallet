@@ -4,7 +4,7 @@ defmodule EWalletDB.Transaction do
   """
   use Ecto.Schema
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   import EWalletDB.Validator
   import EWalletDB.Validator

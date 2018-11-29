@@ -4,7 +4,7 @@ defmodule EWallet.MintGateTest do
   alias Ecto.UUID
   alias EWallet.MintGate
   alias EWalletDB.Token
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "insert/2" do
     test "inserts a new confirmed mint" do

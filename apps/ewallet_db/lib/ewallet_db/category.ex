@@ -5,7 +5,7 @@ defmodule EWalletDB.Category do
   use Ecto.Schema
   use EWalletDB.SoftDelete
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader
   alias Ecto.UUID
@@ -30,7 +30,7 @@ defmodule EWalletDB.Category do
 
     timestamps()
     soft_delete()
-    auditable()
+    activity_logging()
   end
 
   defp changeset(category, attrs) do

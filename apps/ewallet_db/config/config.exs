@@ -16,3 +16,27 @@ config :ewallet_db,
   ]
 
 import_config "#{Mix.env()}.exs"
+
+#
+# @schemas_to_audit_types %{
+#   ActivityLogger.System => "system",
+#   EWalletDB.User => "user",
+#   EWalletDB.Invite => "invite",
+#   EWalletDB.Key => "key",
+#   EWalletDB.ForgetPasswordRequest => "forget_password_request",
+#   EWalletDB.UpdateEmailRequest => "update_email_request",
+#   EWalletDB.AccountUser => "account_user",
+#   EWalletDB.Transaction => "transaction",
+#   EWalletDB.Mint => "mint",
+#   EWalletDB.TransactionRequest => "transaction_request",
+#   EWalletDB.TransactionConsumption => "transaction_consumption",
+#   EWalletDB.Account => "account",
+#   EWalletDB.Category => "category",
+#   EWalletDB.ExchangePair => "exchange_pair",
+#   EWalletDB.Wallet => "wallet",
+#   EWalletDB.Membership => "membership",
+#   EWalletDB.AuthToken => "auth_token",
+#   EWalletDB.APIKey => "api_key",
+#   EWalletDB.Token => "token",
+#   EWalletDB.Role => "role"
+# }

@@ -1,7 +1,7 @@
 defmodule EWalletDB.AuthTokenTest do
   use EWalletDB.SchemaCase
   alias EWalletDB.{AuthToken, Membership}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   @owner_app :some_app
 

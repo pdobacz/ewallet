@@ -5,7 +5,7 @@ defmodule EWalletDB.APIKey do
   use Ecto.Schema
   use EWalletDB.SoftDelete
   use EWalletConfig.Types.ExternalID
-  use EWalletDB.ActivityLogable
+  use ActivityLogger.ActivityLogging
   import Ecto.Changeset
   alias Ecto.UUID
   alias EWalletConfig.Helpers.Crypto
@@ -40,7 +40,7 @@ defmodule EWalletDB.APIKey do
     field(:enabled, :boolean, default: true)
     timestamps()
     soft_delete()
-    auditable()
+    activity_logging()
   end
 
   defp changeset(%APIKey{} = key, attrs) do

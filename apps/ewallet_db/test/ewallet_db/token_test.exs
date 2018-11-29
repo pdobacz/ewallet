@@ -1,7 +1,7 @@
 defmodule EWalletDB.TokenTest do
   use EWalletDB.SchemaCase
   alias EWalletDB.Token
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "Token factory" do
     test_has_valid_factory(Token)

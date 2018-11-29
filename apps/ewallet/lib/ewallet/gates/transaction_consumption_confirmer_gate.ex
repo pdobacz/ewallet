@@ -16,7 +16,7 @@ defmodule EWallet.TransactionConsumptionConfirmerGate do
   alias Ecto.Changeset
   alias EWalletConfig.Helpers.Assoc
   alias EWalletDB.{Repo, TransactionConsumption, TransactionRequest}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   @spec approve_and_confirm(%TransactionRequest{}, %TransactionConsumption{}, Map.t()) ::
           {:error, %TransactionConsumption{}, atom(), String.t()}

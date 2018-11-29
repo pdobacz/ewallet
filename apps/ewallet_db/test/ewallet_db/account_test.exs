@@ -2,7 +2,7 @@ defmodule EWalletDB.AccountTest do
   use EWalletDB.SchemaCase
   alias EWalletDB.Helpers.Preloader
   alias EWalletDB.{Account, Repo}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   describe "Account factory" do
     test_has_valid_factory(Account)

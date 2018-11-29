@@ -5,7 +5,7 @@ defmodule EWalletDB.Factory do
   use ExMachina.Ecto, repo: EWalletDB.Repo
   alias ExMachina.Strategy
   alias EWalletConfig.{Types.WalletAddress, Helpers.Crypto}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   alias EWalletDB.{
     Account,

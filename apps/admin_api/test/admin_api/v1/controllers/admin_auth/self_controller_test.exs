@@ -7,7 +7,7 @@ defmodule AdminAPI.V1.AdminAuth.SelfControllerTest do
   alias EWalletDB.{Account, Membership, Repo, User}
   alias EWalletDB.{Account, Membership, Repo, UpdateEmailRequest, User}
   alias EWalletConfig.Helpers.{Crypto, Assoc}
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   @update_email_url "http://localhost:4000/update_email?email={email}&token={token}"
 

@@ -1,7 +1,7 @@
 defmodule EWallet.TransactionConsumptionFetcherTest do
   use EWallet.LocalLedgerCase, async: true
   alias Ecto.Adapters.SQL.Sandbox
-  alias EWalletConfig.System
+  alias ActivityLogger.System
 
   alias EWallet.{
     TestEndpoint,
