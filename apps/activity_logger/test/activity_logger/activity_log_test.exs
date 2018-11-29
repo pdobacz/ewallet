@@ -1,7 +1,6 @@
 defmodule ActivityLogger.ActivityLogTest do
   use ExUnit.Case
   import ActivityLogger.Factory
-  alias Ecto.{Changeset, Multi}
   alias Ecto.Adapters.SQL.Sandbox
   alias ActivityLogger.{
     System,
@@ -40,7 +39,7 @@ defmodule ActivityLogger.ActivityLogTest do
 
       {:ok, user} =
         TestUser.update(user, %{
-          username: "John",
+          username: "Johnny",
           originator: %System{}
         })
 
@@ -63,7 +62,7 @@ defmodule ActivityLogger.ActivityLogTest do
 
       {:ok, user} =
         TestUser.update(user, %{
-          username: "John",
+          username: "Johnny",
           originator: %System{}
         })
 
@@ -83,7 +82,7 @@ defmodule ActivityLogger.ActivityLogTest do
 
       {:ok, user} =
         TestUser.update(user, %{
-          username: "John",
+          username: "Johnny",
           originator: %System{}
         })
 
@@ -104,7 +103,7 @@ defmodule ActivityLogger.ActivityLogTest do
 
       {:ok, user} =
         TestUser.update(user, %{
-          username: "John",
+          username: "Johnny",
           originator: %System{}
         })
 
@@ -126,7 +125,7 @@ defmodule ActivityLogger.ActivityLogTest do
 
       {:ok, user} =
         TestUser.update(user, %{
-          username: "John",
+          username: "Johnny",
           originator: %System{}
         })
 
@@ -141,14 +140,14 @@ defmodule ActivityLogger.ActivityLogTest do
     test "inserts an activity_log and a document with encrypted metadata" do
       admin = insert(:test_user)
 
-      params =
-        params_for(:test_document, %{
+      {res, record} =
+        :test_document
+        |> params_for(%{
           secret_data: %{something: "cool"},
           originator: admin
         })
+        |> TestDocument.insert()
 
-      changeset = Changeset.change(%TestDocument{}, params)
-      {res, record} = ActivityLog.insert_record_with_activity_log(changeset)
       activity_log = record |> ActivityLog.all_for_target() |> Enum.at(0)
 
       assert res == :ok
@@ -164,25 +163,30 @@ defmodule ActivityLogger.ActivityLogTest do
          "body" => record.body
        }
 
-      assert activity_log.target_encrypted_changes == %{"something" => "cool"}
+      assert activity_log.target_encrypted_changes == %{
+        "secret_data" => %{"something" => "cool"}
+      }
 
       assert record |> ActivityLog.all_for_target() |> length() == 1
     end
   end
 
   describe "ActivityLog.update_record_with_activity_log/2" do
+    test "does not insert an activity_log when updating a user with no changes" do
+      admin = insert(:test_user)
+      {:ok, user} = :test_user |> params_for() |> TestUser.insert()
+      params = params_for(:test_user, %{username: "John", originator: admin})
+      {res, _record} = TestUser.update(user, params)
+
+      assert res == :ok
+      assert user |> ActivityLog.all_for_target() |> length() == 1
+    end
+
     test "inserts an activity_log when updating a user" do
       admin = insert(:test_user)
       {:ok, user} = :test_user |> params_for() |> TestUser.insert()
-
-      params =
-        params_for(:test_user, %{
-          username: "John",
-          originator: admin
-        })
-
-      changeset = Changeset.change(user, params)
-      {res, record} = ActivityLog.update_record_with_activity_log(changeset)
+      params = params_for(:test_user, %{username: "Johnny", originator: admin})
+      {res, record} = TestUser.update(user, params)
       activity_log = record |> ActivityLog.all_for_target() |> Enum.at(0)
 
       assert res == :ok
@@ -204,25 +208,10 @@ defmodule ActivityLogger.ActivityLogTest do
   end
 
   describe "perform/4" do
-    test "inserts an activity_log and a user as well as a wallet" do
+    test "inserts an activity_log and a user as well as a document" do
       admin = insert(:test_user)
-
-      params =
-        params_for(:test_document, %{
-          secret_data: %{something: "cool"},
-          originator: admin
-        })
-
-      changeset = Changeset.change(%TestUser{}, params)
-
-      multi =
-        Multi.new()
-        |> Multi.run(:wow_user, fn %{record: _record} ->
-          {:ok, insert(:test_user, username: "John")}
-        end)
-
-      {res, %{activity_log: activity_log, record: record, wow_user: wow_user}} =
-        ActivityLog.perform(:insert, changeset, [], multi)
+      {res, record} = :test_user |> params_for(%{originator: admin}) |> TestUser.insert()
+      activity_log = record |> ActivityLog.all_for_target() |> Enum.at(0)
 
       assert res == :ok
 
@@ -232,44 +221,7 @@ defmodule ActivityLogger.ActivityLogTest do
       assert activity_log.target_type == "test_user"
       assert activity_log.target_uuid == record.uuid
 
-      assert wow_user != nil
-      assert wow_user.username == "John"
-
       assert record |> ActivityLog.all_for_target() |> length() == 1
-    end
-
-    test "inserts an activity_log and updates a user as well as saving a wallet" do
-      admin = insert(:test_user)
-      {:ok, user} = :test_user |> params_for() |> TestUser.insert()
-
-      params =
-        params_for(:test_user, %{
-          username: "John",
-          originator: admin
-        })
-
-      changeset = Changeset.change(user, params)
-
-      multi =
-        Multi.new()
-        |> Multi.run(:wow_user, fn %{record: _record} ->
-          {:ok, insert(:test_user, username: "test_another_username")}
-        end)
-
-      {res, %{activity_log: activity_log, record: record, wow_user: _}} =
-        ActivityLog.perform(:update, changeset, [], multi)
-
-      assert res == :ok
-
-      assert activity_log.action == "update"
-      assert activity_log.originator_type == "test_user"
-      assert activity_log.originator_uuid == admin.uuid
-      assert activity_log.target_type == "test_user"
-      assert activity_log.target_uuid == record.uuid
-      changes = Map.delete(changeset.changes, :originator)
-      assert activity_log.target_changes == changes
-
-      assert user |> ActivityLog.all_for_target() |> length() == 2
     end
   end
 end

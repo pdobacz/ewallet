@@ -28,7 +28,8 @@ defmodule ActivityLogger.TestDocument do
     |> cast_and_validate_required_for_activity_log(
       attrs,
       [:title, :body, :secret_data],
-      [:title]
+      [:title],
+      [:secret_data]
     )
   end
 

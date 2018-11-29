@@ -37,6 +37,20 @@ defmodule ActivityLogger.TestUser do
     |> insert_record_with_activity_log([])
   end
 
+  def insert_with_document(attrs) do
+    %TestUser{}
+    |> changeset(attrs)
+    |> insert_record_with_activity_log(
+      [],
+      Multi.run(Multi.new(), :document, fn %{record: record} ->
+        TestDocument.insert(%{
+          title: record.username,
+          originator: record
+        })
+      end)
+    )
+  end
+
   @doc """
   Updates a user with the provided attributes.
   """

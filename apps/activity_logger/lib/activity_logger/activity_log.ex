@@ -157,7 +157,7 @@ defmodule ActivityLogger.ActivityLog do
     |> Multi.run(:activity_log, fn %{record: record} ->
       action
       |> build_attrs(changeset, record)
-      |> insert_activity_log()
+      |> insert_activity_log(action)
     end)
     |> Multi.append(multi)
     |> Repo.transaction()
@@ -173,7 +173,11 @@ defmodule ActivityLogger.ActivityLog do
     {:error, changeset}
   end
 
-  defp insert_activity_log(attrs) do
+  defp insert_activity_log(:no_changes, :insert), do: {:ok, nil}
+  defp insert_activity_log(:no_changes, :update), do: {:ok, nil}
+  defp insert_activity_log(:no_changes, :delete), do: insert_activity_log(%{}, :delete)
+
+  defp insert_activity_log(attrs, _) do
     %ActivityLog{}
     |> changeset(attrs)
     |> Repo.insert()
@@ -184,6 +188,7 @@ defmodule ActivityLogger.ActivityLog do
          originator_type <- get_type(originator.__struct__),
          target_type <- get_type(record.__struct__),
          changes <- Map.delete(changeset.changes, :originator),
+         true <- changes != %{} || :no_changes,
          encrypted_changes <- changes[:encrypted_changes],
          changes <- Map.delete(changes, :encrypted_changes),
          changes <- format_changes(changes) do
