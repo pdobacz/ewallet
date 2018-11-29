@@ -9,8 +9,9 @@ defmodule EWalletDB.Transaction do
   import EWalletDB.Validator
   import EWalletDB.Validator
   alias Ecto.{Multi, UUID}
-  alias EWalletDB.{Account, ActivityLog, ExchangePair, Repo, Token, Transaction, User, Wallet}
-  alias EWalletConfig.Types.VirtualStruct
+  alias EWalletDB.{Account, ExchangePair, Repo, Token, Transaction, User, Wallet}
+  alias Utils.Types.VirtualStruct
+  alias ActivityLogger.ActivityLog
 
   @pending "pending"
   @confirmed "confirmed"
@@ -32,8 +33,8 @@ defmodule EWalletDB.Transaction do
     external_id(prefix: "txn_")
 
     field(:idempotency_token, :string)
-    field(:from_amount, EWalletConfig.Types.Integer)
-    field(:to_amount, EWalletConfig.Types.Integer)
+    field(:from_amount, Utils.Types.Integer)
+    field(:to_amount, Utils.Types.Integer)
     # pending -> confirmed
     field(:status, :string, default: @pending)
     # internal / external
@@ -147,7 +148,7 @@ defmodule EWalletDB.Transaction do
 
   defp changeset(%Transaction{} = transaction, attrs) do
     transaction
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [
         :idempotency_token,
@@ -216,7 +217,7 @@ defmodule EWalletDB.Transaction do
 
   defp confirm_changeset(%Transaction{} = transaction, attrs) do
     transaction
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:status, :local_ledger_uuid, :originator],
       [:status, :local_ledger_uuid, :originator]
@@ -226,7 +227,7 @@ defmodule EWalletDB.Transaction do
 
   defp fail_changeset(%Transaction{} = transaction, attrs) do
     transaction
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [
         :status,
@@ -371,7 +372,7 @@ defmodule EWalletDB.Transaction do
       local_ledger_uuid: local_ledger_uuid,
       originator: originator
     })
-    |> ActivityLog.update_record_with_audit()
+    |> update_record_with_activity_log()
     |> handle_update_result()
   end
 
@@ -414,7 +415,7 @@ defmodule EWalletDB.Transaction do
   defp do_fail(data, transaction) do
     transaction
     |> fail_changeset(data)
-    |> ActivityLog.update_record_with_audit()
+    |> update_record_with_activity_log()
     |> handle_update_result()
   end
 

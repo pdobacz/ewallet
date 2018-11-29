@@ -70,7 +70,7 @@ defmodule EWalletDB.Wallet do
 
   defp changeset(%Wallet{} = wallet, attrs) do
     wallet
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       @cast_attrs,
       [:name, :identifier]
@@ -85,7 +85,7 @@ defmodule EWalletDB.Wallet do
 
   defp secondary_changeset(%Wallet{} = wallet, attrs) do
     wallet
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       @cast_attrs,
       [:name, :identifier, :account_uuid]
@@ -96,7 +96,7 @@ defmodule EWalletDB.Wallet do
 
   defp burn_changeset(%Wallet{} = wallet, attrs) do
     wallet
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       @cast_attrs,
       [:name, :identifier, :account_uuid]
@@ -119,7 +119,7 @@ defmodule EWalletDB.Wallet do
 
   defp enable_changeset(%Wallet{} = wallet, attrs) do
     wallet
-    |> cast_and_validate_required_for_audit(attrs, [:enabled], [:enabled])
+    |> cast_and_validate_required_for_activity_log(attrs, [:enabled], [:enabled])
   end
 
   @spec all_for(any()) :: Ecto.Query.t() | nil
@@ -168,7 +168,7 @@ defmodule EWalletDB.Wallet do
   def insert(attrs) do
     %Wallet{}
     |> changeset(attrs)
-    |> insert_record_with_audit()
+    |> insert_record_with_activity_log()
   end
 
   @spec insert_secondary_or_burn(map()) :: {:ok, %__MODULE__{}} | {:error, Ecto.Changeset.t()}
@@ -183,12 +183,12 @@ defmodule EWalletDB.Wallet do
   def insert_secondary_or_burn(attrs), do: insert_secondary_or_burn(attrs, nil)
 
   def insert_secondary_or_burn(attrs, "burn") do
-    %Wallet{} |> burn_changeset(attrs) |> insert_record_with_audit()
+    %Wallet{} |> burn_changeset(attrs) |> insert_record_with_activity_log()
   end
 
   # "secondary" and anything else will go in there.
   def insert_secondary_or_burn(attrs, _) do
-    %Wallet{} |> secondary_changeset(attrs) |> insert_record_with_audit()
+    %Wallet{} |> secondary_changeset(attrs) |> insert_record_with_activity_log()
   end
 
   defp build_identifier("genesis"), do: @genesis
@@ -226,7 +226,7 @@ defmodule EWalletDB.Wallet do
       identifier: @genesis,
       originator: %System{}
     })
-    |> insert_record_with_audit(opts)
+    |> insert_record_with_activity_log(opts)
     |> case do
       {:ok, _wallet} ->
         {:ok, get(@genesis_address)}
@@ -253,6 +253,6 @@ defmodule EWalletDB.Wallet do
   def enable_or_disable(wallet, attrs) do
     wallet
     |> enable_changeset(attrs)
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 end

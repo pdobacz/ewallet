@@ -7,7 +7,8 @@ defmodule EWalletDB.Invite do
   import Ecto.{Changeset, Query}
   alias Ecto.{Multi, UUID}
   alias Utils.Helpers.Crypto
-  alias EWalletDB.{ActivityLog, Invite, Repo, User}
+  alias EWalletDB.{Invite, Repo, User}
+  alias ActivityLogger.ActivityLog
 
   @primary_key {:uuid, UUID, autogenerate: true}
   @token_length 32
@@ -32,7 +33,7 @@ defmodule EWalletDB.Invite do
 
   defp changeset_insert(changeset, attrs) do
     changeset
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:user_uuid, :token, :success_url],
       [:user_uuid, :token]
@@ -41,7 +42,7 @@ defmodule EWalletDB.Invite do
 
   defp changeset_accept(changeset, attrs) do
     changeset
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:verified_at],
       [:verified_at]
@@ -120,7 +121,7 @@ defmodule EWalletDB.Invite do
       success_url: opts[:success_url],
       originator: originator
     })
-    |> insert_record_with_audit(
+    |> insert_record_with_activity_log(
       [],
       # Assign the invite to the user
       Multi.run(Multi.new(), :user, fn %{record: record} ->
@@ -130,7 +131,7 @@ defmodule EWalletDB.Invite do
             invite_uuid: record.uuid,
             originator: record
           })
-          |> update_record_with_audit()
+          |> update_record_with_activity_log()
       end)
     )
     |> case do
@@ -152,7 +153,7 @@ defmodule EWalletDB.Invite do
          {:ok, _user} <- User.update(invite.user, attrs),
          invite_attrs <- %{verified_at: NaiveDateTime.utc_now(), originator: invite.user},
          changeset <- changeset_accept(invite, invite_attrs),
-         {:ok, invite} <- update_record_with_audit(changeset) do
+         {:ok, invite} <- update_record_with_activity_log(changeset) do
       {:ok, invite}
     else
       {:error, _failed_operation, changeset, _changes_so_far} ->
@@ -179,7 +180,7 @@ defmodule EWalletDB.Invite do
          {:ok, _user} <- User.update(user, user_attrs),
          invite_attrs <- %{verified_at: NaiveDateTime.utc_now(), originator: invite.user},
          changeset <- changeset_accept(invite, invite_attrs),
-         {:ok, invite} <- ActivityLog.update_record_with_audit(changeset) do
+         {:ok, invite} <- update_record_with_activity_log(changeset) do
       {:ok, invite}
     else
       {:error, _failed_operation, changeset, _changes_so_far} ->

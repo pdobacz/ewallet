@@ -16,7 +16,7 @@ defmodule EWallet.TransactionConsumptionConsumerGate do
   }
 
   alias EWallet.Web.V1.Event
-  alias EWalletConfig.Helpers.Assoc
+  alias Utils.Helpers.Assoc
 
   alias EWalletDB.{
     Account,

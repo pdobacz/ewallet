@@ -35,7 +35,7 @@ defmodule EWalletDB.Category do
 
   defp changeset(category, attrs) do
     category
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:name, :description],
       [:name]
@@ -101,7 +101,7 @@ defmodule EWalletDB.Category do
   def insert(attrs) do
     %__MODULE__{}
     |> changeset(attrs)
-    |> insert_record_with_audit()
+    |> insert_record_with_activity_log()
   end
 
   @doc """
@@ -111,7 +111,7 @@ defmodule EWalletDB.Category do
   def update(category, attrs) do
     category
     |> changeset(attrs)
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """

@@ -15,7 +15,7 @@ defmodule EWallet.TransactionRequestGate do
     WalletFetcher
   }
 
-  alias EWalletConfig.Helpers.Assoc
+  alias Utils.Helpers.Assoc
   alias EWalletDB.{Account, TransactionRequest, User, Wallet}
 
   @spec create(map()) :: {:ok, %TransactionRequest{}} | {:error, atom()}

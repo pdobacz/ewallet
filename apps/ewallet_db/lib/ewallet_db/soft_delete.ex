@@ -86,7 +86,7 @@ defmodule EWalletDB.SoftDelete do
   end
 
   defp soft_delete_changeset(record, attrs) do
-    cast_and_validate_required_for_audit(
+    cast_and_validate_required_for_activity_log(
       record,
       attrs,
       [:deleted_at]
@@ -119,7 +119,7 @@ defmodule EWalletDB.SoftDelete do
       deleted_at: NaiveDateTime.utc_now(),
       originator: originator
     })
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """
@@ -132,6 +132,6 @@ defmodule EWalletDB.SoftDelete do
       deleted_at: nil,
       originator: originator
     })
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 end

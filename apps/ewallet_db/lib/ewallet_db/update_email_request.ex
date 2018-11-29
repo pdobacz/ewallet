@@ -32,7 +32,7 @@ defmodule EWalletDB.UpdateEmailRequest do
 
   defp changeset(changeset, attrs) do
     changeset
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:email, :token, :user_uuid],
       [:email, :token, :user_uuid]
@@ -108,6 +108,6 @@ defmodule EWalletDB.UpdateEmailRequest do
   defp insert(attrs) do
     %UpdateEmailRequest{}
     |> changeset(attrs)
-    |> insert_record_with_audit()
+    |> insert_record_with_activity_log()
   end
 end

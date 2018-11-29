@@ -154,12 +154,12 @@ defmodule ActivityLogger.ActivityLog do
   def perform(action, changeset, opts \\ [], multi \\ Multi.new()) do
     Multi
     |> apply(action, [Multi.new(), :record, changeset, opts])
-    |> Multi.run(:activity_log, fn %{record: record} ->
-      action
-      |> build_attrs(changeset, record)
-      |> insert_activity_log(action)
-    end)
-    |> Multi.append(multi)
+    # |> Multi.run(:activity_log, fn %{record: record} ->
+    #   action
+    #   |> build_attrs(changeset, record)
+    #   |> insert_activity_log(action)
+    # end)
+    # |> Multi.append(multi)
     |> Repo.transaction()
   end
 

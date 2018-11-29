@@ -14,7 +14,7 @@ defmodule EWallet.TransactionConsumptionConfirmerGate do
   }
 
   alias Ecto.Changeset
-  alias EWalletConfig.Helpers.Assoc
+  alias Utils.Helpers.Assoc
   alias EWalletDB.{Repo, TransactionConsumption, TransactionRequest}
   alias ActivityLogger.System
 

@@ -35,7 +35,7 @@ defmodule EWalletDB.AccountUser do
   @spec changeset(account :: %AccountUser{}, attrs :: map()) :: Ecto.Changeset.t()
   defp changeset(%AccountUser{} = account, attrs) do
     account
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:account_uuid, :user_uuid],
       [:account_uuid, :user_uuid, :originator]
@@ -51,7 +51,7 @@ defmodule EWalletDB.AccountUser do
 
     %AccountUser{}
     |> changeset(attrs)
-    |> insert_record_with_audit(opts)
+    |> insert_record_with_activity_log(opts)
   end
 
   def link(account_uuid, user_uuid, originator) do

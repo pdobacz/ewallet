@@ -45,7 +45,7 @@ defmodule EWalletDB.APIKey do
 
   defp changeset(%APIKey{} = key, attrs) do
     key
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:key, :owner_app, :account_uuid, :enabled, :exchange_address],
       [:key, :owner_app, :account_uuid]
@@ -57,7 +57,7 @@ defmodule EWalletDB.APIKey do
 
   defp enable_changeset(%APIKey{} = key, attrs) do
     key
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:enabled],
       [:enabled]
@@ -66,7 +66,7 @@ defmodule EWalletDB.APIKey do
 
   defp update_changeset(%APIKey{} = key, attrs) do
     key
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:enabled, :exchange_address],
       [:enabled]
@@ -97,7 +97,7 @@ defmodule EWalletDB.APIKey do
 
     %APIKey{}
     |> changeset(attrs)
-    |> insert_record_with_audit()
+    |> insert_record_with_activity_log()
   end
 
   @doc """
@@ -108,13 +108,13 @@ defmodule EWalletDB.APIKey do
 
     api_key
     |> update_changeset(attrs)
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   def update(%APIKey{} = api_key, attrs) do
     api_key
     |> update_changeset(attrs)
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """
@@ -123,7 +123,7 @@ defmodule EWalletDB.APIKey do
   def enable_or_disable(%APIKey{} = api_key, attrs) do
     api_key
     |> enable_changeset(attrs)
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   defp get_master_account_uuid do

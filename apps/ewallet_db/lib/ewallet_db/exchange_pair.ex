@@ -59,7 +59,7 @@ defmodule EWalletDB.ExchangePair do
 
   defp changeset(exchange_pair, attrs) do
     exchange_pair
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:from_token_uuid, :to_token_uuid, :rate, :deleted_at],
       [:from_token_uuid, :to_token_uuid, :rate]
@@ -78,7 +78,7 @@ defmodule EWalletDB.ExchangePair do
 
   defp restore_changeset(exchange_pair, attrs) do
     exchange_pair
-    |> cast_and_validate_required_for_audit(attrs, [:deleted_at])
+    |> cast_and_validate_required_for_activity_log(attrs, [:deleted_at])
     |> unique_constraint(
       :deleted_at,
       name: "exchange_pair_from_token_uuid_to_token_uuid_index"
@@ -86,7 +86,7 @@ defmodule EWalletDB.ExchangePair do
   end
 
   defp touch_changeset(exchange_pair, attrs) do
-    cast_and_validate_required_for_audit(exchange_pair, attrs, [:updated_at])
+    cast_and_validate_required_for_activity_log(exchange_pair, attrs, [:updated_at])
   end
 
   @doc """
@@ -130,7 +130,7 @@ defmodule EWalletDB.ExchangePair do
   def insert(attrs) do
     %__MODULE__{}
     |> changeset(attrs)
-    |> insert_record_with_audit()
+    |> insert_record_with_activity_log()
   end
 
   @doc """
@@ -140,7 +140,7 @@ defmodule EWalletDB.ExchangePair do
   def update(exchange_pair, attrs) do
     exchange_pair
     |> changeset(attrs)
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """
@@ -162,7 +162,7 @@ defmodule EWalletDB.ExchangePair do
   def restore(exchange_pair, originator) do
     changeset = restore_changeset(exchange_pair, %{deleted_at: nil, originator: originator})
 
-    case update_record_with_audit(changeset) do
+    case update_record_with_activity_log(changeset) do
       {:error, %{errors: [deleted_at: {"has already been taken", []}]}} ->
         {:error, :exchange_pair_already_exists}
 
@@ -178,7 +178,7 @@ defmodule EWalletDB.ExchangePair do
   def touch(exchange_pair, originator) do
     exchange_pair
     |> touch_changeset(%{updated_at: NaiveDateTime.utc_now(), originator: originator})
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """

@@ -20,8 +20,10 @@ defmodule AdminAPI.ConnCase do
   alias Ecto.UUID
   alias EWallet.{MintGate, TransactionGate}
   alias EWallet.Web.Date
-  alias EWalletConfig.{ConfigTestHelper, Helpers.Crypto, Types.ExternalID, System}
+  alias EWalletConfig.ConfigTestHelper
   alias EWalletDB.{Account, Key, Repo, User}
+  alias ActivityLogger.System
+  alias Utils.{Types.ExternalID, Helpers.Crypto}
 
   # Attributes required by Phoenix.ConnTest
   @endpoint AdminAPI.Endpoint

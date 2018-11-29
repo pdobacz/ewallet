@@ -8,11 +8,11 @@ defmodule EWalletDB.TransactionRequest do
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader
   alias Ecto.{Changeset, Query, UUID}
-  alias EWalletConfig.Types.VirtualStruct
+  alias Utils.Types.VirtualStruct
 
   alias EWalletDB.{
     Account,
-    ActivityLog,
+    
     Repo,
     Token,
     TransactionConsumption,
@@ -35,7 +35,7 @@ defmodule EWalletDB.TransactionRequest do
     external_id(prefix: "txr_")
 
     field(:type, :string)
-    field(:amount, EWalletConfig.Types.Integer)
+    field(:amount, Utils.Types.Integer)
     # valid -> expired
     field(:status, :string, default: @valid)
     field(:correlation_id, :string)
@@ -116,7 +116,7 @@ defmodule EWalletDB.TransactionRequest do
 
   defp changeset(%TransactionRequest{} = transaction_request, attrs) do
     transaction_request
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [
         :type,
@@ -160,7 +160,7 @@ defmodule EWalletDB.TransactionRequest do
 
   defp consumptions_count_changeset(%TransactionRequest{} = transaction_request, attrs) do
     transaction_request
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:consumptions_count],
       [:consumptions_count]
@@ -169,7 +169,7 @@ defmodule EWalletDB.TransactionRequest do
 
   defp expire_changeset(%TransactionRequest{} = transaction_request, attrs) do
     transaction_request
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:status, :expired_at, :expiration_reason],
       [:status, :expired_at, :expiration_reason, :originator]
@@ -179,7 +179,7 @@ defmodule EWalletDB.TransactionRequest do
 
   defp touch_changeset(%TransactionRequest{} = transaction_request, attrs) do
     transaction_request
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:updated_at, :originator],
       [:updated_at, :originator]
@@ -278,7 +278,7 @@ defmodule EWalletDB.TransactionRequest do
       updated_at: NaiveDateTime.utc_now(),
       originator: originator
     })
-    |> ActivityLog.update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """
@@ -288,7 +288,7 @@ defmodule EWalletDB.TransactionRequest do
   def insert(attrs) do
     %TransactionRequest{}
     |> changeset(attrs)
-    |> ActivityLog.insert_record_with_audit()
+    |> insert_record_with_activity_log()
   end
 
   @doc """
@@ -297,7 +297,7 @@ defmodule EWalletDB.TransactionRequest do
   def update(%TransactionRequest{} = request, attrs) do
     request
     |> changeset(attrs)
-    |> ActivityLog.update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @spec valid?(%TransactionRequest{}) :: true | false
@@ -339,7 +339,7 @@ defmodule EWalletDB.TransactionRequest do
       expiration_reason: reason,
       originator: originator
     })
-    |> ActivityLog.update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """
@@ -399,7 +399,7 @@ defmodule EWalletDB.TransactionRequest do
         consumptions_count: length(consumptions),
         originator: originator
       })
-      |> update_record_with_audit()
+      |> update_record_with_activity_log()
 
     request
   end

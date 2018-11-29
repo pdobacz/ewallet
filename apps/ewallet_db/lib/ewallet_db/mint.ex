@@ -8,8 +8,8 @@ defmodule EWalletDB.Mint do
   import Ecto.{Query, Changeset}
   import EWalletDB.Helpers.Preloader
   alias Ecto.UUID
-  alias EWalletDB.{Account, ActivityLog, Mint, Repo, Token, Transaction}
-  alias EWalletConfig.Types.VirtualStruct
+  alias EWalletDB.{Account, Mint, Repo, Token, Transaction}
+  alias Utils.Types.VirtualStruct
 
   @primary_key {:uuid, Ecto.UUID, autogenerate: true}
 
@@ -17,7 +17,7 @@ defmodule EWalletDB.Mint do
     external_id(prefix: "mnt_")
 
     field(:description, :string)
-    field(:amount, EWalletConfig.Types.Integer)
+    field(:amount, Utils.Types.Integer)
     field(:confirmed, :boolean, default: false)
     field(:originator, VirtualStruct, virtual: true)
 
@@ -50,7 +50,7 @@ defmodule EWalletDB.Mint do
 
   defp changeset(%Mint{} = mint, attrs) do
     mint
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [
         :description,
@@ -76,7 +76,7 @@ defmodule EWalletDB.Mint do
 
   defp update_changeset(%Mint{} = mint, attrs) do
     mint
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:transaction_uuid],
       [:transaction_uuid]
@@ -93,7 +93,7 @@ defmodule EWalletDB.Mint do
     |> where([m], m.token_uuid == ^token.uuid)
     |> select([m], sum(m.amount))
     |> Repo.one()
-    |> EWalletConfig.Types.Integer.load!()
+    |> Utils.Types.Integer.load!()
   end
 
   @doc """
@@ -123,7 +123,7 @@ defmodule EWalletDB.Mint do
   def insert(attrs) do
     %Mint{}
     |> changeset(attrs)
-    |> ActivityLog.insert_record_with_audit()
+    |> insert_record_with_activity_log()
   end
 
   @doc """
@@ -133,7 +133,7 @@ defmodule EWalletDB.Mint do
   def update(%Mint{} = mint, attrs) do
     mint
     |> update_changeset(attrs)
-    |> ActivityLog.update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """
@@ -148,7 +148,7 @@ defmodule EWalletDB.Mint do
         confirmed: true,
         originator: originator
       })
-      |> ActivityLog.update_record_with_audit()
+      |> update_record_with_activity_log()
 
     mint
   end

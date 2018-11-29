@@ -43,7 +43,7 @@ defmodule EWalletDB.AuthToken do
 
   defp changeset(%AuthToken{} = token, attrs) do
     token
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:token, :owner_app, :user_uuid, :account_uuid, :expired],
       [:token, :owner_app, :user_uuid]
@@ -54,7 +54,7 @@ defmodule EWalletDB.AuthToken do
 
   defp expire_changeset(%AuthToken{} = token, attrs) do
     token
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:expired],
       [:expired]
@@ -63,7 +63,7 @@ defmodule EWalletDB.AuthToken do
 
   defp switch_account_changeset(%AuthToken{} = token, attrs) do
     token
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:account_uuid],
       [:account_uuid]
@@ -78,7 +78,7 @@ defmodule EWalletDB.AuthToken do
       account_uuid: account.uuid,
       originator: originator
     })
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """
@@ -174,7 +174,7 @@ defmodule EWalletDB.AuthToken do
   defp insert(attrs) do
     %AuthToken{}
     |> changeset(attrs)
-    |> insert_record_with_audit()
+    |> insert_record_with_activity_log()
   end
 
   # Expires the given token.
@@ -210,6 +210,6 @@ defmodule EWalletDB.AuthToken do
   defp update(%AuthToken{} = token, attrs) do
     token
     |> expire_changeset(attrs)
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 end

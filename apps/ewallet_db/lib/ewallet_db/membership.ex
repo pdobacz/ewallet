@@ -42,7 +42,7 @@ defmodule EWalletDB.Membership do
 
   def changeset(%Membership{} = membership, attrs) do
     membership
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:user_uuid, :account_uuid, :role_uuid],
       [:user_uuid, :account_uuid, :role_uuid]
@@ -148,13 +148,13 @@ defmodule EWalletDB.Membership do
   defp insert(attrs) do
     %Membership{}
     |> changeset(attrs)
-    |> insert_record_with_audit()
+    |> insert_record_with_activity_log()
   end
 
   defp update(%Membership{} = membership, attrs) do
     membership
     |> changeset(attrs)
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   defp delete(%Membership{} = membership, originator) do
@@ -162,6 +162,6 @@ defmodule EWalletDB.Membership do
     |> changeset(%{
       originator: originator
     })
-    |> delete_record_with_audit()
+    |> delete_record_with_activity_log()
   end
 end

@@ -20,7 +20,7 @@ defmodule EWalletDB.TransactionConsumption do
     Wallet
   }
 
-  alias EWalletConfig.Helpers.Assoc
+  alias Utils.Helpers.Assoc
 
   @pending "pending"
   @confirmed "confirmed"
@@ -35,9 +35,9 @@ defmodule EWalletDB.TransactionConsumption do
   schema "transaction_consumption" do
     external_id(prefix: "txc_")
 
-    field(:amount, EWalletConfig.Types.Integer)
-    field(:estimated_consumption_amount, EWalletConfig.Types.Integer)
-    field(:estimated_request_amount, EWalletConfig.Types.Integer)
+    field(:amount, Utils.Types.Integer)
+    field(:estimated_consumption_amount, Utils.Types.Integer)
+    field(:estimated_request_amount, Utils.Types.Integer)
     field(:estimated_rate, :float)
     field(:correlation_id, :string)
     field(:idempotency_token, :string)
@@ -136,7 +136,7 @@ defmodule EWalletDB.TransactionConsumption do
 
   defp changeset(%TransactionConsumption{} = consumption, attrs) do
     consumption
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [
         :amount,
@@ -185,7 +185,7 @@ defmodule EWalletDB.TransactionConsumption do
 
   def approved_changeset(%TransactionConsumption{} = consumption, attrs) do
     consumption
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:status, :approved_at],
       [:status, :approved_at]
@@ -194,7 +194,7 @@ defmodule EWalletDB.TransactionConsumption do
 
   def rejected_changeset(%TransactionConsumption{} = consumption, attrs) do
     consumption
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:status, :rejected_at],
       [:status, :rejected_at]
@@ -203,7 +203,7 @@ defmodule EWalletDB.TransactionConsumption do
 
   def confirmed_changeset(%TransactionConsumption{} = consumption, attrs) do
     consumption
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:status, :confirmed_at, :transaction_uuid],
       [:status, :confirmed_at, :transaction_uuid]
@@ -213,7 +213,7 @@ defmodule EWalletDB.TransactionConsumption do
 
   def failed_changeset(%TransactionConsumption{} = consumption, attrs) do
     consumption
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:status, :failed_at, :transaction_uuid],
       [:status, :failed_at, :transaction_uuid]
@@ -223,7 +223,7 @@ defmodule EWalletDB.TransactionConsumption do
 
   def transaction_failure_changeset(%TransactionConsumption{} = consumption, attrs) do
     consumption
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:status, :failed_at, :error_code, :error_description],
       [:status, :failed_at, :error_code]
@@ -232,7 +232,7 @@ defmodule EWalletDB.TransactionConsumption do
 
   def expired_changeset(%TransactionConsumption{} = consumption, attrs) do
     consumption
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:status, :expired_at],
       [:status, :expired_at]
@@ -306,7 +306,7 @@ defmodule EWalletDB.TransactionConsumption do
       expired_at: NaiveDateTime.utc_now(),
       originator: originator
     })
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """
@@ -376,7 +376,7 @@ defmodule EWalletDB.TransactionConsumption do
     changeset = changeset(%TransactionConsumption{}, attrs)
     opts = [on_conflict: :nothing, conflict_target: :idempotency_token]
 
-    case insert_record_with_audit(changeset, opts) do
+    case insert_record_with_activity_log(changeset, opts) do
       {:ok, consumption} ->
         {:ok, get_by(%{idempotency_token: consumption.idempotency_token})}
 
@@ -433,7 +433,7 @@ defmodule EWalletDB.TransactionConsumption do
     {:ok, consumption} =
       consumption
       |> transaction_failure_changeset(data)
-      |> update_record_with_audit()
+      |> update_record_with_activity_log()
 
     consumption
   end
@@ -467,7 +467,7 @@ defmodule EWalletDB.TransactionConsumption do
     {:ok, consumption} =
       __MODULE__
       |> apply(fun, [consumption, data])
-      |> update_record_with_audit()
+      |> update_record_with_activity_log()
 
     consumption
   end

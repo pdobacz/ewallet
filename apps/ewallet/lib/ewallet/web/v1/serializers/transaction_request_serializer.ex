@@ -13,7 +13,7 @@ defmodule EWallet.Web.V1.TransactionRequestSerializer do
   }
 
   alias EWallet.Web.{Date, Paginator}
-  alias EWalletConfig.Helpers.Assoc
+  alias Utils.Helpers.Assoc
   alias EWalletDB.TransactionRequest
   alias ActivityLogger.System
 

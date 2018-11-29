@@ -31,7 +31,7 @@ defmodule EWalletDB.Token do
     # "Cent"
     field(:subunit, :string)
     # 100
-    field(:subunit_to_unit, EWalletConfig.Types.Integer)
+    field(:subunit_to_unit, Utils.Types.Integer)
     # true
     field(:symbol_first, :boolean)
     # "&#x20AC;"
@@ -61,7 +61,7 @@ defmodule EWalletDB.Token do
 
   defp changeset(%Token{} = token, attrs) do
     token
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [
         :symbol,
@@ -105,7 +105,7 @@ defmodule EWalletDB.Token do
 
   defp update_changeset(%Token{} = token, attrs) do
     token
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [
         :iso_code,
@@ -130,7 +130,7 @@ defmodule EWalletDB.Token do
 
   defp enable_changeset(%Token{} = token, attrs) do
     token
-    |> cast_and_validate_required_for_audit(attrs, [:enabled], [:enabled])
+    |> cast_and_validate_required_for_activity_log(attrs, [:enabled], [:enabled])
   end
 
   defp set_id(changeset, opts) do
@@ -168,7 +168,7 @@ defmodule EWalletDB.Token do
   def insert(attrs) do
     changeset = changeset(%Token{}, attrs)
 
-    case insert_record_with_audit(changeset) do
+    case insert_record_with_activity_log(changeset) do
       {:ok, token} ->
         {:ok, get(token.id)}
 
@@ -183,7 +183,7 @@ defmodule EWalletDB.Token do
   def update(token, attrs) do
     token
     |> update_changeset(attrs)
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 
   @doc """
@@ -220,6 +220,6 @@ defmodule EWalletDB.Token do
   def enable_or_disable(token, attrs) do
     token
     |> enable_changeset(attrs)
-    |> update_record_with_audit()
+    |> update_record_with_activity_log()
   end
 end

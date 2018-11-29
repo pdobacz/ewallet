@@ -9,7 +9,7 @@ defmodule EWalletDB.Account do
   import Ecto.{Changeset, Query}
   import EWalletDB.Helpers.Preloader
   import EWalletDB.AccountValidator
-  alias EWalletConfig.{Intersecter, Helpers.InputAttribute}
+  alias Utils.{Intersecter, Helpers.InputAttribute}
   alias Ecto.{Multi, UUID}
 
   alias EWalletDB.{
@@ -104,7 +104,7 @@ defmodule EWalletDB.Account do
   @spec changeset(%Account{}, map()) :: Ecto.Changeset.t()
   defp changeset(%Account{} = account, attrs) do
     account
-    |> cast_and_validate_required_for_audit(
+    |> cast_and_validate_required_for_activity_log(
       attrs,
       [:name, :description, :parent_uuid, :metadata, :encrypted_metadata],
       [:name]
@@ -137,7 +137,7 @@ defmodule EWalletDB.Account do
           Ecto.Changeset.t() | %Account{} | no_return()
   defp avatar_changeset(changeset, attrs) do
     changeset
-    |> cast_and_validate_required_for_audit(attrs, [])
+    |> cast_and_validate_required_for_activity_log(attrs, [])
     |> cast_attachments(attrs, [:avatar])
   end
 
@@ -148,7 +148,7 @@ defmodule EWalletDB.Account do
   def insert(attrs) do
     %Account{}
     |> changeset(attrs)
-    |> insert_record_with_audit(
+    |> insert_record_with_activity_log(
       [],
       Multi.new()
       |> Multi.run(:wallet, fn %{record: account} ->
@@ -172,7 +172,7 @@ defmodule EWalletDB.Account do
   def update(%Account{} = account, attrs) do
     changeset = changeset(account, attrs)
 
-    case update_record_with_audit(changeset) do
+    case update_record_with_activity_log(changeset) do
       {:ok, account} ->
         {:ok, get(account.id)}
 
@@ -212,7 +212,7 @@ defmodule EWalletDB.Account do
 
     changeset = avatar_changeset(account, attrs)
 
-    case update_record_with_audit(changeset) do
+    case update_record_with_activity_log(changeset) do
       {:ok, account} -> get(account.id)
       result -> result
     end
