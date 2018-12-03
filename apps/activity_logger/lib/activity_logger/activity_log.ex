@@ -5,7 +5,7 @@ defmodule ActivityLogger.ActivityLog do
   use Ecto.Schema
   use Utils.Types.ExternalID
   import Ecto.{Changeset, Query}
-  alias Ecto.{Changeset, Multi, UUID}
+  alias Ecto.{Changeset, UUID}
 
   alias ActivityLogger.{
     ActivityLog,
@@ -113,71 +113,16 @@ defmodule ActivityLogger.ActivityLog do
     end
   end
 
-  @spec insert_record_with_activity_log(%Changeset{}, Keyword.t(), Multi.t()) ::
-          {:ok, any()}
-          | {:error, any()}
-          | {:error, :no_originator_given}
-          | {:error, Multi.name(), any(), %{optional(Multi.name()) => any()}}
-  def insert_record_with_activity_log(changeset, opts \\ [], multi \\ Multi.new()) do
-    :insert
-    |> perform(changeset, opts, multi)
-    |> handle_perform_result()
+  def insert(action, changeset, record) do
+    action
+    |> build_attrs(changeset, record)
+    |> handle_insert(action)
   end
 
-  @spec update_record_with_activity_log(%Changeset{}, Keyword.t(), Multi.t()) ::
-          {:ok, any()}
-          | {:error, any()}
-          | {:error, :no_originator_given}
-          | {:error, Multi.name(), any(), %{optional(Multi.name()) => any()}}
-  def update_record_with_activity_log(changeset, opts \\ [], multi \\ Multi.new()) do
-    :update
-    |> perform(changeset, opts, multi)
-    |> handle_perform_result()
-  end
+  defp handle_insert(:no_changes, :insert), do: {:ok, nil}
+  defp handle_insert(:no_changes, :update), do: {:ok, nil}
 
-  @spec delete_record_with_activity_log(Map.t(), Keyword.t(), Multi.t()) ::
-          {:ok, any()}
-          | {:error, any()}
-          | {:error, :no_originator_given}
-          | {:error, Multi.name(), any(), %{optional(Multi.name()) => any()}}
-  def delete_record_with_activity_log(changeset, opts \\ [], multi \\ Multi.new()) do
-    :delete
-    |> perform(changeset, opts, multi)
-    |> handle_perform_result()
-  end
-
-  @spec perform(Atom.t(), %Changeset{}, Keyword.t(), Multi.t()) ::
-          {:ok, any()}
-          | {:error, any()}
-          | {:error, :no_originator_given}
-          | {:error, Multi.name(), any(), %{optional(Multi.name()) => any()}}
-  def perform(action, changeset, opts \\ [], multi \\ Multi.new()) do
-    Multi
-    |> apply(action, [Multi.new(), :record, changeset, opts])
-    # |> Multi.run(:activity_log, fn %{record: record} ->
-    #   action
-    #   |> build_attrs(changeset, record)
-    #   |> insert_activity_log(action)
-    # end)
-    # |> Multi.append(multi)
-    |> Repo.transaction()
-  end
-
-  defp handle_perform_result({:ok, %{record: record}}) do
-    {:ok, record}
-  end
-
-  # Only the account insertion should fail. If the wallet insert fails, there is
-  # something wrong with our code.
-  defp handle_perform_result({:error, _failed_operation, changeset, _changes_so_far}) do
-    {:error, changeset}
-  end
-
-  defp insert_activity_log(:no_changes, :insert), do: {:ok, nil}
-  defp insert_activity_log(:no_changes, :update), do: {:ok, nil}
-  defp insert_activity_log(:no_changes, :delete), do: insert_activity_log(%{}, :delete)
-
-  defp insert_activity_log(attrs, _) do
+  defp handle_insert(attrs, _) do
     %ActivityLog{}
     |> changeset(attrs)
     |> Repo.insert()
@@ -188,7 +133,7 @@ defmodule ActivityLogger.ActivityLog do
          originator_type <- get_type(originator.__struct__),
          target_type <- get_type(record.__struct__),
          changes <- Map.delete(changeset.changes, :originator),
-         true <- changes != %{} || :no_changes,
+         true <- action == :delete || changes != %{} || :no_changes,
          encrypted_changes <- changes[:encrypted_changes],
          changes <- Map.delete(changes, :encrypted_changes),
          changes <- format_changes(changes) do

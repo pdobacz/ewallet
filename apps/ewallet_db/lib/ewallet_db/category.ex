@@ -101,7 +101,7 @@ defmodule EWalletDB.Category do
   def insert(attrs) do
     %__MODULE__{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log()
+    |> Repo.insert_record_with_activity_log()
   end
 
   @doc """
@@ -111,7 +111,7 @@ defmodule EWalletDB.Category do
   def update(category, attrs) do
     category
     |> changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """

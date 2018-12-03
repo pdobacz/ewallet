@@ -35,8 +35,6 @@ defmodule ActivityLogger.SchemaCase do
   end
   ```
   """
-  import ActivityLogger.Factory
-  alias Ecto.Adapters.SQL
 
   defmacro __using__(_opts) do
     quote do

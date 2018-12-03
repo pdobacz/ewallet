@@ -96,7 +96,7 @@ defmodule EWalletDB.Role do
 
     %Role{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log()
+    |> Repo.insert_record_with_activity_log()
   end
 
   @doc """
@@ -106,7 +106,7 @@ defmodule EWalletDB.Role do
   def update(role, attrs) do
     role
     |> changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """

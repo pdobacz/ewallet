@@ -333,7 +333,7 @@ defmodule EWalletDB.Transaction do
     opts = [on_conflict: :nothing, conflict_target: :idempotency_token]
     changeset = changeset(%Transaction{}, attrs)
 
-    ActivityLog.perform(
+    Repo.perform(
       :insert,
       changeset,
       opts,
@@ -347,18 +347,32 @@ defmodule EWalletDB.Transaction do
         end
       end)
     )
-    |> handle_insert_result()
+    |> handle_insert_result(:insert, changeset)
   end
 
-  defp handle_insert_result({:ok, %{record: _transaction, transaction_1: nil}}) do
+  defp handle_insert_result(
+         {:ok, %{record: _transaction, transaction_1: nil}},
+         _action,
+         _changeset
+       ) do
     {:error, :inserted_transaction_could_not_be_loaded}
   end
 
-  defp handle_insert_result({:ok, %{record: _transaction, transaction_1: transaction_1}}) do
+  defp handle_insert_result(
+         {:ok, %{record: _transaction, transaction_1: transaction_1}},
+         action,
+         changeset
+       ) do
+    # spawn_link(fn -> ActivityLog.insert(action, changeset, transaction_1) end)
+    ActivityLog.insert(action, changeset, transaction_1)
     {:ok, transaction_1}
   end
 
-  defp handle_insert_result({:error, _failed_operation, changeset, _changes_so_far}) do
+  defp handle_insert_result(
+         {:error, _failed_operation, changeset, _changes_so_far},
+         _action,
+         _changeset
+       ) do
     {:error, changeset}
   end
 
@@ -372,7 +386,7 @@ defmodule EWalletDB.Transaction do
       local_ledger_uuid: local_ledger_uuid,
       originator: originator
     })
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
     |> handle_update_result()
   end
 
@@ -415,7 +429,7 @@ defmodule EWalletDB.Transaction do
   defp do_fail(data, transaction) do
     transaction
     |> fail_changeset(data)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
     |> handle_update_result()
   end
 

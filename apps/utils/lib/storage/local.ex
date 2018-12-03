@@ -6,7 +6,7 @@ defmodule Utils.Storage.Local do
   Original: https://github.com/stavro/arc/blob/master/lib/arc/storage/local.ex
   """
   alias Arc.Definition.Versioning
-  alias Utils.Config
+  alias EWalletConfig.Config
 
   def put(definition, version, {file, scope}) do
     destination_dir = definition.storage_dir(version, {file, scope})

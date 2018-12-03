@@ -78,7 +78,7 @@ defmodule EWalletDB.AuthToken do
       account_uuid: account.uuid,
       originator: originator
     })
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -174,7 +174,7 @@ defmodule EWalletDB.AuthToken do
   defp insert(attrs) do
     %AuthToken{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log()
+    |> Repo.insert_record_with_activity_log()
   end
 
   # Expires the given token.
@@ -210,6 +210,6 @@ defmodule EWalletDB.AuthToken do
   defp update(%AuthToken{} = token, attrs) do
     token
     |> expire_changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 end

@@ -2,6 +2,7 @@ defmodule ActivityLogger.ActivityLogTest do
   use ExUnit.Case
   import ActivityLogger.Factory
   alias Ecto.Adapters.SQL.Sandbox
+
   alias ActivityLogger.{
     System,
     ActivityLog,
@@ -99,7 +100,9 @@ defmodule ActivityLogger.ActivityLogTest do
   describe "ActivityLog.get_initial_activity_log/2" do
     test "gets the initial activity_log for a record" do
       initial_originator = insert(:test_user)
-      {:ok, user} = :test_user |> params_for(%{originator: initial_originator}) |> TestUser.insert()
+
+      {:ok, user} =
+        :test_user |> params_for(%{originator: initial_originator}) |> TestUser.insert()
 
       {:ok, user} =
         TestUser.update(user, %{
@@ -121,7 +124,9 @@ defmodule ActivityLogger.ActivityLogTest do
   describe "ActivityLog.get_initial_originator/2" do
     test "gets the initial originator for a record" do
       initial_originator = insert(:test_user)
-      {:ok, user} = :test_user |> params_for(%{originator: initial_originator}) |> TestUser.insert()
+
+      {:ok, user} =
+        :test_user |> params_for(%{originator: initial_originator}) |> TestUser.insert()
 
       {:ok, user} =
         TestUser.update(user, %{
@@ -159,13 +164,13 @@ defmodule ActivityLogger.ActivityLogTest do
       assert activity_log.target_uuid == record.uuid
 
       assert activity_log.target_changes == %{
-         "title" => record.title,
-         "body" => record.body
-       }
+               "title" => record.title,
+               "body" => record.body
+             }
 
       assert activity_log.target_encrypted_changes == %{
-        "secret_data" => %{"something" => "cool"}
-      }
+               "secret_data" => %{"something" => "cool"}
+             }
 
       assert record |> ActivityLog.all_for_target() |> length() == 1
     end
@@ -198,8 +203,8 @@ defmodule ActivityLogger.ActivityLogTest do
       assert activity_log.target_uuid == record.uuid
 
       assert activity_log.target_changes == %{
-        "username" => record.username
-      }
+               "username" => record.username
+             }
 
       assert activity_log.target_encrypted_changes == %{}
 

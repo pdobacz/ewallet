@@ -51,6 +51,7 @@ defmodule EWalletDB.SchemaCase do
       setup do
         :ok = Sandbox.checkout(EWalletDB.Repo)
         :ok = Sandbox.checkout(EWalletConfig.Repo)
+        :ok = Sandbox.checkout(ActivityLogger.Repo)
         %{} = get_or_insert_master_account()
 
         :ok

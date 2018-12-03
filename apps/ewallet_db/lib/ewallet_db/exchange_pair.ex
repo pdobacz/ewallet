@@ -130,7 +130,7 @@ defmodule EWalletDB.ExchangePair do
   def insert(attrs) do
     %__MODULE__{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log()
+    |> Repo.insert_record_with_activity_log()
   end
 
   @doc """
@@ -140,7 +140,7 @@ defmodule EWalletDB.ExchangePair do
   def update(exchange_pair, attrs) do
     exchange_pair
     |> changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -162,7 +162,7 @@ defmodule EWalletDB.ExchangePair do
   def restore(exchange_pair, originator) do
     changeset = restore_changeset(exchange_pair, %{deleted_at: nil, originator: originator})
 
-    case update_record_with_activity_log(changeset) do
+    case Repo.update_record_with_activity_log(changeset) do
       {:error, %{errors: [deleted_at: {"has already been taken", []}]}} ->
         {:error, :exchange_pair_already_exists}
 
@@ -178,7 +178,7 @@ defmodule EWalletDB.ExchangePair do
   def touch(exchange_pair, originator) do
     exchange_pair
     |> touch_changeset(%{updated_at: NaiveDateTime.utc_now(), originator: originator})
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """

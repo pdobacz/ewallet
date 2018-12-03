@@ -27,7 +27,13 @@ defmodule ActivityLogger.ActivityLogging do
   @doc """
   Prepares a changeset for activity_log.
   """
-  def cast_and_validate_required_for_activity_log(record, attrs, cast \\ [], required \\ [], encrypted_fields \\ []) do
+  def cast_and_validate_required_for_activity_log(
+        record,
+        attrs,
+        cast \\ [],
+        required \\ [],
+        encrypted_fields \\ []
+      ) do
     record
     |> Map.delete(:originator)
     |> cast(attrs, [:originator | cast])
@@ -36,6 +42,7 @@ defmodule ActivityLogger.ActivityLogging do
   end
 
   def put_encrypted_changes(changeset, []), do: changeset
+
   def put_encrypted_changes(changeset, encrypted_fields) when is_list(encrypted_fields) do
     {changeset, encrypted_changes} =
       Enum.reduce(encrypted_fields, {changeset, %{}}, fn encrypted_field, {changeset, map} ->
@@ -47,17 +54,6 @@ defmodule ActivityLogger.ActivityLogging do
 
     put_change(changeset, :encrypted_changes, encrypted_changes)
   end
+
   def put_encrypted_changes(changeset, _), do: changeset
-
-  def insert_record_with_activity_log(changeset, opts \\ [], multi \\ Multi.new()) do
-    ActivityLog.insert_record_with_activity_log(changeset, opts, multi)
-  end
-
-  def update_record_with_activity_log(changeset, opts \\ [], multi \\ Multi.new()) do
-    ActivityLog.update_record_with_activity_log(changeset, opts, multi)
-  end
-
-  def delete_record_with_activity_log(changeset, opts \\ [], multi \\ Multi.new()) do
-    ActivityLog.delete_record_with_activity_log(changeset, opts, multi)
-  end
 end

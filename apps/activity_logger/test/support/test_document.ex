@@ -7,6 +7,7 @@ defmodule ActivityLogger.TestDocument do
   use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   alias Ecto.{Multi, UUID}
+  alias ActivityLogger.Repo
 
   alias ActivityLogger.TestDocument
 
@@ -37,6 +38,6 @@ defmodule ActivityLogger.TestDocument do
   def insert(attrs) do
     %TestDocument{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log([])
+    |> Repo.insert_record_with_activity_log([])
   end
 end

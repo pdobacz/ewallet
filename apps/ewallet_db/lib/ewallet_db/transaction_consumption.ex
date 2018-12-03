@@ -306,7 +306,7 @@ defmodule EWalletDB.TransactionConsumption do
       expired_at: NaiveDateTime.utc_now(),
       originator: originator
     })
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -376,7 +376,7 @@ defmodule EWalletDB.TransactionConsumption do
     changeset = changeset(%TransactionConsumption{}, attrs)
     opts = [on_conflict: :nothing, conflict_target: :idempotency_token]
 
-    case insert_record_with_activity_log(changeset, opts) do
+    case Repo.insert_record_with_activity_log(changeset, opts) do
       {:ok, consumption} ->
         {:ok, get_by(%{idempotency_token: consumption.idempotency_token})}
 
@@ -433,7 +433,7 @@ defmodule EWalletDB.TransactionConsumption do
     {:ok, consumption} =
       consumption
       |> transaction_failure_changeset(data)
-      |> update_record_with_activity_log()
+      |> Repo.update_record_with_activity_log()
 
     consumption
   end
@@ -467,7 +467,7 @@ defmodule EWalletDB.TransactionConsumption do
     {:ok, consumption} =
       __MODULE__
       |> apply(fun, [consumption, data])
-      |> update_record_with_activity_log()
+      |> Repo.update_record_with_activity_log()
 
     consumption
   end

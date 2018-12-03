@@ -29,7 +29,7 @@ defmodule EWalletConfig.FileStorageSettingsLoaderTest do
         "file_storage_adapter" => "local"
       })
 
-      assert Application.get_env(:arc, :storage) == EWalletConfig.Storage.Local
+      assert Application.get_env(:arc, :storage) == Utils.Storage.Local
     end
 
     test "load aws storage env" do

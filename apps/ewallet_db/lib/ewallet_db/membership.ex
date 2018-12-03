@@ -148,13 +148,13 @@ defmodule EWalletDB.Membership do
   defp insert(attrs) do
     %Membership{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log()
+    |> Repo.insert_record_with_activity_log()
   end
 
   defp update(%Membership{} = membership, attrs) do
     membership
     |> changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   defp delete(%Membership{} = membership, originator) do
@@ -162,6 +162,6 @@ defmodule EWalletDB.Membership do
     |> changeset(%{
       originator: originator
     })
-    |> delete_record_with_activity_log()
+    |> Repo.delete_record_with_activity_log()
   end
 end

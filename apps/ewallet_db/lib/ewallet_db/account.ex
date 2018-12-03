@@ -148,7 +148,7 @@ defmodule EWalletDB.Account do
   def insert(attrs) do
     %Account{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log(
+    |> Repo.insert_record_with_activity_log(
       [],
       Multi.new()
       |> Multi.run(:wallet, fn %{record: account} ->
@@ -172,7 +172,7 @@ defmodule EWalletDB.Account do
   def update(%Account{} = account, attrs) do
     changeset = changeset(account, attrs)
 
-    case update_record_with_activity_log(changeset) do
+    case Repo.update_record_with_activity_log(changeset) do
       {:ok, account} ->
         {:ok, get(account.id)}
 
@@ -212,7 +212,7 @@ defmodule EWalletDB.Account do
 
     changeset = avatar_changeset(account, attrs)
 
-    case update_record_with_activity_log(changeset) do
+    case Repo.update_record_with_activity_log(changeset) do
       {:ok, account} -> get(account.id)
       result -> result
     end

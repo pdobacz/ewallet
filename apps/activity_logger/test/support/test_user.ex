@@ -5,10 +5,8 @@ defmodule ActivityLogger.TestUser do
   use Ecto.Schema
   use Utils.Types.ExternalID
   use ActivityLogger.ActivityLogging
-  import Ecto.{Changeset, Query}
   alias Ecto.{Multi, UUID}
-
-  alias ActivityLogger.TestUser
+  alias ActivityLogger.{TestDocument, Repo, TestUser}
 
   @primary_key {:uuid, UUID, autogenerate: true}
 
@@ -34,13 +32,13 @@ defmodule ActivityLogger.TestUser do
   def insert(attrs) do
     %TestUser{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log([])
+    |> Repo.insert_record_with_activity_log([])
   end
 
   def insert_with_document(attrs) do
     %TestUser{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log(
+    |> Repo.insert_record_with_activity_log(
       [],
       Multi.run(Multi.new(), :document, fn %{record: record} ->
         TestDocument.insert(%{
@@ -58,6 +56,6 @@ defmodule ActivityLogger.TestUser do
   def update(%TestUser{} = user, attrs) do
     user
     |> changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 end

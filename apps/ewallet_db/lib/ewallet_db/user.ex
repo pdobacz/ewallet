@@ -327,7 +327,7 @@ defmodule EWalletDB.User do
   def insert(attrs) do
     %User{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log(
+    |> Repo.insert_record_with_activity_log(
       [],
       Multi.run(Multi.new(), :wallet, fn %{record: record} ->
         case User.admin?(record) do
@@ -371,7 +371,7 @@ defmodule EWalletDB.User do
         update_user_changeset(user, attrs)
       end
 
-    update_record_with_activity_log(changeset)
+    Repo.update_record_with_activity_log(changeset)
   end
 
   @doc """
@@ -408,7 +408,7 @@ defmodule EWalletDB.User do
   defp do_update_password(user, attrs) do
     user
     |> password_changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -418,7 +418,7 @@ defmodule EWalletDB.User do
   def update_email(%User{} = user, attrs) do
     user
     |> email_changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -437,7 +437,7 @@ defmodule EWalletDB.User do
 
     user
     |> avatar_changeset(updated_attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -586,7 +586,7 @@ defmodule EWalletDB.User do
       is_admin: boolean,
       originator: originator
     })
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -688,6 +688,6 @@ defmodule EWalletDB.User do
   def enable_or_disable(user, attrs) do
     user
     |> enable_changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 end

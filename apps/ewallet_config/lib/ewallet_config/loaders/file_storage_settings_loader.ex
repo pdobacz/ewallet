@@ -47,7 +47,7 @@ defmodule EWalletConfig.FileStorageSettingsLoader do
   end
 
   defp load_file_storage("local", _app) do
-    Application.put_env(:arc, :storage, EWalletConfig.Storage.Local)
+    Application.put_env(:arc, :storage, Utils.Storage.Local)
   end
 
   defp load_file_storage(storage, _app) do

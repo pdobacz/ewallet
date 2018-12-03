@@ -97,7 +97,7 @@ defmodule EWalletDB.APIKey do
 
     %APIKey{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log()
+    |> Repo.insert_record_with_activity_log()
   end
 
   @doc """
@@ -108,13 +108,13 @@ defmodule EWalletDB.APIKey do
 
     api_key
     |> update_changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   def update(%APIKey{} = api_key, attrs) do
     api_key
     |> update_changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -123,7 +123,7 @@ defmodule EWalletDB.APIKey do
   def enable_or_disable(%APIKey{} = api_key, attrs) do
     api_key
     |> enable_changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   defp get_master_account_uuid do

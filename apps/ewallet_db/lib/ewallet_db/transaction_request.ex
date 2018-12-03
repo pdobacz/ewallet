@@ -12,7 +12,6 @@ defmodule EWalletDB.TransactionRequest do
 
   alias EWalletDB.{
     Account,
-    
     Repo,
     Token,
     TransactionConsumption,
@@ -278,7 +277,7 @@ defmodule EWalletDB.TransactionRequest do
       updated_at: NaiveDateTime.utc_now(),
       originator: originator
     })
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -288,7 +287,7 @@ defmodule EWalletDB.TransactionRequest do
   def insert(attrs) do
     %TransactionRequest{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log()
+    |> Repo.insert_record_with_activity_log()
   end
 
   @doc """
@@ -297,7 +296,7 @@ defmodule EWalletDB.TransactionRequest do
   def update(%TransactionRequest{} = request, attrs) do
     request
     |> changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @spec valid?(%TransactionRequest{}) :: true | false
@@ -339,7 +338,7 @@ defmodule EWalletDB.TransactionRequest do
       expiration_reason: reason,
       originator: originator
     })
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -399,7 +398,7 @@ defmodule EWalletDB.TransactionRequest do
         consumptions_count: length(consumptions),
         originator: originator
       })
-      |> update_record_with_activity_log()
+      |> Repo.update_record_with_activity_log()
 
     request
   end

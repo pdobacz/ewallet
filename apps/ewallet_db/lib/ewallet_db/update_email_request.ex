@@ -108,6 +108,6 @@ defmodule EWalletDB.UpdateEmailRequest do
   defp insert(attrs) do
     %UpdateEmailRequest{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log()
+    |> Repo.insert_record_with_activity_log()
   end
 end

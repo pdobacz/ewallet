@@ -11,6 +11,7 @@ defmodule AdminPanel.PageControllerTest do
 
   setup do
     Sandbox.checkout(EWalletDB.Repo)
+    Sandbox.checkout(ActivityLogger.Repo)
   end
 
   describe "GET request to /admin" do

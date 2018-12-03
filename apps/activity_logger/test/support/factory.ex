@@ -4,12 +4,14 @@ defmodule ActivityLogger.Factory do
   """
   use ExMachina.Ecto, repo: ActivityLogger.Repo
   alias ExMachina.Strategy
+
   alias ActivityLogger.{
     System,
     ActivityLog,
     TestDocument,
     TestUser
   }
+
   alias Ecto.UUID
   alias ExULID.ULID
 

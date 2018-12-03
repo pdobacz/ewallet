@@ -8,6 +8,7 @@ defmodule EWalletDB.AccountUser do
   import Ecto.Changeset
   alias Ecto.UUID
   alias EWalletDB.{Account, AccountUser, User}
+  alias EWalletDB.Repo
 
   @primary_key {:uuid, UUID, autogenerate: true}
 
@@ -51,7 +52,7 @@ defmodule EWalletDB.AccountUser do
 
     %AccountUser{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log(opts)
+    |> Repo.insert_record_with_activity_log(opts)
   end
 
   def link(account_uuid, user_uuid, originator) do

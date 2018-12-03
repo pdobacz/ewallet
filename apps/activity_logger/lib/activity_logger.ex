@@ -5,7 +5,11 @@ defmodule ActivityLogger do
 
   def configure(schemas_to_activity_log_types) do
     update_config(:schemas_to_activity_log_types, schemas_to_activity_log_types)
-    update_config(:schemas_to_activity_log_types, to_activity_log_types(schemas_to_activity_log_types))
+
+    update_config(
+      :activity_log_types_to_schemas,
+      to_activity_log_types(schemas_to_activity_log_types)
+    )
   end
 
   defp to_activity_log_types(schemas_to_activity_log_types) do

@@ -31,7 +31,10 @@ defmodule EWalletDB.ForgetPasswordRequest do
 
   defp changeset(changeset, attrs) do
     changeset
-    |> cast_and_validate_required_for_activity_log(attrs, [:token, :user_uuid], [:token, :user_uuid])
+    |> cast_and_validate_required_for_activity_log(attrs, [:token, :user_uuid], [
+      :token,
+      :user_uuid
+    ])
     |> assoc_constraint(:user)
   end
 
@@ -102,6 +105,6 @@ defmodule EWalletDB.ForgetPasswordRequest do
   defp insert(attrs) do
     %ForgetPasswordRequest{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log()
+    |> Repo.insert_record_with_activity_log()
   end
 end

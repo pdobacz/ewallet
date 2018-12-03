@@ -8,7 +8,6 @@ defmodule EWalletDB.Invite do
   alias Ecto.{Multi, UUID}
   alias Utils.Helpers.Crypto
   alias EWalletDB.{Invite, Repo, User}
-  alias ActivityLogger.ActivityLog
 
   @primary_key {:uuid, UUID, autogenerate: true}
   @token_length 32
@@ -110,9 +109,7 @@ defmodule EWalletDB.Invite do
   @doc """
   Generates an invite for the given user.
   """
-  def generate(user, opts \\ []) do
-    originator = ActivityLog.get_initial_originator(user)
-
+  def generate(user, originator, opts \\ []) do
     # Insert a new invite
     %Invite{}
     |> changeset_insert(%{
@@ -121,7 +118,7 @@ defmodule EWalletDB.Invite do
       success_url: opts[:success_url],
       originator: originator
     })
-    |> insert_record_with_activity_log(
+    |> Repo.insert_record_with_activity_log(
       [],
       # Assign the invite to the user
       Multi.run(Multi.new(), :user, fn %{record: record} ->
@@ -131,7 +128,7 @@ defmodule EWalletDB.Invite do
             invite_uuid: record.uuid,
             originator: record
           })
-          |> update_record_with_activity_log()
+          |> Repo.update_record_with_activity_log()
       end)
     )
     |> case do
@@ -153,7 +150,7 @@ defmodule EWalletDB.Invite do
          {:ok, _user} <- User.update(invite.user, attrs),
          invite_attrs <- %{verified_at: NaiveDateTime.utc_now(), originator: invite.user},
          changeset <- changeset_accept(invite, invite_attrs),
-         {:ok, invite} <- update_record_with_activity_log(changeset) do
+         {:ok, invite} <- Repo.update_record_with_activity_log(changeset) do
       {:ok, invite}
     else
       {:error, _failed_operation, changeset, _changes_so_far} ->
@@ -180,7 +177,7 @@ defmodule EWalletDB.Invite do
          {:ok, _user} <- User.update(user, user_attrs),
          invite_attrs <- %{verified_at: NaiveDateTime.utc_now(), originator: invite.user},
          changeset <- changeset_accept(invite, invite_attrs),
-         {:ok, invite} <- update_record_with_activity_log(changeset) do
+         {:ok, invite} <- Repo.update_record_with_activity_log(changeset) do
       {:ok, invite}
     else
       {:error, _failed_operation, changeset, _changes_so_far} ->

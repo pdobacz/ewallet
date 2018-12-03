@@ -63,6 +63,7 @@ defmodule EWalletDB.SoftDelete do
   """
   use ActivityLogger.ActivityLogging
   import Ecto.Query
+  alias EWalletDB.Repo
 
   @doc false
   defmacro __using__(_) do
@@ -119,7 +120,7 @@ defmodule EWalletDB.SoftDelete do
       deleted_at: NaiveDateTime.utc_now(),
       originator: originator
     })
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -132,6 +133,6 @@ defmodule EWalletDB.SoftDelete do
       deleted_at: nil,
       originator: originator
     })
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 end

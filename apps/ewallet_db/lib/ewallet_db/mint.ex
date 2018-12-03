@@ -123,7 +123,7 @@ defmodule EWalletDB.Mint do
   def insert(attrs) do
     %Mint{}
     |> changeset(attrs)
-    |> insert_record_with_activity_log()
+    |> Repo.insert_record_with_activity_log()
   end
 
   @doc """
@@ -133,7 +133,7 @@ defmodule EWalletDB.Mint do
   def update(%Mint{} = mint, attrs) do
     mint
     |> update_changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -148,7 +148,7 @@ defmodule EWalletDB.Mint do
         confirmed: true,
         originator: originator
       })
-      |> update_record_with_activity_log()
+      |> Repo.update_record_with_activity_log()
 
     mint
   end

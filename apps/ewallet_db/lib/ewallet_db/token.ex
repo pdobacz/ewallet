@@ -168,7 +168,7 @@ defmodule EWalletDB.Token do
   def insert(attrs) do
     changeset = changeset(%Token{}, attrs)
 
-    case insert_record_with_activity_log(changeset) do
+    case Repo.insert_record_with_activity_log(changeset) do
       {:ok, token} ->
         {:ok, get(token.id)}
 
@@ -183,7 +183,7 @@ defmodule EWalletDB.Token do
   def update(token, attrs) do
     token
     |> update_changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 
   @doc """
@@ -220,6 +220,6 @@ defmodule EWalletDB.Token do
   def enable_or_disable(token, attrs) do
     token
     |> enable_changeset(attrs)
-    |> update_record_with_activity_log()
+    |> Repo.update_record_with_activity_log()
   end
 end
