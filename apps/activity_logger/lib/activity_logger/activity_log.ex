@@ -164,7 +164,7 @@ defmodule ActivityLogger.ActivityLog do
 
   defp remove_forbidden(changes, prevent_saving) do
     changes
-    |> Enum.filter(fn {key, value} -> !Enum.member?(prevent_saving, key) end)
+    |> Enum.filter(fn {key, _} -> !Enum.member?(prevent_saving, key) end)
     |> Enum.into(%{})
   end
 
@@ -177,7 +177,7 @@ defmodule ActivityLogger.ActivityLog do
 
   defp format_changes(changes, encrypted_fields) do
     changes
-    |> Enum.filter(fn {key, value} ->
+    |> Enum.filter(fn {key, _} ->
       !Enum.member?(encrypted_fields, key)
     end)
     |> format_changes(nil)
@@ -191,7 +191,7 @@ defmodule ActivityLogger.ActivityLog do
   end
 
   defp format_change(field, value) do
-    {field, value}
+    {field, format_value(value)}
   end
 
   defp format_value(%Changeset{} = value) do

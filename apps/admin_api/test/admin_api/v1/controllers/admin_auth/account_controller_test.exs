@@ -269,24 +269,22 @@ defmodule AdminAPI.V1.AdminAuth.AccountControllerTest do
       assert response["success"] == true
 
       account = Account.get(response["data"]["id"])
-      log = get_last_activity_log(account)
 
-      assert log.action == "insert"
-      assert log.inserted_at != nil
-      assert log.originator_type == "user"
-      assert log.originator_uuid == user.uuid
-      assert log.target_type == "account"
-      assert log.target_uuid == account.uuid
-
-      assert log.target_changes == %{
-               "metadata" => %{"something" => "interesting"},
-               "name" => "A test account",
-               "parent_uuid" => parent.uuid
-             }
-
-      assert log.target_encrypted_changes == %{
-               "encrypted_metadata" => %{"something" => "secret"}
-             }
+      account
+      |> get_last_activity_log()
+      |> assert_activity_log(
+        action: "insert",
+        originator: user,
+        target: account,
+        changes: %{
+          "metadata" => %{"something" => "interesting"},
+          "name" => "A test account",
+          "parent_uuid" => parent.uuid
+        },
+        encrypted_changes: %{
+          "encrypted_metadata" => %{"something" => "secret"}
+        }
+      )
     end
 
     test "creates a new account with no parent_id" do
@@ -357,24 +355,22 @@ defmodule AdminAPI.V1.AdminAuth.AccountControllerTest do
       assert response["success"] == true
 
       account = Account.get(response["data"]["id"])
-      log = get_last_activity_log(account)
 
-      assert log.action == "update"
-      assert log.inserted_at != nil
-      assert log.originator_type == "user"
-      assert log.originator_uuid == user.uuid
-      assert log.target_type == "account"
-      assert log.target_uuid == account.uuid
-
-      assert log.target_changes == %{
-               "name" => "updated_name",
-               "parent_uuid" => account.parent_uuid,
-               "description" => "updated_description"
-             }
-
-      assert log.target_encrypted_changes == %{
-               "encrypted_metadata" => %{"something" => "secret"}
-             }
+      account
+      |> get_last_activity_log()
+      |> assert_activity_log(
+        action: "update",
+        originator: user,
+        target: account,
+        changes: %{
+          "name" => "updated_name",
+          "parent_uuid" => account.parent_uuid,
+          "description" => "updated_description"
+        },
+        encrypted_changes: %{
+          "encrypted_metadata" => %{"something" => "secret"}
+        }
+      )
     end
 
     test "updates the account's categories" do
@@ -570,6 +566,39 @@ defmodule AdminAPI.V1.AdminAuth.AccountControllerTest do
 
       assert response["data"]["description"] ==
                "You are not allowed to perform the requested operation."
+    end
+
+    test "generates an activity log" do
+      user = get_test_admin()
+      account = insert(:account)
+
+      response =
+        admin_user_request("/account.upload_avatar", %{
+          "id" => account.id,
+          "avatar" => %Plug.Upload{
+            path: "test/support/assets/test.jpg",
+            filename: "test.jpg"
+          }
+        })
+
+      assert response["success"] == true
+
+      account = Account.get(account.id)
+
+      account
+      |> get_last_activity_log()
+      |> assert_activity_log(
+        action: "update",
+        originator: user,
+        target: account,
+        changes: %{
+          "avatar" => %{
+            "file_name" => "test.jpg",
+            "updated_at" => Ecto.DateTime.to_iso8601(account.avatar.updated_at)
+          }
+        },
+        encrypted_changes: %{}
+      )
     end
   end
 end

@@ -59,6 +59,7 @@ defmodule AdminAPI.ConnCase do
       import AdminAPI.ConnCase
       import AdminAPI.Router.Helpers
       import EWalletDB.Factory
+      import ActivityLogger.ActivityLoggerTestHelper, only: [assert_activity_log: 2]
 
       # Reiterate all module attributes from `AdminAPI.ConnCase`
       @endpoint unquote(@endpoint)
@@ -197,9 +198,6 @@ defmodule AdminAPI.ConnCase do
     |> order_by(desc: :inserted_at)
     |> where(target_type: ^type)
     |> ActivityLogger.Repo.all()
-  end
-
-  def assert_last_activity_log(action, expected_originator, expected_target) do
   end
 
   def mint!(token, amount \\ 1_000_000, originator \\ %System{}) do
