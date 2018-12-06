@@ -44,7 +44,7 @@ defmodule EWalletConfig.MixProject do
       {:ecto, "~> 2.1.6"},
       {:poison, "~> 3.1"},
       {:deferred_config, "~> 0.1.0"},
-      {:cloak, "~> 0.7.0-alpha"},
+      {:cloak, "~> 0.9.1"},
       {:arc, "~> 0.8.0"},
       {:arc_ecto, "~> 0.7.0"},
       {:bcrypt_elixir, "~> 1.0"},

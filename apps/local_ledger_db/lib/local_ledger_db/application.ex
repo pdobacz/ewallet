@@ -11,7 +11,8 @@ defmodule LocalLedgerDB.Application do
 
     # List all child processes to be supervised
     children = [
-      supervisor(LocalLedgerDB.Repo, [])
+      supervisor(LocalLedgerDB.Repo, []),
+      supervisor(LocalLedgerDB.Vault, [])
       # Starts a worker by calling: LocalLedgerDB.Worker.start_link(arg)
       # {LocalLedgerDB.Worker, arg},
     ]

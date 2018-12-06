@@ -13,7 +13,8 @@ defmodule EWalletConfig.Application do
     children = [
       # Starts a worker by calling: EWalletConfig.Worker.start_link(arg)
       supervisor(EWalletConfig.Repo, []),
-      supervisor(EWalletConfig.Config, [[named: true]])
+      supervisor(EWalletConfig.Config, [[named: true]]),
+      supervisor(EWalletConfig.Vault, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

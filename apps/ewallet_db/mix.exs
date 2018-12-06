@@ -50,7 +50,7 @@ defmodule EWalletDB.Mixfile do
 
       {:poison, "~> 3.1"},
       {:bcrypt_elixir, "~> 1.0"},
-      {:cloak, "~> 0.7.0-alpha"},
+      {:cloak, "~> 0.9.1"},
       {:plug, "~> 1.0"},
       {:arc, "~> 0.8.0"},
       {:arc_ecto, "~> 0.7.0"},
