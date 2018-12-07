@@ -255,5 +255,38 @@ defmodule AdminAPI.V1.AdminAuth.AdminUserControllerTest do
       assert response["data"]["description"] ==
                "You are not allowed to perform the requested operation."
     end
+
+    test "generates an activity log" do
+      admin = get_test_admin()
+      account = Account.get_master_account()
+      role = insert(:role, %{name: "some_role"})
+      admin = insert(:admin, %{email: "admin@omise.co"})
+      _membership = insert(:membership, %{user: admin, account: account, role: role})
+
+      timestamp = DateTime.utc_now()
+
+      response =
+        admin_user_request("/admin.enable_or_disable", %{
+          id: admin.id,
+          enabled: false
+        })
+
+      assert response["success"] == true
+      admin = User.get(admin.id)
+      logs = get_all_activity_logs_since(timestamp)
+      assert Enum.count(logs) == 1
+
+      logs
+      |> Enum.at(0)
+      |> assert_activity_log(
+        action: "update",
+        originator: get_test_admin(),
+        target: admin,
+        changes: %{
+          "enabled" => false
+        },
+        encrypted_changes: %{}
+      )
+    end
   end
 end
