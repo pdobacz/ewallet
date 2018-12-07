@@ -3,7 +3,7 @@ defmodule ActivityLogger.ActivityLoggerTestHelper do
   Contains helper methods to make testing activity logging easier
   """
   use ExUnit.CaseTemplate
-  alias ActivityLogger.ActivityLog
+  alias ActivityLogger.{ActivityLog, System}
   alias EWalletConfig.{Setting, StoredSetting}
 
   def assert_activity_log(
@@ -19,6 +19,24 @@ defmodule ActivityLogger.ActivityLoggerTestHelper do
       action: action,
       originator: originator,
       target: %StoredSetting{uuid: target.uuid},
+      changes: changes,
+      encrypted_changes: encrypted_changes
+    )
+  end
+
+  def assert_activity_log(
+        log,
+        action: action,
+        originator: :system,
+        target: target,
+        changes: changes,
+        encrypted_changes: encrypted_changes
+      ) do
+    assert_activity_log(
+      log,
+      action: action,
+      originator: %System{uuid: "00000000-0000-0000-0000-000000000000"},
+      target: target,
       changes: changes,
       encrypted_changes: encrypted_changes
     )

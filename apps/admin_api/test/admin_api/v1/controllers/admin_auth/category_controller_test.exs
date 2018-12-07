@@ -294,14 +294,7 @@ defmodule AdminAPI.V1.AdminAuth.CategoryControllerTest do
       category = insert(:category)
       timestamp = DateTime.utc_now()
 
-      request_data =
-        params_for(:category, %{
-          id: category.id,
-          name: "updated_name",
-          description: "updated_description"
-        })
-
-      response = admin_user_request("/category.update", request_data)
+      response = admin_user_request("/category.delete", %{id: category.id})
 
       assert response["success"] == true
 

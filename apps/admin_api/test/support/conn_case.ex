@@ -197,14 +197,14 @@ defmodule AdminAPI.ConnCase do
     type = ActivityLog.get_type(schema.__struct__)
 
     ActivityLog
-    |> order_by(desc: :inserted_at)
+    |> order_by(asc: :inserted_at)
     |> where(target_type: ^type)
     |> ActivityLogger.Repo.all()
   end
 
   def get_all_activity_logs_since(since) do
     ActivityLog
-    |> order_by(desc: :inserted_at)
+    |> order_by(asc: :inserted_at)
     |> where([a], a.inserted_at > ^since)
     |> ActivityLogger.Repo.all()
   end

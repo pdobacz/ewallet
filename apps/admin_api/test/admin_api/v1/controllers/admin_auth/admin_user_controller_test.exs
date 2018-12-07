@@ -257,7 +257,6 @@ defmodule AdminAPI.V1.AdminAuth.AdminUserControllerTest do
     end
 
     test "generates an activity log" do
-      admin = get_test_admin()
       account = Account.get_master_account()
       role = insert(:role, %{name: "some_role"})
       admin = insert(:admin, %{email: "admin@omise.co"})

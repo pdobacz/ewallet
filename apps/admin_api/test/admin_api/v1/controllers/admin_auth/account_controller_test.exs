@@ -276,18 +276,10 @@ defmodule AdminAPI.V1.AdminAuth.AccountControllerTest do
 
       logs
       |> Enum.at(0)
-      |> assert_activity_log(
+      |> assert_simple_activity_log(
         action: "insert",
-        originator: user,
-        target: account,
-        changes: %{
-          "metadata" => %{"something" => "interesting"},
-          "name" => "A test account",
-          "parent_uuid" => parent.uuid
-        },
-        encrypted_changes: %{
-          "encrypted_metadata" => %{"something" => "secret"}
-        }
+        originator_type: "account",
+        target_type: "wallet"
       )
 
       logs
@@ -300,10 +292,18 @@ defmodule AdminAPI.V1.AdminAuth.AccountControllerTest do
 
       logs
       |> Enum.at(2)
-      |> assert_simple_activity_log(
+      |> assert_activity_log(
         action: "insert",
-        originator_type: "account",
-        target_type: "wallet"
+        originator: user,
+        target: account,
+        changes: %{
+          "metadata" => %{"something" => "interesting"},
+          "name" => "A test account",
+          "parent_uuid" => parent.uuid
+        },
+        encrypted_changes: %{
+          "encrypted_metadata" => %{"something" => "secret"}
+        }
       )
     end
 
