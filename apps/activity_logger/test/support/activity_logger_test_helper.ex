@@ -22,4 +22,16 @@ defmodule ActivityLogger.ActivityLoggerTestHelper do
     assert log.target_changes == changes
     assert log.target_encrypted_changes == encrypted_changes
   end
+
+  def assert_simple_activity_log(
+        log,
+        action: action,
+        originator_type: o_type,
+        target_type: t_type
+      ) do
+    assert log.action == action
+    assert log.inserted_at != nil
+    assert log.originator_type == o_type
+    assert log.target_type == t_type
+  end
 end

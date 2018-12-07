@@ -59,7 +59,9 @@ defmodule AdminAPI.ConnCase do
       import AdminAPI.ConnCase
       import AdminAPI.Router.Helpers
       import EWalletDB.Factory
-      import ActivityLogger.ActivityLoggerTestHelper, only: [assert_activity_log: 2]
+
+      import ActivityLogger.ActivityLoggerTestHelper,
+        only: [assert_activity_log: 2, assert_simple_activity_log: 2]
 
       # Reiterate all module attributes from `AdminAPI.ConnCase`
       @endpoint unquote(@endpoint)
@@ -197,6 +199,13 @@ defmodule AdminAPI.ConnCase do
     ActivityLog
     |> order_by(desc: :inserted_at)
     |> where(target_type: ^type)
+    |> ActivityLogger.Repo.all()
+  end
+
+  def get_all_activity_logs_since(since) do
+    ActivityLog
+    |> order_by(desc: :inserted_at)
+    |> where([a], a.inserted_at > ^since)
     |> ActivityLogger.Repo.all()
   end
 
