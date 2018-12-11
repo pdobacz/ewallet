@@ -329,7 +329,6 @@ defmodule AdminAPI.V1.AdminAuth.TokenControllerTest do
       logs = get_all_activity_logs_since(timestamp)
       assert Enum.count(logs) == 7
 
-
       logs
       |> Enum.at(0)
       |> assert_activity_log(
