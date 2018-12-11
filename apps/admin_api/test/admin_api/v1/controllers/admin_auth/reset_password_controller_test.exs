@@ -131,7 +131,11 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
         action: "insert",
         originator: :system,
         target: request,
-        changes: %{"token" => request.token, "user_uuid" => user.uuid},
+        changes: %{
+          "token" => request.token,
+          "user_uuid" => user.uuid,
+          "expires_at" => NaiveDateTime.to_iso8601(request.expires_at)
+        },
         encrypted_changes: %{}
       )
     end
@@ -237,8 +241,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
 
     test "generates an activity log" do
       {:ok, user} = :admin |> params_for() |> User.insert()
-      request = ForgetPasswordRequest.generate(user)
-
+      {:ok, request} = ForgetPasswordRequest.generate(user)
       timestamp = DateTime.utc_now()
 
       response =

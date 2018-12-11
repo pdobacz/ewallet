@@ -17,8 +17,9 @@ defmodule AdminAPI.ChannelCase do
   use Phoenix.ChannelTest
   import EWalletDB.Factory
   alias Ecto.Adapters.SQL.Sandbox
-  alias EWalletConfig.{ConfigTestHelper, Helpers.Crypto, Types.ExternalID}
+  alias EWalletConfig.ConfigTestHelper
   alias EWalletDB.{Key, Account, User}
+  alias Utils.{Types.ExternalID, Helpers.Crypto}
 
   # Attributes for provider calls
   @access_key "test_access_key"

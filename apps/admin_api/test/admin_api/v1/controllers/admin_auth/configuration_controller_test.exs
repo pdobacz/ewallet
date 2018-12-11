@@ -152,7 +152,7 @@ defmodule AdminAPI.V1.AdminAuth.ConfigurationControllerTest do
         action: "update",
         originator: get_test_admin(),
         target: setting,
-        changes: %{"data" => %{"value" => "new_base_url.example"}},
+        changes: %{"data" => %{"value" => "new_base_url.example"}, "position" => setting.position},
         encrypted_changes: %{}
       )
     end

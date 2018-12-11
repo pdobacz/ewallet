@@ -6,7 +6,7 @@ defmodule EWalletDB.ForgetPasswordRequest do
   use ActivityLogger.ActivityLogging
   import Ecto.{Changeset, Query}
   alias Ecto.UUID
-  alias EWalletDB.{ForgetPasswordRequest, Repo, User}
+  alias EWalletDB.{Repo, User}
   alias Utils.Helpers.Crypto
   alias ActivityLogger.System
 
@@ -139,12 +139,19 @@ defmodule EWalletDB.ForgetPasswordRequest do
   @spec generate(%User{}) :: %__MODULE__{} | {:error, Ecto.Changeset.t()}
   def generate(user) do
     token = Crypto.generate_base64_key(@token_length)
+
     lifetime_minutes =
       Application.get_env(:ewallet, :forget_password_request_lifetime, @default_lifetime_minutes)
 
     expires_at = NaiveDateTime.utc_now() |> NaiveDateTime.add(60 * lifetime_minutes)
 
-    with {:ok, _} <- insert(%{token: token, user_uuid: user.uuid, expires_at: expires_at, originator: %System{}}),
+    with {:ok, _} <-
+           insert(%{
+             token: token,
+             user_uuid: user.uuid,
+             expires_at: expires_at,
+             originator: %System{}
+           }),
          %__MODULE__{} = request <- __MODULE__.get(user, token) do
       {:ok, request}
     else

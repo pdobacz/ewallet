@@ -517,7 +517,6 @@ defmodule EWalletConfig.SettingTest do
       default_settings = Application.get_env(:ewallet_config, :default_settings)
       settings = Setting.all()
 
-      settings = Setting.all()
       assert length(settings) == Enum.count(default_settings)
 
       first_setting = Enum.at(settings, 0)
@@ -528,9 +527,10 @@ defmodule EWalletConfig.SettingTest do
       assert Setting.insert_all_defaults(%System{}, %{
                "base_url" => "fake_url"
              }) == :ok
-     default_settings = Application.get_env(:ewallet_config, :default_settings)
 
-     assert length(Setting.all()) == Enum.count(default_settings)
+      default_settings = Application.get_env(:ewallet_config, :default_settings)
+
+      assert length(Setting.all()) == Enum.count(default_settings)
       assert Setting.get_value("base_url") == "fake_url"
     end
   end
