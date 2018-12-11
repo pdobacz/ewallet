@@ -1,8 +1,8 @@
-defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
-  use AdminAPI.ConnCase, async: true
+defmodule EWalletAPI.V1.ResetPasswordControllerTest do
+  use EWalletAPI.ConnCase, async: true
   use Bamboo.Test
   alias EWallet.ForgetPasswordEmail
-  alias Utils.Helpers.Crypto
+  alias EWalletConfig.Helpers.Crypto
   alias EWalletDB.{ForgetPasswordRequest, Repo, User}
 
   @redirect_url "http://localhost:4000/reset_password?email={email}&token={token}"
@@ -12,7 +12,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       {:ok, user} = :admin |> params_for() |> User.insert()
 
       response =
-        unauthenticated_request("/admin.reset_password", %{
+        public_request("/user.reset_password", %{
           "email" => user.email,
           "redirect_url" => @redirect_url
         })
@@ -32,7 +32,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       redirect_url = "http://unknown-url.com/reset_password?email={email}&token={token}"
 
       response =
-        unauthenticated_request("/admin.reset_password", %{
+        public_request("/user.reset_password", %{
           "email" => "example@mail.com",
           "redirect_url" => redirect_url
         })
@@ -46,7 +46,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
 
     test "returns an error when sending email = nil" do
       response =
-        unauthenticated_request("/admin.reset_password", %{
+        public_request("/user.reset_password", %{
           "email" => nil,
           "redirect_url" => @redirect_url
         })
@@ -59,7 +59,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       num_requests = Repo.aggregate(ForgetPasswordRequest, :count, :token)
 
       response =
-        unauthenticated_request("/admin.reset_password", %{
+        public_request("/user.reset_password", %{
           "email" => "example@mail.com",
           "redirect_url" => @redirect_url
         })
@@ -72,7 +72,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       {:ok, user} = :admin |> params_for() |> User.insert()
 
       response =
-        unauthenticated_request("/admin.reset_password", %{
+        public_request("/user.reset_password", %{
           "redirect_url" => @redirect_url
         })
 
@@ -90,7 +90,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       {:ok, user} = :admin |> params_for() |> User.insert()
 
       response =
-        unauthenticated_request("/admin.reset_password", %{
+        public_request("/user.reset_password", %{
           "email" => user.email
         })
 
@@ -103,38 +103,6 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       assert response["data"]["code"] == "client:invalid_parameter"
       assert request == nil
     end
-
-    test "generates an activity log" do
-      {:ok, user} = :admin |> params_for() |> User.insert()
-
-      timestamp = DateTime.utc_now()
-
-      response =
-        unauthenticated_request("/admin.reset_password", %{
-          "email" => user.email,
-          "redirect_url" => @redirect_url
-        })
-
-      assert response["success"] == true
-
-      request =
-        ForgetPasswordRequest
-        |> Repo.get_by(user_uuid: user.uuid)
-        |> Repo.preload(:user)
-
-      logs = get_all_activity_logs_since(timestamp)
-      assert Enum.count(logs) == 1
-
-      logs
-      |> Enum.at(0)
-      |> assert_activity_log(
-        action: "insert",
-        originator: :system,
-        target: request,
-        changes: %{"token" => request.token, "user_uuid" => user.uuid},
-        encrypted_changes: %{}
-      )
-    end
   end
 
   describe "ResetPasswordController.update/2" do
@@ -145,7 +113,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       assert user.password_hash != Crypto.hash_password("password")
 
       response =
-        unauthenticated_request("/admin.update_password", %{
+        public_request("/user.update_password", %{
           email: user.email,
           token: request.token,
           password: "password",
@@ -158,12 +126,12 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       assert ForgetPasswordRequest.all_active() |> length() == 0
     end
 
-    test "returns an token_not_found error when the user is not found" do
+    test "returns a token_not_found error when the user is not found" do
       {:ok, user} = :admin |> params_for() |> User.insert()
       {:ok, request} = ForgetPasswordRequest.generate(user)
 
       response =
-        unauthenticated_request("/admin.update_password", %{
+        public_request("/user.update_password", %{
           email: "example@mail.com",
           token: request.token,
           password: "password",
@@ -182,7 +150,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       assert user.password_hash != Crypto.hash_password("password")
 
       response =
-        unauthenticated_request("/admin.update_password", %{
+        public_request("/user.update_password", %{
           email: user.email,
           token: "123",
           password: "password",
@@ -201,7 +169,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       assert user.password_hash != Crypto.hash_password("password")
 
       response =
-        unauthenticated_request("/admin.update_password", %{
+        public_request("/user.update_password", %{
           email: user.email,
           token: request.token,
           password: "short",
@@ -224,7 +192,7 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       assert user.password_hash != Crypto.hash_password("password")
 
       response =
-        unauthenticated_request("/admin.update_password", %{
+        public_request("/user.update_password", %{
           token: request.token,
           password: "password",
           password_confirmation: "password"
@@ -233,38 +201,6 @@ defmodule AdminAPI.V1.AdminAuth.ResetPasswordControllerTest do
       assert response["success"] == false
       assert response["data"]["code"] == "client:invalid_parameter"
       assert ForgetPasswordRequest |> Repo.all() |> length() == 1
-    end
-
-    test "generates an activity log" do
-      {:ok, user} = :admin |> params_for() |> User.insert()
-      request = ForgetPasswordRequest.generate(user)
-
-      timestamp = DateTime.utc_now()
-
-      response =
-        unauthenticated_request("/admin.update_password", %{
-          email: user.email,
-          token: request.token,
-          password: "password",
-          password_confirmation: "password"
-        })
-
-      assert response["success"] == true
-
-      user = User.get(user.id)
-
-      logs = get_all_activity_logs_since(timestamp)
-      assert Enum.count(logs) == 1
-
-      logs
-      |> Enum.at(0)
-      |> assert_activity_log(
-        action: "update",
-        originator: request,
-        target: user,
-        changes: %{"password_hash" => user.password_hash},
-        encrypted_changes: %{}
-      )
     end
   end
 end
