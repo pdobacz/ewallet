@@ -178,7 +178,7 @@ defmodule AdminAPI.V1.AdminAuth.AdminUserControllerTest do
       admin = insert(:admin, %{email: "admin@omise.co"})
       _membership = insert(:membership, %{user: admin, account: account, role: role})
 
-      {:ok, token} = AuthToken.generate(admin, @owner_app)
+      {:ok, token} = AuthToken.generate(admin, @owner_app, %System{})
       token_string = token.token
       # Ensure tokens is usable.
       assert AuthToken.authenticate(token_string, @owner_app)

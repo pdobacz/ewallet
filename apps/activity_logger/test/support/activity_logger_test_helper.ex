@@ -35,7 +35,7 @@ defmodule ActivityLogger.ActivityLoggerTestHelper do
     assert_activity_log(
       log,
       action: action,
-      originator: %System{uuid: "00000000-0000-0000-0000-000000000000"},
+      originator: %System{},
       target: target,
       changes: changes,
       encrypted_changes: encrypted_changes

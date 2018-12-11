@@ -2,6 +2,7 @@ defmodule AdminAPI.V1.ProviderAuth.AdminControllerTest do
   use AdminAPI.ConnCase, async: true
   alias Ecto.UUID
   alias EWalletDB.{User, Account, AuthToken}
+  alias ActivityLogger.System
 
   @owner_app :some_app
 
@@ -175,7 +176,7 @@ defmodule AdminAPI.V1.ProviderAuth.AdminControllerTest do
       admin = insert(:admin, %{email: "admin@omise.co"})
       _membership = insert(:membership, %{user: admin, account: account, role: role})
 
-      {:ok, token} = AuthToken.generate(admin, @owner_app)
+      {:ok, token} = AuthToken.generate(admin, @owner_app, %System{})
       token_string = token.token
       # Ensure tokens is usable.
       assert AuthToken.authenticate(token_string, @owner_app)
