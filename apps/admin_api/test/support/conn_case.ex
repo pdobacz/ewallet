@@ -174,6 +174,7 @@ defmodule AdminAPI.ConnCase do
   """
   def get_test_admin, do: User.get(@admin_id)
   def get_test_user, do: User.get_by_provider_user_id(@provider_user_id)
+  def get_test_key, do: Key.get_by(%{access_key: @access_key})
 
   @doc """
   Returns the last inserted record of the given schema.

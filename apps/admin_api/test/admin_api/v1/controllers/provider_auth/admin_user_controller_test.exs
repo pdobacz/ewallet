@@ -239,5 +239,37 @@ defmodule AdminAPI.V1.ProviderAuth.AdminControllerTest do
       assert response["data"]["code"] == "client:invalid_parameter"
       assert response["data"]["description"] == "Invalid parameter provided. `id` is required."
     end
+
+    test "generates an activity log" do
+      account = Account.get_master_account()
+      role = insert(:role, %{name: "some_role"})
+      admin = insert(:admin, %{email: "admin@omise.co"})
+      _membership = insert(:membership, %{user: admin, account: account, role: role})
+
+      timestamp = DateTime.utc_now()
+
+      response =
+        provider_request("/admin.enable_or_disable", %{
+          id: admin.id,
+          enabled: false
+        })
+
+      assert response["success"] == true
+      admin = User.get(admin.id)
+      logs = get_all_activity_logs_since(timestamp)
+      assert Enum.count(logs) == 1
+
+      logs
+      |> Enum.at(0)
+      |> assert_activity_log(
+        action: "update",
+        originator: get_test_key(),
+        target: admin,
+        changes: %{
+          "enabled" => false
+        },
+        encrypted_changes: %{}
+      )
+    end
   end
 end
